@@ -11,5 +11,18 @@
       "/notebooks/langchain_localai_demo.html",
       "/notebooks/localai_openai_api.html"
     ]
+  },
+  {
+    "listing": "/archive.html",
+    "items": [
+      "/notebooks/langchain_embed_search_pdf.html",
+      "/notebooks/training_eval_loop.html",
+      "/notebooks/training_with_accelarate.html",
+      "/notebooks/using_Trainer_api.html",
+      "/notebooks/preprocessing_dataset_pytorch.html",
+      "/notebooks/langchain_memory.html",
+      "/notebooks/langchain_localai_demo.html",
+      "/notebooks/localai_openai_api.html"
+    ]
   }
 ]

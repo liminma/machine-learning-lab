@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2023-06-17">
 
-<title>Limin’s Generative AI Lab - openai API with LocalAI</title>
+<title>Limin’s Generative AI Lab - Archive</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,59 +20,27 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-html/quarto.js"></script>
-<script src="../site_libs/quarto-html/popper.min.js"></script>
-<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-listing/list.min.js"></script>
+<script src="site_libs/quarto-listing/quarto-listing.js"></script>
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -93,9 +60,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-submit-button-title": "Submit"
   }
 }</script>
+<script>
 
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    const listingTargetEl = window.document.querySelector('#listing-listing .list');
+    if (!listingTargetEl) {
+      // No listing discovered, do not attach.
+      return; 
+    }
 
-<link rel="stylesheet" href="../styles.css">
+    const options = {
+      valueNames: ['listing-date','listing-title',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      
+      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description"],
+    };
+
+    window['quarto-listings'] = window['quarto-listings'] || {};
+    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
+
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  });
+
+  window.addEventListener('hashchange',() => {
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  })
+  </script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-fixed">
@@ -105,7 +103,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
-    <a class="navbar-brand" href="../index.html">
+    <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">Limin’s Generative AI Lab</span>
     </a>
   </div>
@@ -126,7 +124,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../archive.html" rel="" target="">
+    <a class="nav-link active" href="./archive.html" rel="" target="" aria-current="page">
  <span class="menu-text">Archive</span></a>
   </li>  
 </ul>
@@ -137,110 +135,193 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
-      <h1 class="title">openai API with LocalAI</h1>
-                                <div class="quarto-categories">
-                <div class="quarto-category">openai</div>
-              </div>
-                  </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta">
-
-      
-      <div>
-      <div class="quarto-title-meta-heading">Published</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date">June 17, 2023</p>
-      </div>
-    </div>
-    
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    </div>
+    
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content column-page" id="quarto-document-content">
 
-
-
-
-<p>Using <code>openai</code> API with locally running LLMs.</p>
-<div class="cell" data-tags="[]" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openai</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>openai.api_base <span class="op">=</span> <span class="st">"http://localhost:8080/v1"</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>openai.api_key <span class="op">=</span> <span class="st">"dummy api key"</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> <span class="st">"nous-hermes-13b.ggmlv3.q4_0.bin"</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>prompt <span class="op">=</span> <span class="st">"Who is Stephen Hawking? Please write one paragraph."</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>start_time <span class="op">=</span> time.perf_counter()</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> openai.Completion.create(</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    model<span class="op">=</span>model,</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    prompt<span class="op">=</span>prompt,</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    max_tokens<span class="op">=</span><span class="dv">1000</span>,</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    temperature<span class="op">=</span><span class="fl">0.0</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>elapsed <span class="op">=</span> time.perf_counter() <span class="op">-</span> start_time</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(response.choices[<span class="dv">0</span>].text)</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'</span><span class="ch">\n</span><span class="ss">Elapsed time: </span><span class="sc">{</span>elapsed<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Stephen Hawking was a renowned theoretical physicist, cosmologist and author who made groundbreaking contributions to our understanding of the universe, including the now famous theory of black holes and the discovery that black holes emit radiation. He was also known for his work on quantum mechanics, general relativity and the origins of the cosmos. Despite being diagnosed with a rare form of motor neuron disease at the age of 21, he continued to make important contributions to science until his death in 2018.
-
-Elapsed time: 62.64086055383086</code></pre>
-</div>
-</div>
-<div class="cell" data-tags="[]" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>prompt <span class="op">=</span> <span class="st">"""</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="st">What is the sentiment of the following review delimited with triple backticks.</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="st">Please limit your answer to one word.</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="st">```</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="st">I bought a laptop last week. It arrived quickly, </span><span class="ch">\</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="st">but had a minor issue. The company promptly replaced it, </span><span class="ch">\</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="st">and the new one works perfectly. Impressed with their quick </span><span class="ch">\</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="st">response and the laptop's performance.</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="st">```</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>start_time <span class="op">=</span> time.perf_counter()</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>chat_completion <span class="op">=</span> openai.ChatCompletion.create(</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    model<span class="op">=</span>model,</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    messages<span class="op">=</span>[{<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: prompt}])</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>elapsed <span class="op">=</span> time.perf_counter() <span class="op">-</span> start_time</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(chat_completion.choices[<span class="dv">0</span>].message)</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'</span><span class="ch">\n</span><span class="ss">Elapsed time: </span><span class="sc">{</span>elapsed<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>{
-  "content": "Positive",
-  "role": "assistant"
-}
-
-Elapsed time: 26.65933546423912</code></pre>
-</div>
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Archive</h1>
 </div>
 
 
 
-</main> <!-- /main -->
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+
+
+
+
+<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
+<div class="list quarto-listing-default">
+<div class="quarto-post image-right" data-index="0" data-categories="LangChain" data-listing-date-sort="1688875200000" data-listing-file-modified-sort="1689622252858" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
+<div class="body">
+<a href="./notebooks/langchain_embed_search_pdf.html">
+<h3 class="no-anchor listing-title">
+Embedding and Searching PDF
+</h3>
+<div class="listing-subtitle">
+
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./notebooks/langchain_embed_search_pdf.html">
+<div class="listing-date">
+Jul 9, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-categories="PyTorch" data-listing-date-sort="1688011200000" data-listing-file-modified-sort="1689622089952" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
+<div class="body">
+<a href="./notebooks/training_eval_loop.html">
+<h3 class="no-anchor listing-title">
+Training and Evaluation Loop
+</h3>
+<div class="listing-subtitle">
+
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./notebooks/training_eval_loop.html">
+<div class="listing-date">
+Jun 29, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="2" data-categories="PyTorch" data-listing-date-sort="1688011200000" data-listing-file-modified-sort="1689620994075" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
+<div class="body">
+<a href="./notebooks/training_with_accelarate.html">
+<h3 class="no-anchor listing-title">
+Training with <code>accelerate</code>
+</h3>
+<div class="listing-subtitle">
+
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./notebooks/training_with_accelarate.html">
+<div class="listing-date">
+Jun 29, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="3" data-categories="PyTorch" data-listing-date-sort="1687752000000" data-listing-file-modified-sort="1689622327250" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
+<div class="body">
+<a href="./notebooks/using_Trainer_api.html">
+<h3 class="no-anchor listing-title">
+Using <code>Trainer</code> API
+</h3>
+<div class="listing-subtitle">
+
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./notebooks/using_Trainer_api.html">
+<div class="listing-date">
+Jun 26, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="4" data-categories="PyTorch" data-listing-date-sort="1687752000000" data-listing-file-modified-sort="1689616449256" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
+<div class="body">
+<a href="./notebooks/preprocessing_dataset_pytorch.html">
+<h3 class="no-anchor listing-title">
+Preprocessing Datasets Using PyTorch
+</h3>
+<div class="listing-subtitle">
+
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./notebooks/preprocessing_dataset_pytorch.html">
+<div class="listing-date">
+Jun 26, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="5" data-categories="LangChain" data-listing-date-sort="1686974400000" data-listing-file-modified-sort="1689622433792" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
+<div class="body">
+<a href="./notebooks/langchain_memory.html">
+<h3 class="no-anchor listing-title">
+Using LangChain Memory
+</h3>
+<div class="listing-subtitle">
+
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./notebooks/langchain_memory.html">
+<div class="listing-date">
+Jun 17, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="6" data-categories="LangChain" data-listing-date-sort="1686974400000" data-listing-file-modified-sort="1689611917974" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
+<div class="body">
+<a href="./notebooks/langchain_localai_demo.html">
+<h3 class="no-anchor listing-title">
+LangChain with LocalAI
+</h3>
+<div class="listing-subtitle">
+
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./notebooks/langchain_localai_demo.html">
+<div class="listing-date">
+Jun 17, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="7" data-categories="openai" data-listing-date-sort="1686974400000" data-listing-file-modified-sort="1689615763563" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
+<div class="body">
+<a href="./notebooks/localai_openai_api.html">
+<h3 class="no-anchor listing-title">
+openai API with LocalAI
+</h3>
+<div class="listing-subtitle">
+
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./notebooks/localai_openai_api.html">
+<div class="listing-date">
+Jun 17, 2023
+</div>
+</a>
+</div>
+</div>
+</div>
+<div class="listing-no-matching d-none">
+No matching items
+</div>
+</div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
