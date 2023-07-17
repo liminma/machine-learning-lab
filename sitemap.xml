@@ -2,42 +2,38 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/langchain_memory.html</loc>
-    <lastmod>2023-07-17T20:35:50.491Z</lastmod>
+    <lastmod>2023-07-17T20:41:13.820Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/langchain_localai_demo.html</loc>
-    <lastmod>2023-07-17T20:35:50.906Z</lastmod>
+    <lastmod>2023-07-17T20:41:14.292Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/using_Trainer_api.html</loc>
-    <lastmod>2023-07-17T20:35:51.471Z</lastmod>
+    <lastmod>2023-07-17T20:41:14.908Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/training_eval_loop.html</loc>
-    <lastmod>2023-07-17T20:35:52.039Z</lastmod>
+    <lastmod>2023-07-17T20:41:15.476Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/localai_openai_api.html</loc>
-    <lastmod>2023-07-17T20:35:52.526Z</lastmod>
+    <lastmod>2023-07-17T20:41:16.041Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/training_with_accelarate.html</loc>
-    <lastmod>2023-07-17T20:35:53.073Z</lastmod>
+    <lastmod>2023-07-17T20:41:16.602Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/langchain_embed_search_pdf.html</loc>
-    <lastmod>2023-07-17T20:35:53.589Z</lastmod>
+    <lastmod>2023-07-17T20:41:17.135Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/preprocessing_dataset_pytorch.html</loc>
-    <lastmod>2023-07-17T20:35:54.139Z</lastmod>
+    <lastmod>2023-07-17T20:41:17.743Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/index.html</loc>
-    <lastmod>2023-07-17T20:35:55.815Z</lastmod>
-  </url>
-  <url>
-    <loc>https://liminma.github.io/generative-ai-lab/archive.html</loc>
-    <lastmod>2023-07-17T20:35:56.620Z</lastmod>
+    <lastmod>2023-07-17T20:41:19.371Z</lastmod>
   </url>
 </urlset>
