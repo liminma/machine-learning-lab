@@ -2,42 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/langchain_memory.html</loc>
-    <lastmod>2023-07-17T20:26:17.897Z</lastmod>
+    <lastmod>2023-07-17T20:35:50.491Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/langchain_localai_demo.html</loc>
-    <lastmod>2023-07-17T20:26:18.386Z</lastmod>
+    <lastmod>2023-07-17T20:35:50.906Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/using_Trainer_api.html</loc>
-    <lastmod>2023-07-17T20:26:18.950Z</lastmod>
+    <lastmod>2023-07-17T20:35:51.471Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/training_eval_loop.html</loc>
-    <lastmod>2023-07-17T20:26:19.434Z</lastmod>
+    <lastmod>2023-07-17T20:35:52.039Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/localai_openai_api.html</loc>
-    <lastmod>2023-07-17T20:26:19.870Z</lastmod>
+    <lastmod>2023-07-17T20:35:52.526Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/training_with_accelarate.html</loc>
-    <lastmod>2023-07-17T20:26:20.409Z</lastmod>
+    <lastmod>2023-07-17T20:35:53.073Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/langchain_embed_search_pdf.html</loc>
-    <lastmod>2023-07-17T20:26:20.909Z</lastmod>
+    <lastmod>2023-07-17T20:35:53.589Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/preprocessing_dataset_pytorch.html</loc>
-    <lastmod>2023-07-17T20:26:21.487Z</lastmod>
+    <lastmod>2023-07-17T20:35:54.139Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/index.html</loc>
-    <lastmod>2023-07-17T20:26:23.083Z</lastmod>
+    <lastmod>2023-07-17T20:35:55.815Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/archive.html</loc>
-    <lastmod>2023-07-17T20:26:23.788Z</lastmod>
+    <lastmod>2023-07-17T20:35:56.620Z</lastmod>
   </url>
 </urlset>
