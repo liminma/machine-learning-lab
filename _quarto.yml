@@ -1,0 +1,25 @@
+project:
+  type: website
+
+website:
+  title: "Limin's Generative AI Lab"
+  site-url: http://liminma.github.io/generative-ai-lab
+  description: "Limin Ma's blogs about generative AI."
+  page-navigation: true
+  navbar:
+    right:
+      - icon: github
+        href: https://github.com/liminma
+      - icon: linkedin
+        href: https://www.linkedin.com/in/liminma2021
+      - icon: rss
+        href: index.xml
+      - text: Archive
+        href: archive.qmd
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+
+
+
