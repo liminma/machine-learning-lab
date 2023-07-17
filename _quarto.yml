@@ -3,8 +3,8 @@ project:
 
 website:
   title: "Limin's Generative AI Lab"
-  site-url: http://liminma.github.io/generative-ai-lab
-  description: "Limin Ma's blogs about generative AI."
+  site-url: https://liminma.github.io/generative-ai-lab
+  description: "My experiments with LLMs and related technologies."
   page-navigation: true
   navbar:
     right:
