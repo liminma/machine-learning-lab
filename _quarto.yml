@@ -12,8 +12,6 @@ website:
         href: https://github.com/liminma
       - icon: linkedin
         href: https://www.linkedin.com/in/liminma2021
-      - icon: rss
-        href: index.xml
       - text: Archive
         href: archive.qmd
 format:
