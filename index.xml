@@ -10,7 +10,593 @@
 <atom:link href="https://liminma.github.io/generative-ai-lab/index.xml" rel="self" type="application/rss+xml"/>
 <description>My experiments with LLMs and related technologies.</description>
 <generator>quarto-1.3.340</generator>
-<lastBuildDate>Sun, 09 Jul 2023 04:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 24 Jul 2023 04:00:00 GMT</lastBuildDate>
+<item>
+  <title>How to construct prompts for Llama 2 and chat with it?</title>
+  <link>https://liminma.github.io/generative-ai-lab/notebooks/llama2_prompt_template.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<img src="https://liminma.github.io/generative-ai-lab/notebooks/llama2_prompt_template_files/figure-html/b693ec84-00f6-4855-b2e7-e0bcd4bbc185-1-9aa851a5-2570-42b1-a25a-b4e75f2c2a32.jpg" class="img-fluid">
+<div style="text-align: right; font-size: 10px; color: grey; margin-bottom: 2em;">
+Source: Photo by <a style="color: grey;" href="https://unsplash.com/@chris23?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Chris</a> on <a style="color: grey;" href="https://unsplash.com/photos/ZhF-9SKetvs?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a>
+</div>
+<p>In order to get the best results from Large Language Models (LLMs), prompts should be optimized to tell LLMs what to do and how to do it. One important consideration is that they should follow the prompt template that was used during the training of a model. So we need to figure out what is Llama 2’s prompt template before we can use it effectively.</p>
+<section id="llama-2s-prompt-template" class="level2">
+<h2 class="anchored" data-anchor-id="llama-2s-prompt-template">Llama 2’s prompt template</h2>
+<p>How Llama 2 constructs its prompts can be found in its <a href="https://github.com/facebookresearch/llama/blob/main/llama/generation.py#L213" target="_blank"><code>chat_completion</code></a> function in the source code. Depending on whether it’s a single turn or multi-turn chat, a prompt will have the following format.</p>
+<p>A single turn prompt will look like this,</p>
+<pre><code>&lt;s&gt;[INST] &lt;&lt;SYS&gt;&gt;
+{system_prompt}
+&lt;&lt;/SYS&gt;&gt;
+
+{user_message} [/INST]</code></pre>
+<p>and a multi-turn prompt will look like this,</p>
+<pre><code>&lt;s&gt;[INST] &lt;&lt;SYS&gt;&gt;
+{system_prompt}
+&lt;&lt;/SYS&gt;&gt;
+
+{user_message_1} [/INST] {model_output_1} &lt;/s&gt;\
+&lt;s&gt;[INST] {user_message_2} [/INST] {model_output_2} &lt;/s&gt;\
+&lt;s&gt;[INST] {user_message_3} [/INST]</code></pre>
+<p>Here are special tokens and their meaning:</p>
+<ul>
+<li><code>&lt;s&gt;</code>, <code>&lt;/s&gt;</code>: the <code>bos</code> and <code>eos</code> tokens.</li>
+<li><code>[INST]</code>, <code>[/INST]</code>: the beginning and end of the instructions for the model.</li>
+<li><code>&lt;&lt;SYS&gt;&gt;</code>, <code>&lt;&lt;/SYS&gt;&gt;</code>: the beginning and end of the system prompt.<br>
+</li>
+<li><code>{system_prompt}</code>, <code>{user_message}</code>, <code>{model_output}</code>: placeholders for system prompt, user inputs and model outputs, respectively.</li>
+</ul>
+<p>According to the <a href="https://github.com/facebookresearch/llama/blob/main/llama/generation.py#L46" target="_blank">source code</a>, the default system prompt is:</p>
+<blockquote class="blockquote">
+<p>You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.</p>
+<p>If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don’t know the answer to a question, please don’t share false information.</p>
+</blockquote>
+</section>
+<section id="a-function-for-creating-prompts" class="level2">
+<h2 class="anchored" data-anchor-id="a-function-for-creating-prompts">A function for creating prompts</h2>
+<p>By going through the <a href="https://github.com/facebookresearch/llama/blob/main/llama/generation.py#L213" target="_blank"><code>chat_completion</code></a> function, we can define a prompt construction function for Llama 2,</p>
+<div class="cell" data-tags="[]" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">B_INST, E_INST <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"[INST]"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"[/INST]"</span></span>
+<span id="cb3-2">B_SYS, E_SYS <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"&lt;&lt;SYS&gt;&gt;</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">&lt;&lt;/SYS&gt;&gt;</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span></span>
+<span id="cb3-3">BOS, EOS <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"&lt;s&gt;"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"&lt;/s&gt;"</span></span>
+<span id="cb3-4"></span>
+<span id="cb3-5">DEFAULT_SYSTEM_PROMPT <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb3-6"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.</span></span>
+<span id="cb3-7"></span>
+<span id="cb3-8"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information."""</span></span>
+<span id="cb3-9"></span>
+<span id="cb3-10"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> construct_llama2_prompt(dialog: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>[<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">dict</span>]) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>:</span>
+<span id="cb3-11">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> dialog[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'role'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'system'</span>:</span>
+<span id="cb3-12">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># insert the default system prompt as the first message</span></span>
+<span id="cb3-13">        dialog <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [{<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'role'</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'system'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'content'</span>: DEFAULT_SYSTEM_PROMPT}] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> dialog</span>
+<span id="cb3-14"></span>
+<span id="cb3-15">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># merge the first 2 messages</span></span>
+<span id="cb3-16">    dialog <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [{<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'role'</span>: dialog[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'role'</span>],</span>
+<span id="cb3-17">               <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'content'</span>: B_SYS <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> dialog[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'content'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> E_SYS <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> dialog[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'content'</span>]}</span>
+<span id="cb3-18">             ] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> dialog[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>:]</span>
+<span id="cb3-19"></span>
+<span id="cb3-20">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># construct prompt using chat history</span></span>
+<span id="cb3-21">    prompt_buffer <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [</span>
+<span id="cb3-22">        <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>BOS<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}{</span>B_INST<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>(prompt[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"content"</span>])<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>strip()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>E_INST<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>(answer[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"content"</span>])<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>strip()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>EOS<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span> </span>
+<span id="cb3-23">         <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> prompt, answer <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">zip</span>(dialog[::<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>], dialog[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>::<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>])</span>
+<span id="cb3-24">        ]</span>
+<span id="cb3-25"></span>
+<span id="cb3-26">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(dialog) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>:</span>
+<span id="cb3-27">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># add the last message (the current user input)</span></span>
+<span id="cb3-28">        prompt_buffer <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+=</span> [<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>BOS<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}{</span>B_INST<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>(dialog[<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"content"</span>])<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>strip()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>E_INST<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>]</span>
+<span id="cb3-29"></span>
+<span id="cb3-30">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">''</span>.join(prompt_buffer)</span></code></pre></div>
+</div>
+<p>We also create a utility function to retrieve answer from model’s outputs,</p>
+<div class="cell" data-tags="[]" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> extract_answer(model_outputs):</span>
+<span id="cb4-2">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> model_outputs[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'generated_text'</span>].split(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'[/INST]'</span>)[<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>].strip()</span></code></pre></div>
+</div>
+<p>Now let’s try to chat with the <a href="https://huggingface.co/meta-llama/Llama-2-7b-chat-hf">Llama-2-7b-chat</a> model</p>
+</section>
+<section id="chat-with-llama-2" class="level2">
+<h2 class="anchored" data-anchor-id="chat-with-llama-2">Chat with Llama 2</h2>
+<section id="load-the-model" class="level3">
+<h3 class="anchored" data-anchor-id="load-the-model">load the model</h3>
+<p>We’ll use <code>transformers</code> pipeline to load the model,</p>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> torch</span>
+<span id="cb5-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> transformers <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pipeline</span>
+<span id="cb5-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> transformers <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> GenerationConfig</span>
+<span id="cb5-4"></span>
+<span id="cb5-5">checkpoint <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'meta-llama/Llama-2-7b-chat-hf'</span></span>
+<span id="cb5-6"></span>
+<span id="cb5-7">gen_config <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> GenerationConfig.from_pretrained(checkpoint)</span>
+<span id="cb5-8">gen_config.max_new_tokens <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4096</span></span>
+<span id="cb5-9"></span>
+<span id="cb5-10">pipe <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pipeline(task<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"text-generation"</span>,</span>
+<span id="cb5-11">                model<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>checkpoint,</span>
+<span id="cb5-12">                torch_dtype<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>torch.float16,</span>
+<span id="cb5-13">                generation_config<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>gen_config,</span>
+<span id="cb5-14">                device_map<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'auto'</span>,</span>
+<span id="cb5-15">)</span></code></pre></div>
+</div>
+</section>
+<section id="chat-with-the-model" class="level3">
+<h3 class="anchored" data-anchor-id="chat-with-the-model">chat with the model</h3>
+<p>Here is how the prompt of a single turn dialog looks like,</p>
+<div class="cell" data-tags="[]" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">dialog <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [{<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'role'</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'user'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'content'</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Hello, how are you?"</span>}]</span>
+<span id="cb6-2">prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> construct_llama2_prompt(dialog)</span>
+<span id="cb6-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(prompt)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;s&gt;[INST] &lt;&lt;SYS&gt;&gt;
+You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.
+
+If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.
+&lt;&lt;/SYS&gt;&gt;
+
+Hello, how are you? [/INST]</code></pre>
+</div>
+</div>
+<p>Send the prompt to the model,</p>
+<div class="cell" data-tags="[]" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">outputs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pipe(prompt)</span>
+<span id="cb8-2">answer <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> extract_answer(outputs)</span>
+<span id="cb8-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(answer)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Hello! I'm just an AI, I don't have personal feelings or emotions, but I'm here to help you with any questions or concerns you may have. How can I assist you today? Please keep in mind that I'm here to provide helpful and respectful responses, and I will always do my best to ensure that my answers are safe, socially unbiased, and positive in nature. If a question doesn't make sense or is not factually coherent, I will explain why instead of answering something not correct. If I don't know the answer to a question, I will not share false information. Is there anything else I can help you with?</code></pre>
+</div>
+</div>
+<p>Keep chatting and the following are prompts of multi-turn dialog,</p>
+<div class="cell" data-tags="[]" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">dialog <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+=</span> [</span>
+<span id="cb10-2">    {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'role'</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'assistant'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'content'</span>: answer},</span>
+<span id="cb10-3">    {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'role'</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'user'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'content'</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Can you tell me a science joke?"</span>}</span>
+<span id="cb10-4">]</span>
+<span id="cb10-5"></span>
+<span id="cb10-6">prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> construct_llama2_prompt(dialog)</span>
+<span id="cb10-7"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(prompt)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;s&gt;[INST] &lt;&lt;SYS&gt;&gt;
+You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.
+
+If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.
+&lt;&lt;/SYS&gt;&gt;
+
+Hello, how are you? [/INST] Hello! I'm just an AI, I don't have personal feelings or emotions, but I'm here to help you with any questions or concerns you may have. How can I assist you today? Please keep in mind that I'm here to provide helpful and respectful responses, and I will always do my best to ensure that my answers are safe, socially unbiased, and positive in nature. If a question doesn't make sense or is not factually coherent, I will explain why instead of answering something not correct. If I don't know the answer to a question, I will not share false information. Is there anything else I can help you with? &lt;/s&gt;&lt;s&gt;[INST] Can you tell me a science joke? [/INST]</code></pre>
+</div>
+</div>
+<div class="cell" data-tags="[]" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1">outputs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pipe(prompt)</span>
+<span id="cb12-2">answer <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> extract_answer(outputs)</span>
+<span id="cb12-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(answer)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Of course! Here's a science joke for you:
+Why did the physicist break up with his girlfriend?
+She was always gravitating towards him, but he needed some space!
+I hope you found that joke amusing! Do you have any other questions or topics you'd like to discuss?</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="what-if-we-dont-follow-the-models-prompt-template" class="level2">
+<h2 class="anchored" data-anchor-id="what-if-we-dont-follow-the-models-prompt-template">What if we don’t follow the model’s prompt template?</h2>
+<p>We can do a quick test.</p>
+<div class="cell" data-tags="[]" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">question <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'How to make pizza?'</span></span></code></pre></div>
+</div>
+<section id="not-following-the-template" class="level3">
+<h3 class="anchored" data-anchor-id="not-following-the-template">Not following the template</h3>
+<div class="cell" data-tags="[]" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1">output1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pipe(question)</span>
+<span id="cb15-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(output1[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'generated_text'</span>])</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>How to make pizza?
+
+To make pizza, you will need the following ingredients:
+
+* Pizza dough (homemade or store-bought)
+* Pizza sauce
+* Mozzarella cheese (shredded or sliced)
+* Toppings of your choice (e.g. pepperoni, sausage, mushrooms, onions, bell peppers)
+
+Here is a basic recipe for making pizza at home:
+
+1. Preheat your oven to 450-500°F (230-260°C).
+2. If using homemade pizza dough, let it rise for 1-2 hours until it is puffy and doubled in size. If using store-bought dough, follow the package instructions for thawing and rising.
+3. Roll out the pizza dough on a floured surface to your desired thickness. Transfer the dough to a pizza pan or baking sheet.
+4. Spread the pizza sauce over the dough, leaving a small border around the edges.
+5. Sprinkle the shredded mozzarella cheese over the sauce.
+6. Add your desired toppings, such as pepperoni, sausage, mushrooms, onions, and bell peppers.
+7. Bake the pizza in the preheated oven for 10-15 minutes, or until the crust is golden brown and the cheese is melted and bubbly.
+8. Remove the pizza from the oven and let it cool for a few minutes before slicing and serving.
+
+Enjoy your homemade pizza!</code></pre>
+</div>
+</div>
+<p>The answer is not bad. But let’s see how the model will respond if we follow its prompt template.</p>
+</section>
+<section id="following-the-template" class="level3">
+<h3 class="anchored" data-anchor-id="following-the-template">Following the template</h3>
+<div class="cell" data-tags="[]" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1">dialog <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [{<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'role'</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'user'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'content'</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'How to make pizza?'</span>}]</span>
+<span id="cb17-2">output2 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pipe(construct_llama2_prompt(dialog))</span>
+<span id="cb17-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(extract_answer(output2))</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Great question! Making pizza can be a fun and delicious activity. Here's a basic recipe for making pizza at home:
+Ingredients:
+* 1 1/2 cups warm water
+* 2 tablespoons active dry yeast
+* 3 1/2 cups all-purpose flour
+* 1 teaspoon salt
+* 2 tablespoons olive oil
+* 1 cup pizza sauce (homemade or store-bought)
+* Toppings of your choice (such as cheese, vegetables, meats, etc.)
+Instructions:
+1. In a large mixing bowl, combine the warm water and yeast. Let it sit for 5-10 minutes until the yeast becomes frothy.
+2. Add the flour, salt, and olive oil to the bowl. Mix until a dough forms.
+3. Knead the dough on a floured surface for 5-10 minutes until it becomes smooth and elastic.
+4. Place the dough in a lightly oiled bowl, cover it with plastic wrap, and let it rise in a warm, draft-free place for 1-2 hours until it has doubled in size.
+5. Preheat your oven to 450-500°F (230-260°C).
+6. Punch down the dough and divide it into as many portions as you want to make individual pizzas.
+7. Roll out each portion of dough into a thin circle, about 1/4 inch thick.
+8. Place the dough on a pizza stone or baking sheet.
+9. Spread the pizza sauce over the dough, leaving a small border around the edges.
+10. Add your desired toppings.
+11. Bake the pizza in the preheated oven for 10-15 minutes until the crust is golden brown and the cheese is melted and bubbly.
+12. Remove the pizza from the oven and let it cool for a few minutes before slicing and serving.
+Enjoy your homemade pizza!
+
+Please note that this is a basic recipe and you can always adjust it to your liking by adding different toppings or using different types of cheese. Also, if you want to make a gluten-free pizza, you can use a gluten-free flour blend instead of all-purpose flour.</code></pre>
+</div>
+</div>
+<p>The 2nd response is much better!</p>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>In this blog post, I have explained what Llama 2’s default prompt template is, how to create prompts for it, and how to chat with it using the <code>transformers</code> pipeline. I hope you have found this post useful. Thank you for reading!</p>
+
+
+</section>
+
+ ]]></description>
+  <category>Llama 2</category>
+  <category>Prompt Engineering</category>
+  <guid>https://liminma.github.io/generative-ai-lab/notebooks/llama2_prompt_template.html</guid>
+  <pubDate>Mon, 24 Jul 2023 04:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Embedding and Searching PDF</title>
   <link>https://liminma.github.io/generative-ai-lab/notebooks/langchain_embed_search_pdf.html</link>

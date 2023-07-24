@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Limin’s Generative AI Lab - Archive</title>
+<title>Limin's Generative AI Lab – untitled</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,8 +64,6 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -60,43 +92,12 @@ ul.task-list li input[type="checkbox"] {
     "search-submit-button-title": "Submit"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -124,7 +125,7 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./archive.html" rel="" target="" aria-current="page">
+    <a class="nav-link" href="./archive.html" rel="" target="">
  <span class="menu-text">Archive</span></a>
   </li>  
 </ul>
@@ -135,212 +136,70 @@ ul.task-list li input[type="checkbox"] {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content column-page" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Archive</h1>
-</div>
+<main class="content" id="quarto-document-content">
 
 
 
-<div class="quarto-title-meta">
+<div class="cell" data-tags="[]" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> transformers</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoTokenizer, AutoModelForCausalLM</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[]" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(transformers.__version__, <span class="st">','</span>, torch.__version__)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>4.31.0 , 2.0.1+cu117</code></pre>
+</div>
+</div>
+<div class="cell" data-tags="[]" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>checkpoint <span class="op">=</span> <span class="st">'meta-llama/Llama-2-7b-chat-hf'</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>tokenizer <span class="op">=</span> AutoTokenizer.from_pretrained(checkpoint)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>tokenizer</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>LlamaTokenizerFast(name_or_path='meta-llama/Llama-2-7b-chat-hf', vocab_size=32000, model_max_length=1000000000000000019884624838656, is_fast=True, padding_side='left', truncation_side='right', special_tokens={'bos_token': AddedToken("&lt;s&gt;", rstrip=False, lstrip=False, single_word=False, normalized=False), 'eos_token': AddedToken("&lt;/s&gt;", rstrip=False, lstrip=False, single_word=False, normalized=False), 'unk_token': AddedToken("&lt;unk&gt;", rstrip=False, lstrip=False, single_word=False, normalized=False)}, clean_up_tokenization_spaces=False)</code></pre>
+</div>
+</div>
+<div class="cell" data-tags="[]" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> AutoModelForCausalLM.from_pretrained(checkpoint, torch_dtype<span class="op">=</span>torch.float16, device_map<span class="op">=</span><span class="st">'auto'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading checkpoint shards: 100%|██████████| 2/2 [00:09&lt;00:00,  4.95s/it]</code></pre>
+</div>
+</div>
+<div class="cell" data-tags="[]" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>transformers.models.llama.modeling_llama.LlamaForCausalLM</code></pre>
+</div>
+</div>
+<div class="cell" data-tags="[]" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>q <span class="op">=</span> <span class="st">"Let's think step by step. What is electroencephalography?"</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>inputs <span class="op">=</span> tokenizer.encode(q, return_tensors<span class="op">=</span><span class="st">'pt'</span>).to(<span class="st">'cuda'</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>outputs <span class="op">=</span> model.generate(inputs, max_new_tokens<span class="op">=</span><span class="dv">500</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[]" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>answer <span class="op">=</span> tokenizer.decode(outputs[<span class="dv">0</span>], skip_special_tokens<span class="op">=</span><span class="va">True</span>, clean_up_tokenization_spaces<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(answer.strip())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Let's think step by step. What is electroencephalography?
 
-    
-  
-    
-  </div>
-  
+Electroencephalography (EEG) is a non-invasive neuroimaging technique that measures the electrical activity of the brain. EEG recordings are typically made by placing electrodes on the scalp, which detect the electrical impulses produced by the brain's neurons. These impulses are then analyzed to provide information about the brain's activity, including its rhythms, patterns, and responses to stimuli.
+EEG is commonly used in a variety of applications, including:
+1. Diagnosis and monitoring of neurological disorders: EEG can help diagnose and monitor conditions such as epilepsy, seizures, and encephalitis.
+2. Sleep disorders: EEG can be used to diagnose and monitor sleep disorders such as insomnia, narcolepsy, and sleep apnea.
+3. Brain function: EEG can be used to study the brain's electrical activity in response to various stimuli, such as drugs, alcohol, and sensory deprivation.
+4. Brain-computer interfaces: EEG can be used to develop brain-computer interfaces (BCIs) that allow people to control devices with their thoughts.
+5. Neurofeedback training: EEG can be used for neurofeedback training, which involves using the brain's electrical activity to teach self-regulation of brain function.</code></pre>
+</div>
+</div>
 
-</header>
 
 
-
-
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="Llama 2,Prompt Engineering" data-listing-date-sort="1690171200000" data-listing-file-modified-sort="1690233552144" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3">
-<div class="body">
-<a href="./notebooks/llama2_prompt_template.html">
-<h3 class="no-anchor listing-title">
-How to construct prompts for Llama 2 and chat with it?
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./notebooks/llama2_prompt_template.html">
-<div class="listing-date">
-Jul 24, 2023
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="LangChain" data-listing-date-sort="1688875200000" data-listing-file-modified-sort="1689622252858" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
-<div class="body">
-<a href="./notebooks/langchain_embed_search_pdf.html">
-<h3 class="no-anchor listing-title">
-Embedding and Searching PDF
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./notebooks/langchain_embed_search_pdf.html">
-<div class="listing-date">
-Jul 9, 2023
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="PyTorch" data-listing-date-sort="1688011200000" data-listing-file-modified-sort="1689622089952" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
-<div class="body">
-<a href="./notebooks/training_eval_loop.html">
-<h3 class="no-anchor listing-title">
-Training and Evaluation Loop
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./notebooks/training_eval_loop.html">
-<div class="listing-date">
-Jun 29, 2023
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-categories="PyTorch" data-listing-date-sort="1688011200000" data-listing-file-modified-sort="1689620994075" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
-<div class="body">
-<a href="./notebooks/training_with_accelarate.html">
-<h3 class="no-anchor listing-title">
-Training with <code>accelerate</code>
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./notebooks/training_with_accelarate.html">
-<div class="listing-date">
-Jun 29, 2023
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="4" data-categories="PyTorch" data-listing-date-sort="1687752000000" data-listing-file-modified-sort="1689622327250" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
-<div class="body">
-<a href="./notebooks/using_Trainer_api.html">
-<h3 class="no-anchor listing-title">
-Using <code>Trainer</code> API
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./notebooks/using_Trainer_api.html">
-<div class="listing-date">
-Jun 26, 2023
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="5" data-categories="PyTorch" data-listing-date-sort="1687752000000" data-listing-file-modified-sort="1689616449256" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
-<div class="body">
-<a href="./notebooks/preprocessing_dataset_pytorch.html">
-<h3 class="no-anchor listing-title">
-Preprocessing Datasets Using PyTorch
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./notebooks/preprocessing_dataset_pytorch.html">
-<div class="listing-date">
-Jun 26, 2023
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="6" data-categories="LangChain" data-listing-date-sort="1686974400000" data-listing-file-modified-sort="1689622433792" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
-<div class="body">
-<a href="./notebooks/langchain_memory.html">
-<h3 class="no-anchor listing-title">
-Using LangChain Memory
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./notebooks/langchain_memory.html">
-<div class="listing-date">
-Jun 17, 2023
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="7" data-categories="LangChain" data-listing-date-sort="1686974400000" data-listing-file-modified-sort="1689611917974" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
-<div class="body">
-<a href="./notebooks/langchain_localai_demo.html">
-<h3 class="no-anchor listing-title">
-LangChain with LocalAI
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./notebooks/langchain_localai_demo.html">
-<div class="listing-date">
-Jun 17, 2023
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="8" data-categories="openai" data-listing-date-sort="1686974400000" data-listing-file-modified-sort="1689615763563" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
-<div class="body">
-<a href="./notebooks/localai_openai_api.html">
-<h3 class="no-anchor listing-title">
-openai API with LocalAI
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./notebooks/localai_openai_api.html">
-<div class="listing-date">
-Jun 17, 2023
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
