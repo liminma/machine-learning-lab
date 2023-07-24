@@ -39,8 +39,8 @@ def construct_llama2_prompt(dialog: list[dict]) -> str:
     Return:
         constructed prompt.
     """
-    # insert the system prompt as the first message
     if dialog[0]['role'] != 'system':
+        # insert the system prompt as the first message
         dialog = [{'role': 'system', 'content': DEFAULT_SYSTEM_PROMPT}] + dialog
 
     # merge the first 2 messages
