@@ -2,54 +2,46 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/langchain_memory.html</loc>
-    <lastmod>2023-07-24T21:29:17.214Z</lastmod>
+    <lastmod>2023-07-24T21:31:58.389Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/langchain_localai_demo.html</loc>
-    <lastmod>2023-07-24T21:29:17.702Z</lastmod>
+    <lastmod>2023-07-24T21:31:58.902Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/using_Trainer_api.html</loc>
-    <lastmod>2023-07-24T21:29:18.286Z</lastmod>
+    <lastmod>2023-07-24T21:31:59.512Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/training_eval_loop.html</loc>
-    <lastmod>2023-07-24T21:29:18.916Z</lastmod>
+    <lastmod>2023-07-24T21:32:00.069Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/localai_openai_api.html</loc>
-    <lastmod>2023-07-24T21:29:19.491Z</lastmod>
+    <lastmod>2023-07-24T21:32:00.562Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/training_with_accelarate.html</loc>
-    <lastmod>2023-07-24T21:29:20.042Z</lastmod>
+    <lastmod>2023-07-24T21:32:01.063Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/langchain_embed_search_pdf.html</loc>
-    <lastmod>2023-07-24T21:29:20.572Z</lastmod>
+    <lastmod>2023-07-24T21:32:01.606Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/preprocessing_dataset_pytorch.html</loc>
-    <lastmod>2023-07-24T21:29:21.176Z</lastmod>
+    <lastmod>2023-07-24T21:32:02.161Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/llama2_prompt_template.html</loc>
-    <lastmod>2023-07-24T21:29:21.829Z</lastmod>
+    <lastmod>2023-07-24T21:32:02.776Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/index.html</loc>
-    <lastmod>2023-07-24T21:29:23.580Z</lastmod>
+    <lastmod>2023-07-24T21:32:04.533Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/archive.html</loc>
-    <lastmod>2023-07-24T21:29:24.356Z</lastmod>
-  </url>
-  <url>
-    <loc>https://liminma.github.io/generative-ai-lab/Llama2.html</loc>
-    <lastmod>2023-07-24T21:29:24.986Z</lastmod>
-  </url>
-  <url>
-    <loc>https://liminma.github.io/generative-ai-lab/L2-Memory.html</loc>
-    <lastmod>2023-07-24T21:29:25.654Z</lastmod>
+    <lastmod>2023-07-24T21:32:05.247Z</lastmod>
   </url>
 </urlset>
