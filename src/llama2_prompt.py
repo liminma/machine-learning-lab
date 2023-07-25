@@ -59,3 +59,7 @@ def construct_llama2_prompt(dialog: list[dict]) -> str:
         prompt_buffer += [f'{BOS}{B_INST} {(dialog[-1]["content"]).strip()} {E_INST}']
 
     return ''.join(prompt_buffer)
+
+
+def retrieve_answer(outputs: dict) -> str:
+    return outputs['generated_text'].split(E_INST)[-1].strip()
