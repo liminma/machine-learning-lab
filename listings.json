@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/notebooks/react_agent_llama2.html",
       "/notebooks/llama2_prompt_template.html",
       "/notebooks/langchain_embed_search_pdf.html",
       "/notebooks/training_eval_loop.html",
@@ -16,6 +17,7 @@
   {
     "listing": "/archive.html",
     "items": [
+      "/notebooks/react_agent_llama2.html",
       "/notebooks/llama2_prompt_template.html",
       "/notebooks/langchain_embed_search_pdf.html",
       "/notebooks/training_eval_loop.html",

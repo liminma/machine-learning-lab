@@ -2,46 +2,50 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/langchain_memory.html</loc>
-    <lastmod>2023-07-24T21:31:58.389Z</lastmod>
+    <lastmod>2023-08-01T18:35:38.157Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/langchain_localai_demo.html</loc>
-    <lastmod>2023-07-24T21:31:58.902Z</lastmod>
+    <lastmod>2023-08-01T18:35:38.708Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/using_Trainer_api.html</loc>
-    <lastmod>2023-07-24T21:31:59.512Z</lastmod>
+    <lastmod>2023-08-01T18:35:39.279Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/training_eval_loop.html</loc>
-    <lastmod>2023-07-24T21:32:00.069Z</lastmod>
+    <lastmod>2023-08-01T18:35:39.911Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/localai_openai_api.html</loc>
-    <lastmod>2023-07-24T21:32:00.562Z</lastmod>
+    <lastmod>2023-08-01T18:35:40.394Z</lastmod>
+  </url>
+  <url>
+    <loc>https://liminma.github.io/generative-ai-lab/notebooks/react_agent_llama2.html</loc>
+    <lastmod>2023-08-01T18:35:41.402Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/training_with_accelarate.html</loc>
-    <lastmod>2023-07-24T21:32:01.063Z</lastmod>
+    <lastmod>2023-08-01T18:35:42.483Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/langchain_embed_search_pdf.html</loc>
-    <lastmod>2023-07-24T21:32:01.606Z</lastmod>
+    <lastmod>2023-08-01T18:35:43.027Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/preprocessing_dataset_pytorch.html</loc>
-    <lastmod>2023-07-24T21:32:02.161Z</lastmod>
+    <lastmod>2023-08-01T18:35:43.610Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/llama2_prompt_template.html</loc>
-    <lastmod>2023-07-24T21:32:02.776Z</lastmod>
+    <lastmod>2023-08-01T18:35:44.276Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/index.html</loc>
-    <lastmod>2023-07-24T21:32:04.533Z</lastmod>
+    <lastmod>2023-08-01T18:35:46.059Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/archive.html</loc>
-    <lastmod>2023-07-24T21:32:05.247Z</lastmod>
+    <lastmod>2023-08-01T18:35:46.919Z</lastmod>
   </url>
 </urlset>
