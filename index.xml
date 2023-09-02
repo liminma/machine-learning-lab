@@ -901,14 +901,9 @@ Enjoy your homemade pizza!
 Please note that this is a basic recipe and you can always adjust it to your liking by adding different toppings or using different types of cheese. Also, if you want to make a gluten-free pizza, you can use a gluten-free flour blend instead of all-purpose flour.</code></pre>
 </div>
 </div>
-<p>The 2nd response is much better!</p>
-</section>
-</section>
-<section id="conclusion" class="level2">
-<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>In this blog post, I have explained what Llama 2’s default prompt template is, how to create prompts for it, and how to chat with it using the <code>transformers</code> pipeline. I hope you have found this post useful. Thank you for reading!</p>
 
 
+</section>
 </section>
 
  ]]></description>
