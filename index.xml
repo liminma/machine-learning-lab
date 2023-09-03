@@ -2198,7 +2198,7 @@ font-style: inherit;">print</span>(response)</span></code></pre></div>
 </section>
 <section id="step-2-retrieve-product-information-for-extracted-products-from-the-previous-step." class="level3">
 <h3 class="anchored" data-anchor-id="step-2-retrieve-product-information-for-extracted-products-from-the-previous-step.">Step 2: Retrieve product information for extracted products from the previous step.</h3>
-<div class="cell" data-jupyter="{&quot;source_hidden&quot;:true}" data-execution_count="34">
+<div class="cell" data-execution_count="34">
 <details>
 <summary>product information (click to toggle the content)</summary>
 <div class="sourceCode cell-code" id="cb32" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1">products <span class="op" style="color: #5E5E5E;
@@ -4156,7 +4156,7 @@ font-style: inherit;">print</span>(context_product_information)</span></code></p
 </section>
 <section id="step-3-generate-final-answer-to-user-query-based-on-detailed-product-information" class="level3">
 <h3 class="anchored" data-anchor-id="step-3-generate-final-answer-to-user-query-based-on-detailed-product-information">Step 3: Generate final answer to user query based on detailed product information</h3>
-<div class="cell" data-execution_count="66">
+<div class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb36" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1">system_instruction <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
@@ -4185,8 +4185,11 @@ background-color: null;
 font-style: inherit;">f"""</span></span>
 <span id="cb36-7"><span class="ss" style="color: #20794D;
 background-color: null;
-font-style: inherit;">tell me about the smartx pro phone and the fotosnap camera, the dslr one. Also tell me about your tvs"""</span></span>
-<span id="cb36-8">user_message <span class="op" style="color: #5E5E5E;
+font-style: inherit;">tell me about the smartx pro phone and the fotosnap camera, the dslr one.</span></span>
+<span id="cb36-8"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Also tell me about your tvs"""</span></span>
+<span id="cb36-9">user_message <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> {<span class="st" style="color: #20794D;
 background-color: null;
@@ -4195,16 +4198,16 @@ background-color: null;
 font-style: inherit;">'user'</span>, <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'content'</span>: user_input}</span>
-<span id="cb36-9"></span>
-<span id="cb36-10">assistant_message <span class="op" style="color: #5E5E5E;
+<span id="cb36-10"></span>
+<span id="cb36-11">assistant_message <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> {</span>
-<span id="cb36-11">    <span class="st" style="color: #20794D;
+<span id="cb36-12">    <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'role'</span>:<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'assistant'</span>,</span>
-<span id="cb36-12">    <span class="st" style="color: #20794D;
+<span id="cb36-13">    <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'content'</span>: <span class="ss" style="color: #20794D;
 background-color: null;
@@ -4217,11 +4220,11 @@ background-color: null;
 font-style: inherit;">}</span><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'</span>}</span>
-<span id="cb36-13"></span>
-<span id="cb36-14">final_response, _ <span class="op" style="color: #5E5E5E;
+<span id="cb36-14"></span>
+<span id="cb36-15">final_response, _ <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> chat_completion([system_message, user_message, assistant_message])</span>
-<span id="cb36-15"><span class="bu" style="color: null;
+<span id="cb36-16"><span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">print</span>(final_response)</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -4426,8 +4429,407 @@ font-style: inherit;">print</span>(response)</span></code></pre></div>
 <pre><code>N</code></pre>
 </div>
 </div>
+</section>
+<section id="evaluate-outputs" class="level2">
+<h2 class="anchored" data-anchor-id="evaluate-outputs">Evaluate Outputs</h2>
+<section id="evaluate-outputs-using-a-rubric" class="level3">
+<h3 class="anchored" data-anchor-id="evaluate-outputs-using-a-rubric">Evaluate outputs using a rubric</h3>
+<div class="cell" height="844" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb42" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> eval_with_rubric(inputs, context, outputs):</span>
+<span id="cb42-2">    system_message <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb42-3"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    You are an assistant that evaluates how well the customer service agent </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb42-4"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    answers a user question by looking at the context that the customer service </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb42-5"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    agent is using to generate its response. </span></span>
+<span id="cb42-6"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    """</span></span>
+<span id="cb42-7"></span>
+<span id="cb42-8">    user_message <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"""</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb42-9"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">You are evaluating a submitted answer to a question based on the context </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb42-10"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">that the agent uses to answer the question.</span></span>
+<span id="cb42-11"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Here are the data:</span></span>
+<span id="cb42-12"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    [BEGIN DATA]</span></span>
+<span id="cb42-13"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    ************</span></span>
+<span id="cb42-14"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    [Question]: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>inputs<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span></span>
+<span id="cb42-15"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    ************</span></span>
+<span id="cb42-16"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    [Context]: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>context<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span></span>
+<span id="cb42-17"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    ************</span></span>
+<span id="cb42-18"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    [Submission]: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>outputs<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span></span>
+<span id="cb42-19"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    ************</span></span>
+<span id="cb42-20"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    [END DATA]</span></span>
+<span id="cb42-21"></span>
+<span id="cb42-22"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Compare the factual content of the submitted answer with the context. </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb42-23"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Ignore any differences in style, grammar, or punctuation.</span></span>
+<span id="cb42-24"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Answer the following questions:</span></span>
+<span id="cb42-25"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    - Is the Assistant response based only on the context provided? (Y or N)</span></span>
+<span id="cb42-26"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    - Does the answer include information that is not provided in the context? (Y or N)</span></span>
+<span id="cb42-27"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    - Is there any disagreement between the response and the context? (Y or N)</span></span>
+<span id="cb42-28"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    - Count how many questions the user asked. (output a number)</span></span>
+<span id="cb42-29"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    - For each question that the user asked, is there a corresponding answer to it?</span></span>
+<span id="cb42-30"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">      Question 1: (Y or N)</span></span>
+<span id="cb42-31"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">      Question 2: (Y or N)</span></span>
+<span id="cb42-32"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">      ...</span></span>
+<span id="cb42-33"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">      Question N: (Y or N)</span></span>
+<span id="cb42-34"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    - Of the number of questions asked, how many of these questions were addressed by the answer? (output a number)</span></span>
+<span id="cb42-35"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb42-36"></span>
+<span id="cb42-37">    messages <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [</span>
+<span id="cb42-38">        {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'role'</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'system'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'content'</span>: system_message},</span>
+<span id="cb42-39">        {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'role'</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'user'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'content'</span>: user_message}</span>
+<span id="cb42-40">    ]</span>
+<span id="cb42-41"></span>
+<span id="cb42-42">    response, _ <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> chat_completion(messages)</span>
+<span id="cb42-43">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> response</span></code></pre></div>
+</div>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb43" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1">evaluation_output <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> eval_with_rubric(user_input, context_product_information , final_response)</span>
+<span id="cb43-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(evaluation_output)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>- Is the Assistant response based only on the context provided? (Y or N)
+Y
+
+- Does the answer include information that is not provided in the context? (Y or N)
+N
+
+- Is there any disagreement between the response and the context? (Y or N)
+N
+
+- Count how many questions the user asked. (output a number)
+2
+
+- For each question that the user asked, is there a corresponding answer to it?
+Question 1: Y
+Question 2: Y
+
+- Of the number of questions asked, how many of these questions were addressed by the answer? (output a number)
+2</code></pre>
+</div>
+</div>
+</section>
+<section id="evaluate-outputs-based-on-an-idealexpert-answer" class="level3">
+<h3 class="anchored" data-anchor-id="evaluate-outputs-based-on-an-idealexpert-answer">Evaluate outputs based on an “ideal/expert” answer</h3>
+<p>Evaluation prompt: refer to <a href="https://github.com/openai/evals/blob/main/evals/registry/modelgraded/fact.yaml">OpenAI evals</a></p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb45" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1">ideal_answer <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb45-2"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">The SmartX ProPhone is a powerful smartphone with advanced camera features. For instance, it has a 12MP dual camera. Other features include 5G wireless and 128GB storage. It also has a 6.1-inch display.  The price is $899.99.</span></span>
+<span id="cb45-3"></span>
+<span id="cb45-4"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">The FotoSnap DSLR Camera is great for capturing stunning photos and videos. Some features include 1080p video, 3-inch LCD, a 24.2MP sensor, and interchangeable lenses. The price is 599.99.</span></span>
+<span id="cb45-5"></span>
+<span id="cb45-6"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">For TVs and TV related products, we offer 3 TVs </span></span>
+<span id="cb45-7"></span>
+<span id="cb45-8"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">All TVs offer HDR and Smart TV.</span></span>
+<span id="cb45-9"></span>
+<span id="cb45-10"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">The CineView 4K TV has vibrant colors and smart features. Some of these features include a 55-inch display, '4K resolution. It's priced at 599.</span></span>
+<span id="cb45-11"></span>
+<span id="cb45-12"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">The CineView 8K TV is a stunning 8K TV. Some features include a 65-inch display and 8K resolution.  It's priced at 2999.99</span></span>
+<span id="cb45-13"></span>
+<span id="cb45-14"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">The CineView OLED TV lets you experience vibrant colors. Some features include a 55-inch display and 4K resolution. It's priced at 1499.99.</span></span>
+<span id="cb45-15"></span>
+<span id="cb45-16"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">We also offer 2 home theater products, both which include bluetooth.The SoundMax Home Theater is a powerful home theater system for an immmersive audio experience.</span></span>
+<span id="cb45-17"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Its features include 5.1 channel, 1000W output, and wireless subwoofer.</span></span>
+<span id="cb45-18"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">It's priced at 399.99.</span></span>
+<span id="cb45-19"></span>
+<span id="cb45-20"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">The SoundMax Soundbar is a sleek and powerful soundbar.</span></span>
+<span id="cb45-21"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">It's features include 2.1 channel, 300W output, and wireless subwoofer.</span></span>
+<span id="cb45-22"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">It's priced at 199.99</span></span>
+<span id="cb45-23"></span>
+<span id="cb45-24"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Are there any questions additional you may have about these products that you mentioned here?</span></span>
+<span id="cb45-25"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Or may do you have other questions I can help you with?"""</span></span></code></pre></div>
+</div>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb46" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> eval_with_ideal(inputs, ideal_answer, outputs):</span>
+<span id="cb46-2">    system_message <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb46-3"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    You are an assistant that evaluates how well the customer service agent </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb46-4"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    answers a user question by comparing the response to the ideal (expert) response</span></span>
+<span id="cb46-5"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    Output a single letter and nothing else. </span></span>
+<span id="cb46-6"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    """</span></span>
+<span id="cb46-7"></span>
+<span id="cb46-8">    user_message <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"""</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb46-9"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">You are comparing a submitted answer to an expert answer on a given question. Here is the data:</span></span>
+<span id="cb46-10"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    [BEGIN DATA]</span></span>
+<span id="cb46-11"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    ************</span></span>
+<span id="cb46-12"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    [Question]: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>inputs<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span></span>
+<span id="cb46-13"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    ************</span></span>
+<span id="cb46-14"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    [Expert]: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>ideal_answer<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span></span>
+<span id="cb46-15"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    ************</span></span>
+<span id="cb46-16"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    [Submission]: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>outputs<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span></span>
+<span id="cb46-17"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    ************</span></span>
+<span id="cb46-18"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    [END DATA]</span></span>
+<span id="cb46-19"></span>
+<span id="cb46-20"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Compare the factual content of the submitted answer with the expert answer. Ignore any differences in style, grammar, or punctuation.</span></span>
+<span id="cb46-21"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    The submitted answer may either be a subset or superset of the expert answer, or it may conflict with it. Determine which case applies. Answer the question by selecting one of the following options:</span></span>
+<span id="cb46-22"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    (A) The submitted answer is a subset of the expert answer and is fully consistent with it.</span></span>
+<span id="cb46-23"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    (B) The submitted answer is a superset of the expert answer and is fully consistent with it.</span></span>
+<span id="cb46-24"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    (C) The submitted answer contains all the same details as the expert answer.</span></span>
+<span id="cb46-25"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    (D) There is a disagreement between the submitted answer and the expert answer.</span></span>
+<span id="cb46-26"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    (E) The answers differ, but these differences don't matter from the perspective of factuality.</span></span>
+<span id="cb46-27"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">  choice_strings: ABCDE</span></span>
+<span id="cb46-28"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb46-29"></span>
+<span id="cb46-30">    messages <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [</span>
+<span id="cb46-31">        {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'role'</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'system'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'content'</span>: system_message},</span>
+<span id="cb46-32">        {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'role'</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'user'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'content'</span>: user_message}</span>
+<span id="cb46-33">    ]</span>
+<span id="cb46-34"></span>
+<span id="cb46-35">    response, _ <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> chat_completion(messages)</span>
+<span id="cb46-36">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> response</span></code></pre></div>
+</div>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb47" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1">evaluation_output <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> eval_with_ideal(user_input, ideal_answer , final_response)</span>
+<span id="cb47-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(evaluation_output)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>D</code></pre>
+</div>
+</div>
 
 
+</section>
 </section>
 
  ]]></description>

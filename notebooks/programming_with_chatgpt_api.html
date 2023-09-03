@@ -184,6 +184,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#step-3-generate-final-answer-to-user-query-based-on-detailed-product-information" id="toc-step-3-generate-final-answer-to-user-query-based-on-detailed-product-information" class="nav-link" data-scroll-target="#step-3-generate-final-answer-to-user-query-based-on-detailed-product-information">Step 3: Generate final answer to user query based on detailed product information</a></li>
   </ul></li>
   <li><a href="#check-if-outputs-are-based-on-factual-information" id="toc-check-if-outputs-are-based-on-factual-information" class="nav-link" data-scroll-target="#check-if-outputs-are-based-on-factual-information">Check if outputs are based on factual information</a></li>
+  <li><a href="#evaluate-outputs" id="toc-evaluate-outputs" class="nav-link" data-scroll-target="#evaluate-outputs">Evaluate Outputs</a>
+  <ul class="collapse">
+  <li><a href="#evaluate-outputs-using-a-rubric" id="toc-evaluate-outputs-using-a-rubric" class="nav-link" data-scroll-target="#evaluate-outputs-using-a-rubric">Evaluate outputs using a rubric</a></li>
+  <li><a href="#evaluate-outputs-based-on-an-idealexpert-answer" id="toc-evaluate-outputs-based-on-an-idealexpert-answer" class="nav-link" data-scroll-target="#evaluate-outputs-based-on-an-idealexpert-answer">Evaluate outputs based on an “ideal/expert” answer</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -651,7 +656,7 @@ Response to user:#### Yes, we sell computers. We have a variety of computers and
 </section>
 <section id="step-2-retrieve-product-information-for-extracted-products-from-the-previous-step." class="level3">
 <h3 class="anchored" data-anchor-id="step-2-retrieve-product-information-for-extracted-products-from-the-previous-step.">Step 2: Retrieve product information for extracted products from the previous step.</h3>
-<div class="cell" data-jupyter="{&quot;source_hidden&quot;:true}" data-execution_count="34">
+<div class="cell" data-execution_count="34">
 <details>
 <summary>product information (click to toggle the content)</summary>
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>products <span class="op">=</span> {</span>
@@ -1149,22 +1154,23 @@ Response to user:#### Yes, we sell computers. We have a variety of computers and
 </section>
 <section id="step-3-generate-final-answer-to-user-query-based-on-detailed-product-information" class="level3">
 <h3 class="anchored" data-anchor-id="step-3-generate-final-answer-to-user-query-based-on-detailed-product-information">Step 3: Generate final answer to user query based on detailed product information</h3>
-<div class="cell" data-execution_count="66">
+<div class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>system_instruction <span class="op">=</span> <span class="ss">f"""</span></span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="ss">You are a customer service assistant for a large electronic store. Respond in a friendly and helpful tone, with very concise answers. Make sure to ask the user relevant follow up questions.</span></span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="ss">"""</span></span>
 <span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>system_message <span class="op">=</span> {<span class="st">'role'</span>:<span class="st">'system'</span>, <span class="st">'content'</span>: system_instruction}</span>
 <span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>user_input <span class="op">=</span> <span class="ss">f"""</span></span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="ss">tell me about the smartx pro phone and the fotosnap camera, the dslr one. Also tell me about your tvs"""</span></span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>user_message <span class="op">=</span> {<span class="st">'role'</span>:<span class="st">'user'</span>, <span class="st">'content'</span>: user_input}</span>
-<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>assistant_message <span class="op">=</span> {</span>
-<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">'role'</span>:<span class="st">'assistant'</span>,</span>
-<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">'content'</span>: <span class="ss">f'Relevant product information:</span><span class="ch">\n</span><span class="sc">{</span>context_product_information<span class="sc">}</span><span class="ss">'</span>}</span>
-<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>final_response, _ <span class="op">=</span> chat_completion([system_message, user_message, assistant_message])</span>
-<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(final_response)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="ss">tell me about the smartx pro phone and the fotosnap camera, the dslr one.</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a><span class="ss">Also tell me about your tvs"""</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>user_message <span class="op">=</span> {<span class="st">'role'</span>:<span class="st">'user'</span>, <span class="st">'content'</span>: user_input}</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>assistant_message <span class="op">=</span> {</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">'role'</span>:<span class="st">'assistant'</span>,</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">'content'</span>: <span class="ss">f'Relevant product information:</span><span class="ch">\n</span><span class="sc">{</span>context_product_information<span class="sc">}</span><span class="ss">'</span>}</span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>final_response, _ <span class="op">=</span> chat_completion([system_message, user_message, assistant_message])</span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(final_response)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>The SmartX ProPhone is a powerful smartphone with a 6.1-inch display, 128GB storage, a 12MP dual camera, and 5G capability. It is priced at $899.99 and comes with a 1-year warranty. 
 
@@ -1233,8 +1239,159 @@ Is there anything specific you would like to know about these products?</code></
 <pre><code>N</code></pre>
 </div>
 </div>
+</section>
+<section id="evaluate-outputs" class="level2">
+<h2 class="anchored" data-anchor-id="evaluate-outputs">Evaluate Outputs</h2>
+<section id="evaluate-outputs-using-a-rubric" class="level3">
+<h3 class="anchored" data-anchor-id="evaluate-outputs-using-a-rubric">Evaluate outputs using a rubric</h3>
+<div class="cell" height="844" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> eval_with_rubric(inputs, context, outputs):</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>    system_message <span class="op">=</span> <span class="st">"""</span><span class="ch">\</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="st">    You are an assistant that evaluates how well the customer service agent </span><span class="ch">\</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="st">    answers a user question by looking at the context that the customer service </span><span class="ch">\</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="st">    agent is using to generate its response. </span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="st">    """</span></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>    user_message <span class="op">=</span> <span class="ss">f"""</span><span class="ch">\</span></span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a><span class="ss">You are evaluating a submitted answer to a question based on the context </span><span class="ch">\</span></span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a><span class="ss">that the agent uses to answer the question.</span></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a><span class="ss">Here are the data:</span></span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a><span class="ss">    [BEGIN DATA]</span></span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a><span class="ss">    ************</span></span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a><span class="ss">    [Question]: </span><span class="sc">{</span>inputs<span class="sc">}</span></span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a><span class="ss">    ************</span></span>
+<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a><span class="ss">    [Context]: </span><span class="sc">{</span>context<span class="sc">}</span></span>
+<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a><span class="ss">    ************</span></span>
+<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a><span class="ss">    [Submission]: </span><span class="sc">{</span>outputs<span class="sc">}</span></span>
+<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a><span class="ss">    ************</span></span>
+<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a><span class="ss">    [END DATA]</span></span>
+<span id="cb42-21"><a href="#cb42-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-22"><a href="#cb42-22" aria-hidden="true" tabindex="-1"></a><span class="ss">Compare the factual content of the submitted answer with the context. </span><span class="ch">\</span></span>
+<span id="cb42-23"><a href="#cb42-23" aria-hidden="true" tabindex="-1"></a><span class="ss">Ignore any differences in style, grammar, or punctuation.</span></span>
+<span id="cb42-24"><a href="#cb42-24" aria-hidden="true" tabindex="-1"></a><span class="ss">Answer the following questions:</span></span>
+<span id="cb42-25"><a href="#cb42-25" aria-hidden="true" tabindex="-1"></a><span class="ss">    - Is the Assistant response based only on the context provided? (Y or N)</span></span>
+<span id="cb42-26"><a href="#cb42-26" aria-hidden="true" tabindex="-1"></a><span class="ss">    - Does the answer include information that is not provided in the context? (Y or N)</span></span>
+<span id="cb42-27"><a href="#cb42-27" aria-hidden="true" tabindex="-1"></a><span class="ss">    - Is there any disagreement between the response and the context? (Y or N)</span></span>
+<span id="cb42-28"><a href="#cb42-28" aria-hidden="true" tabindex="-1"></a><span class="ss">    - Count how many questions the user asked. (output a number)</span></span>
+<span id="cb42-29"><a href="#cb42-29" aria-hidden="true" tabindex="-1"></a><span class="ss">    - For each question that the user asked, is there a corresponding answer to it?</span></span>
+<span id="cb42-30"><a href="#cb42-30" aria-hidden="true" tabindex="-1"></a><span class="ss">      Question 1: (Y or N)</span></span>
+<span id="cb42-31"><a href="#cb42-31" aria-hidden="true" tabindex="-1"></a><span class="ss">      Question 2: (Y or N)</span></span>
+<span id="cb42-32"><a href="#cb42-32" aria-hidden="true" tabindex="-1"></a><span class="ss">      ...</span></span>
+<span id="cb42-33"><a href="#cb42-33" aria-hidden="true" tabindex="-1"></a><span class="ss">      Question N: (Y or N)</span></span>
+<span id="cb42-34"><a href="#cb42-34" aria-hidden="true" tabindex="-1"></a><span class="ss">    - Of the number of questions asked, how many of these questions were addressed by the answer? (output a number)</span></span>
+<span id="cb42-35"><a href="#cb42-35" aria-hidden="true" tabindex="-1"></a><span class="ss">"""</span></span>
+<span id="cb42-36"><a href="#cb42-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-37"><a href="#cb42-37" aria-hidden="true" tabindex="-1"></a>    messages <span class="op">=</span> [</span>
+<span id="cb42-38"><a href="#cb42-38" aria-hidden="true" tabindex="-1"></a>        {<span class="st">'role'</span>: <span class="st">'system'</span>, <span class="st">'content'</span>: system_message},</span>
+<span id="cb42-39"><a href="#cb42-39" aria-hidden="true" tabindex="-1"></a>        {<span class="st">'role'</span>: <span class="st">'user'</span>, <span class="st">'content'</span>: user_message}</span>
+<span id="cb42-40"><a href="#cb42-40" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb42-41"><a href="#cb42-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-42"><a href="#cb42-42" aria-hidden="true" tabindex="-1"></a>    response, _ <span class="op">=</span> chat_completion(messages)</span>
+<span id="cb42-43"><a href="#cb42-43" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> response</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>evaluation_output <span class="op">=</span> eval_with_rubric(user_input, context_product_information , final_response)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(evaluation_output)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>- Is the Assistant response based only on the context provided? (Y or N)
+Y
+
+- Does the answer include information that is not provided in the context? (Y or N)
+N
+
+- Is there any disagreement between the response and the context? (Y or N)
+N
+
+- Count how many questions the user asked. (output a number)
+2
+
+- For each question that the user asked, is there a corresponding answer to it?
+Question 1: Y
+Question 2: Y
+
+- Of the number of questions asked, how many of these questions were addressed by the answer? (output a number)
+2</code></pre>
+</div>
+</div>
+</section>
+<section id="evaluate-outputs-based-on-an-idealexpert-answer" class="level3">
+<h3 class="anchored" data-anchor-id="evaluate-outputs-based-on-an-idealexpert-answer">Evaluate outputs based on an “ideal/expert” answer</h3>
+<p>Evaluation prompt: refer to <a href="https://github.com/openai/evals/blob/main/evals/registry/modelgraded/fact.yaml">OpenAI evals</a></p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>ideal_answer <span class="op">=</span> <span class="st">"""</span><span class="ch">\</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="st">The SmartX ProPhone is a powerful smartphone with advanced camera features. For instance, it has a 12MP dual camera. Other features include 5G wireless and 128GB storage. It also has a 6.1-inch display.  The price is $899.99.</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="st">The FotoSnap DSLR Camera is great for capturing stunning photos and videos. Some features include 1080p video, 3-inch LCD, a 24.2MP sensor, and interchangeable lenses. The price is 599.99.</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a><span class="st">For TVs and TV related products, we offer 3 TVs </span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a><span class="st">All TVs offer HDR and Smart TV.</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a><span class="st">The CineView 4K TV has vibrant colors and smart features. Some of these features include a 55-inch display, '4K resolution. It's priced at 599.</span></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a><span class="st">The CineView 8K TV is a stunning 8K TV. Some features include a 65-inch display and 8K resolution.  It's priced at 2999.99</span></span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a><span class="st">The CineView OLED TV lets you experience vibrant colors. Some features include a 55-inch display and 4K resolution. It's priced at 1499.99.</span></span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a><span class="st">We also offer 2 home theater products, both which include bluetooth.The SoundMax Home Theater is a powerful home theater system for an immmersive audio experience.</span></span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a><span class="st">Its features include 5.1 channel, 1000W output, and wireless subwoofer.</span></span>
+<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a><span class="st">It's priced at 399.99.</span></span>
+<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a><span class="st">The SoundMax Soundbar is a sleek and powerful soundbar.</span></span>
+<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a><span class="st">It's features include 2.1 channel, 300W output, and wireless subwoofer.</span></span>
+<span id="cb45-22"><a href="#cb45-22" aria-hidden="true" tabindex="-1"></a><span class="st">It's priced at 199.99</span></span>
+<span id="cb45-23"><a href="#cb45-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-24"><a href="#cb45-24" aria-hidden="true" tabindex="-1"></a><span class="st">Are there any questions additional you may have about these products that you mentioned here?</span></span>
+<span id="cb45-25"><a href="#cb45-25" aria-hidden="true" tabindex="-1"></a><span class="st">Or may do you have other questions I can help you with?"""</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> eval_with_ideal(inputs, ideal_answer, outputs):</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    system_message <span class="op">=</span> <span class="st">"""</span><span class="ch">\</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="st">    You are an assistant that evaluates how well the customer service agent </span><span class="ch">\</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="st">    answers a user question by comparing the response to the ideal (expert) response</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="st">    Output a single letter and nothing else. </span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a><span class="st">    """</span></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>    user_message <span class="op">=</span> <span class="ss">f"""</span><span class="ch">\</span></span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a><span class="ss">You are comparing a submitted answer to an expert answer on a given question. Here is the data:</span></span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a><span class="ss">    [BEGIN DATA]</span></span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a><span class="ss">    ************</span></span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a><span class="ss">    [Question]: </span><span class="sc">{</span>inputs<span class="sc">}</span></span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a><span class="ss">    ************</span></span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a><span class="ss">    [Expert]: </span><span class="sc">{</span>ideal_answer<span class="sc">}</span></span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a><span class="ss">    ************</span></span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a><span class="ss">    [Submission]: </span><span class="sc">{</span>outputs<span class="sc">}</span></span>
+<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a><span class="ss">    ************</span></span>
+<span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a><span class="ss">    [END DATA]</span></span>
+<span id="cb46-19"><a href="#cb46-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-20"><a href="#cb46-20" aria-hidden="true" tabindex="-1"></a><span class="ss">Compare the factual content of the submitted answer with the expert answer. Ignore any differences in style, grammar, or punctuation.</span></span>
+<span id="cb46-21"><a href="#cb46-21" aria-hidden="true" tabindex="-1"></a><span class="ss">    The submitted answer may either be a subset or superset of the expert answer, or it may conflict with it. Determine which case applies. Answer the question by selecting one of the following options:</span></span>
+<span id="cb46-22"><a href="#cb46-22" aria-hidden="true" tabindex="-1"></a><span class="ss">    (A) The submitted answer is a subset of the expert answer and is fully consistent with it.</span></span>
+<span id="cb46-23"><a href="#cb46-23" aria-hidden="true" tabindex="-1"></a><span class="ss">    (B) The submitted answer is a superset of the expert answer and is fully consistent with it.</span></span>
+<span id="cb46-24"><a href="#cb46-24" aria-hidden="true" tabindex="-1"></a><span class="ss">    (C) The submitted answer contains all the same details as the expert answer.</span></span>
+<span id="cb46-25"><a href="#cb46-25" aria-hidden="true" tabindex="-1"></a><span class="ss">    (D) There is a disagreement between the submitted answer and the expert answer.</span></span>
+<span id="cb46-26"><a href="#cb46-26" aria-hidden="true" tabindex="-1"></a><span class="ss">    (E) The answers differ, but these differences don't matter from the perspective of factuality.</span></span>
+<span id="cb46-27"><a href="#cb46-27" aria-hidden="true" tabindex="-1"></a><span class="ss">  choice_strings: ABCDE</span></span>
+<span id="cb46-28"><a href="#cb46-28" aria-hidden="true" tabindex="-1"></a><span class="ss">"""</span></span>
+<span id="cb46-29"><a href="#cb46-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-30"><a href="#cb46-30" aria-hidden="true" tabindex="-1"></a>    messages <span class="op">=</span> [</span>
+<span id="cb46-31"><a href="#cb46-31" aria-hidden="true" tabindex="-1"></a>        {<span class="st">'role'</span>: <span class="st">'system'</span>, <span class="st">'content'</span>: system_message},</span>
+<span id="cb46-32"><a href="#cb46-32" aria-hidden="true" tabindex="-1"></a>        {<span class="st">'role'</span>: <span class="st">'user'</span>, <span class="st">'content'</span>: user_message}</span>
+<span id="cb46-33"><a href="#cb46-33" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb46-34"><a href="#cb46-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-35"><a href="#cb46-35" aria-hidden="true" tabindex="-1"></a>    response, _ <span class="op">=</span> chat_completion(messages)</span>
+<span id="cb46-36"><a href="#cb46-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> response</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>evaluation_output <span class="op">=</span> eval_with_ideal(user_input, ideal_answer , final_response)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(evaluation_output)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>D</code></pre>
+</div>
+</div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
