@@ -18,3 +18,15 @@ def chat_completion(messages: list[dict],
     usage = outputs.usage.to_dict()
 
     return content, usage
+
+
+def run_and_print(prompt: str) -> None:
+    """A helper function for a simple call to API and print the response.
+    """
+
+    messages = [
+        {'role': 'user', 'content': prompt}
+    ]
+    response, _ = chat_completion(messages)
+
+    print(response)
