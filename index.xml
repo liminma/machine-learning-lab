@@ -2358,61 +2358,269 @@ font-style: inherit;">import</span> display, HTML</span>
 </div>
 </section>
 </section>
+<section id="summarizing-texts" class="level2">
+<h2 class="anchored" data-anchor-id="summarizing-texts">Summarizing texts</h2>
+<div class="cell" data-execution_count="58">
+<details>
+<summary>text to be summarized (click to toggle the content)</summary>
+<div class="sourceCode cell-code" id="cb34" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1">prod_review <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Got this panda plush toy for my daughter's birthday, who loves it and takes it everywhere. It's soft and super cute, and its face has a friendly look. It's a bit small for what I paid though. I think there might be other options that are bigger for the same price. It arrived a day earlier than expected, so I got to play with it myself before I gave it to her."</span></span></code></pre></div>
+</details>
+</div>
+<section id="specify-limit-of-generated-response" class="level3">
+<h3 class="anchored" data-anchor-id="specify-limit-of-generated-response">specify limit of generated response</h3>
+<div class="cell" data-execution_count="59">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb35" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1">prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"""</span></span>
+<span id="cb35-2"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Your task is to generate a short summary of a product review from an ecommerce site. </span></span>
+<span id="cb35-3"></span>
+<span id="cb35-4"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Summarize the review below, delimited by triple backticks, in at most 30 words. </span></span>
+<span id="cb35-5"></span>
+<span id="cb35-6"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Review: ```</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>prod_review<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">```</span></span>
+<span id="cb35-7"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb35-8">messages <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [</span>
+<span id="cb35-9">    {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'role'</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'user'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'content'</span>: prompt}</span>
+<span id="cb35-10">]</span>
+<span id="cb35-11">response, usages <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> chat_completion(messages)</span>
+<span id="cb35-12"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(response)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>This panda plush toy is loved by the reviewer's daughter, who takes it everywhere. It is soft, cute, and has a friendly face. However, it is considered small for the price.</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="62">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb37" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(response.split())</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="62">
+<pre><code>31</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="64">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb39" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1">usages</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="64">
+<pre><code>{'prompt_tokens': 135, 'completion_tokens': 39, 'total_tokens': 174}</code></pre>
+</div>
+</div>
+</section>
+<section id="specify-a-focus-for-the-model-to-summarize-with" class="level3">
+<h3 class="anchored" data-anchor-id="specify-a-focus-for-the-model-to-summarize-with">specify a focus for the model to summarize with</h3>
+<p>focusing on shipping and delivery</p>
+<div class="cell" data-execution_count="65">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb41" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1">prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"""</span></span>
+<span id="cb41-2"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Your task is to generate a short summary of a product review from an ecommerce site to give feedback to the Shipping deparmtment.</span></span>
+<span id="cb41-3"></span>
+<span id="cb41-4"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Summarize the review below, delimited by triple backticks, in at most 30 words, and focusing on any aspects that mention shipping and delivery of the product. </span></span>
+<span id="cb41-5"></span>
+<span id="cb41-6"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Review: ```</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>prod_review<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">```</span></span>
+<span id="cb41-7"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb41-8"></span>
+<span id="cb41-9">run_and_print(prompt)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>The customer loves the panda plush toy but feels it is small for the price. They mention that it arrived a day earlier than expected.</code></pre>
+</div>
+</div>
+<p>focusing on price and value</p>
+<div class="cell" data-execution_count="66">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb43" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1">prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"""</span></span>
+<span id="cb43-2"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Your task is to generate a short summary of a product review from an ecommerce site to give feedback to the pricing deparmtment, responsible for determining the price of the product.</span></span>
+<span id="cb43-3"></span>
+<span id="cb43-4"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Summarize the review below, delimited by triple backticks, in at most 30 words, and focusing on any aspects that are relevant to the price and perceived value.</span></span>
+<span id="cb43-5"></span>
+<span id="cb43-6"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Review: ```</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>prod_review<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">```</span></span>
+<span id="cb43-7"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb43-8"></span>
+<span id="cb43-9">run_and_print(prompt)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>The panda plush toy is loved by the daughter, but the reviewer feels it is overpriced as there might be larger options available for the same price.</code></pre>
+</div>
+</div>
+</section>
+<section id="extract-information" class="level3">
+<h3 class="anchored" data-anchor-id="extract-information">extract information</h3>
+<div class="cell" data-execution_count="67">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb45" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1">prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"""</span></span>
+<span id="cb45-2"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Your task is to extract relevant information from a product review from an ecommerce site to give feedback to the Shipping department.</span></span>
+<span id="cb45-3"></span>
+<span id="cb45-4"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">From the review below, delimited by triple quotes extract the information relevant to shipping and delivery.</span></span>
+<span id="cb45-5"></span>
+<span id="cb45-6"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Your answer should only include words from the original review.</span></span>
+<span id="cb45-7"></span>
+<span id="cb45-8"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Review: ```</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>prod_review<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">```</span></span>
+<span id="cb45-9"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb45-10"></span>
+<span id="cb45-11">response <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> get_completion(prompt)</span>
+<span id="cb45-12"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(response)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>The relevant information about shipping and delivery from the review is: "It arrived a day earlier than expected."</code></pre>
+</div>
+</div>
+</section>
+</section>
 <section id="inferring-from-texts" class="level2">
 <h2 class="anchored" data-anchor-id="inferring-from-texts">Inferring from texts</h2>
 <div class="cell" data-execution_count="26">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb34" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1">text <span class="op" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb47" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1">text <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"""Needed a nice lamp for my bedroom, and this one had additional storage and not too high of a price point. Got it fast.  The string to our lamp broke during the transit and the company happily sent over a new one. Came within a few days as well. It was easy to put together.  I had a missing part, so I contacted their support and they very quickly got me the missing piece! Lumina seems to me to be a great company that cares about their customers and products!!"""</span></span>
-<span id="cb34-2"></span>
-<span id="cb34-3">prompt <span class="op" style="color: #5E5E5E;
+<span id="cb47-2"></span>
+<span id="cb47-3">prompt <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">f"""</span></span>
-<span id="cb34-4"><span class="ss" style="color: #20794D;
+<span id="cb47-4"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">Identify the following items from the review text: </span></span>
-<span id="cb34-5"><span class="ss" style="color: #20794D;
+<span id="cb47-5"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">- Sentiment (positive or negative)</span></span>
-<span id="cb34-6"><span class="ss" style="color: #20794D;
+<span id="cb47-6"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">- Identify up to five emotions. List them using low-case words.</span></span>
-<span id="cb34-7"><span class="ss" style="color: #20794D;
+<span id="cb47-7"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">- Is the reviewer expressing anger? (true or false)</span></span>
-<span id="cb34-8"><span class="ss" style="color: #20794D;
+<span id="cb47-8"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">- Item purchased by reviewer</span></span>
-<span id="cb34-9"><span class="ss" style="color: #20794D;
+<span id="cb47-9"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">- Company that made the item</span></span>
-<span id="cb34-10"></span>
-<span id="cb34-11"><span class="ss" style="color: #20794D;
+<span id="cb47-10"></span>
+<span id="cb47-11"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">The review is delimited with triple backticks.</span></span>
-<span id="cb34-12"><span class="ss" style="color: #20794D;
+<span id="cb47-12"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">Format your response as a JSON object with:</span></span>
-<span id="cb34-13"><span class="ss" style="color: #20794D;
+<span id="cb47-13"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"Sentiment", "Emotions", "Anger", "Item" and "Brand" as the keys.</span></span>
-<span id="cb34-14"><span class="ss" style="color: #20794D;
+<span id="cb47-14"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">If the information isn't present, use "unknown" as the value.</span></span>
-<span id="cb34-15"><span class="ss" style="color: #20794D;
+<span id="cb47-15"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">Make your response as short as possible.</span></span>
-<span id="cb34-16"><span class="ss" style="color: #20794D;
+<span id="cb47-16"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">Format the Anger value as a boolean.</span></span>
-<span id="cb34-17"></span>
-<span id="cb34-18"><span class="ss" style="color: #20794D;
+<span id="cb47-17"></span>
+<span id="cb47-18"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">Review text: '''</span><span class="sc" style="color: #5E5E5E;
 background-color: null;
@@ -2421,11 +2629,11 @@ background-color: null;
 font-style: inherit;">}</span><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'''</span></span>
-<span id="cb34-19"><span class="ss" style="color: #20794D;
+<span id="cb47-19"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"""</span></span>
-<span id="cb34-20"></span>
-<span id="cb34-21">run_and_print(prompt)</span></code></pre></div>
+<span id="cb47-20"></span>
+<span id="cb47-21">run_and_print(prompt)</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>{
@@ -2442,85 +2650,85 @@ font-style: inherit;">"""</span></span>
 <div class="cell" data-execution_count="29">
 <details>
 <summary>story text (click to toggle the content)</summary>
-<div class="sourceCode cell-code" id="cb36" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1">story <span class="op" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb49" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1">story <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"""</span></span>
-<span id="cb36-2"><span class="st" style="color: #20794D;
+<span id="cb49-2"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">In a recent survey conducted by the government, </span></span>
-<span id="cb36-3"><span class="st" style="color: #20794D;
+<span id="cb49-3"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">public sector employees were asked to rate their level </span></span>
-<span id="cb36-4"><span class="st" style="color: #20794D;
+<span id="cb49-4"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">of satisfaction with the department they work at. </span></span>
-<span id="cb36-5"><span class="st" style="color: #20794D;
+<span id="cb49-5"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">The results revealed that NASA was the most popular </span></span>
-<span id="cb36-6"><span class="st" style="color: #20794D;
+<span id="cb49-6"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">department with a satisfaction rating of 95%.</span></span>
-<span id="cb36-7"></span>
-<span id="cb36-8"><span class="st" style="color: #20794D;
+<span id="cb49-7"></span>
+<span id="cb49-8"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">One NASA employee, John Smith, commented on the findings, </span></span>
-<span id="cb36-9"><span class="st" style="color: #20794D;
+<span id="cb49-9"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">stating, "I'm not surprised that NASA came out on top. </span></span>
-<span id="cb36-10"><span class="st" style="color: #20794D;
+<span id="cb49-10"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">It's a great place to work with amazing people and </span></span>
-<span id="cb36-11"><span class="st" style="color: #20794D;
+<span id="cb49-11"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">incredible opportunities. I'm proud to be a part of </span></span>
-<span id="cb36-12"><span class="st" style="color: #20794D;
+<span id="cb49-12"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">such an innovative organization."</span></span>
-<span id="cb36-13"></span>
-<span id="cb36-14"><span class="st" style="color: #20794D;
+<span id="cb49-13"></span>
+<span id="cb49-14"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">The results were also welcomed by NASA's management team, </span></span>
-<span id="cb36-15"><span class="st" style="color: #20794D;
+<span id="cb49-15"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">with Director Tom Johnson stating, "We are thrilled to </span></span>
-<span id="cb36-16"><span class="st" style="color: #20794D;
+<span id="cb49-16"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">hear that our employees are satisfied with their work at NASA. </span></span>
-<span id="cb36-17"><span class="st" style="color: #20794D;
+<span id="cb49-17"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">We have a talented and dedicated team who work tirelessly </span></span>
-<span id="cb36-18"><span class="st" style="color: #20794D;
+<span id="cb49-18"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">to achieve our goals, and it's fantastic to see that their </span></span>
-<span id="cb36-19"><span class="st" style="color: #20794D;
+<span id="cb49-19"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">hard work is paying off."</span></span>
-<span id="cb36-20"></span>
-<span id="cb36-21"><span class="st" style="color: #20794D;
+<span id="cb49-20"></span>
+<span id="cb49-21"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">The survey also revealed that the </span></span>
-<span id="cb36-22"><span class="st" style="color: #20794D;
+<span id="cb49-22"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">Social Security Administration had the lowest satisfaction </span></span>
-<span id="cb36-23"><span class="st" style="color: #20794D;
+<span id="cb49-23"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">rating, with only 45</span><span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">% o</span><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">f employees indicating they were </span></span>
-<span id="cb36-24"><span class="st" style="color: #20794D;
+<span id="cb49-24"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">satisfied with their job. The government has pledged to </span></span>
-<span id="cb36-25"><span class="st" style="color: #20794D;
+<span id="cb49-25"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">address the concerns raised by employees in the survey and </span></span>
-<span id="cb36-26"><span class="st" style="color: #20794D;
+<span id="cb49-26"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">work towards improving job satisfaction across all departments.</span></span>
-<span id="cb36-27"><span class="st" style="color: #20794D;
+<span id="cb49-27"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"""</span></span></code></pre></div>
 </details>
@@ -2528,24 +2736,24 @@ font-style: inherit;">"""</span></span></code></pre></div>
 <div class="cell" data-execution_count="30">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb37" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1">prompt <span class="op" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb50" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1">prompt <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">f"""</span></span>
-<span id="cb37-2"><span class="ss" style="color: #20794D;
+<span id="cb50-2"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">Determine five topics that are being discussed in the following text, which is delimited by triple backticks.</span></span>
-<span id="cb37-3"></span>
-<span id="cb37-4"><span class="ss" style="color: #20794D;
+<span id="cb50-3"></span>
+<span id="cb50-4"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">Make each item one or two words long. </span></span>
-<span id="cb37-5"></span>
-<span id="cb37-6"><span class="ss" style="color: #20794D;
+<span id="cb50-5"></span>
+<span id="cb50-6"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">Format your response as a list of items separated by commas.</span></span>
-<span id="cb37-7"></span>
-<span id="cb37-8"><span class="ss" style="color: #20794D;
+<span id="cb50-7"></span>
+<span id="cb50-8"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">Text sample: '''</span><span class="sc" style="color: #5E5E5E;
 background-color: null;
@@ -2554,25 +2762,25 @@ background-color: null;
 font-style: inherit;">}</span><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'''</span></span>
-<span id="cb37-9"><span class="ss" style="color: #20794D;
+<span id="cb50-9"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"""</span></span>
-<span id="cb37-10"></span>
-<span id="cb37-11">messages <span class="op" style="color: #5E5E5E;
+<span id="cb50-10"></span>
+<span id="cb50-11">messages <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> [</span>
-<span id="cb37-12">    {<span class="st" style="color: #20794D;
+<span id="cb50-12">    {<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'role'</span>: <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'user'</span>, <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'content'</span>: prompt}</span>
-<span id="cb37-13">]</span>
-<span id="cb37-14">response, _ <span class="op" style="color: #5E5E5E;
+<span id="cb50-13">]</span>
+<span id="cb50-14">response, _ <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> chat_completion(messages)</span>
-<span id="cb37-15"><span class="bu" style="color: null;
+<span id="cb50-15"><span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">print</span>(response)</span></code></pre></div>
 </details>
@@ -2587,7 +2795,7 @@ font-style: inherit;">print</span>(response)</span></code></pre></div>
 <div class="cell" data-execution_count="35">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb39" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1">response <span class="op" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb52" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1">response <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> response.split(sep<span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -2598,7 +2806,7 @@ background-color: null;
 font-style: inherit;">\n</span><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'</span>)</span>
-<span id="cb39-2">response</span></code></pre></div>
+<span id="cb52-2">response</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-display" data-execution_count="35">
 <pre><code>['1. Government survey',
@@ -2611,7 +2819,7 @@ font-style: inherit;">'</span>)</span>
 <div class="cell" data-execution_count="38">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb41" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1">topic_list <span class="op" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb54" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1">topic_list <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
 background-color: null;
@@ -2620,25 +2828,25 @@ background-color: null;
 font-style: inherit;">"local government"</span>, <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"engineering"</span>,</span>
-<span id="cb41-2">              <span class="st" style="color: #20794D;
+<span id="cb54-2">              <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"employee satisfaction"</span>, <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"federal government"</span>]</span>
-<span id="cb41-3">prompt <span class="op" style="color: #5E5E5E;
+<span id="cb54-3">prompt <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">f"""</span></span>
-<span id="cb41-4"><span class="ss" style="color: #20794D;
+<span id="cb54-4"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">Determine whether each item in the following list of topics is a topic in the text below, which is delimited with triple backticks.</span></span>
-<span id="cb41-5"></span>
-<span id="cb41-6"><span class="ss" style="color: #20794D;
+<span id="cb54-5"></span>
+<span id="cb54-6"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">Give your answer as list with 0 or 1 for each topic.</span></span>
-<span id="cb41-7"></span>
-<span id="cb41-8"><span class="ss" style="color: #20794D;
+<span id="cb54-7"></span>
+<span id="cb54-8"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">List of topics: </span><span class="sc" style="color: #5E5E5E;
 background-color: null;
@@ -2649,8 +2857,8 @@ background-color: null;
 font-style: inherit;">.</span>join(topic_list)<span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">}</span></span>
-<span id="cb41-9"></span>
-<span id="cb41-10"><span class="ss" style="color: #20794D;
+<span id="cb54-9"></span>
+<span id="cb54-10"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">Text sample: '''</span><span class="sc" style="color: #5E5E5E;
 background-color: null;
@@ -2659,11 +2867,11 @@ background-color: null;
 font-style: inherit;">}</span><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'''</span></span>
-<span id="cb41-11"><span class="ss" style="color: #20794D;
+<span id="cb54-11"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"""</span></span>
-<span id="cb41-12"></span>
-<span id="cb41-13">run_and_print(prompt)</span></code></pre></div>
+<span id="cb54-12"></span>
+<span id="cb54-13">run_and_print(prompt)</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1, 0, 0, 1, 1]</code></pre>
@@ -2676,22 +2884,22 @@ font-style: inherit;">"""</span></span>
 <div class="cell" data-execution_count="39">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb43" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1">prompt <span class="op" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb56" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1">prompt <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"""</span></span>
-<span id="cb43-2"><span class="st" style="color: #20794D;
+<span id="cb56-2"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">Translate the following from slang to a business letter: </span></span>
-<span id="cb43-3"><span class="st" style="color: #20794D;
+<span id="cb56-3"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'Dude, This is Joe, check out this spec on this standing lamp.'</span></span>
-<span id="cb43-4"><span class="st" style="color: #20794D;
+<span id="cb56-4"><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"""</span></span>
-<span id="cb43-5"></span>
-<span id="cb43-6">run_and_print(prompt)</span></code></pre></div>
+<span id="cb56-5"></span>
+<span id="cb56-6">run_and_print(prompt)</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Dear Sir/Madam,
@@ -2713,13 +2921,13 @@ Joe</code></pre>
 <div class="cell" data-execution_count="42">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb45" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1">employees <span class="op" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb58" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1">employees <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> {</span>
-<span id="cb45-2">    <span class="st" style="color: #20794D;
+<span id="cb58-2">    <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"Employees"</span> : [</span>
-<span id="cb45-3">        {<span class="st" style="color: #20794D;
+<span id="cb58-3">        {<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"name"</span>:<span class="st" style="color: #20794D;
 background-color: null;
@@ -2732,7 +2940,7 @@ background-color: null;
 font-style: inherit;">"cell phone"</span>: <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"(416)123-3456"</span>},</span>
-<span id="cb45-4">        {<span class="st" style="color: #20794D;
+<span id="cb58-4">        {<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"name"</span>:<span class="st" style="color: #20794D;
 background-color: null;
@@ -2745,7 +2953,7 @@ background-color: null;
 font-style: inherit;">"cell phone"</span>: <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"(416)987-4321"</span>},</span>
-<span id="cb45-5">        {<span class="st" style="color: #20794D;
+<span id="cb58-5">        {<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"name"</span>:<span class="st" style="color: #20794D;
 background-color: null;
@@ -2758,36 +2966,36 @@ background-color: null;
 font-style: inherit;">"cell phone"</span>: <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"(416)555-6666"</span>}</span>
-<span id="cb45-6">    ]</span>
-<span id="cb45-7">}</span>
-<span id="cb45-8">prompt <span class="op" style="color: #5E5E5E;
+<span id="cb58-6">    ]</span>
+<span id="cb58-7">}</span>
+<span id="cb58-8">prompt <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">f"""</span></span>
-<span id="cb45-9"><span class="ss" style="color: #20794D;
+<span id="cb58-9"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">Translate the following python dictionary from JSON to an HTML table with column headers and title:</span></span>
-<span id="cb45-10"><span class="sc" style="color: #5E5E5E;
+<span id="cb58-10"><span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">{</span>employees<span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">}</span></span>
-<span id="cb45-11"><span class="ss" style="color: #20794D;
+<span id="cb58-11"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"""</span></span>
-<span id="cb45-12">messages <span class="op" style="color: #5E5E5E;
+<span id="cb58-12">messages <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> [</span>
-<span id="cb45-13">    {<span class="st" style="color: #20794D;
+<span id="cb58-13">    {<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'role'</span>: <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'user'</span>, <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'content'</span>: prompt}</span>
-<span id="cb45-14">]</span>
-<span id="cb45-15">response, _ <span class="op" style="color: #5E5E5E;
+<span id="cb58-14">]</span>
+<span id="cb58-15">response, _ <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> chat_completion(messages)</span></code></pre></div>
 </details>
@@ -2795,13 +3003,13 @@ font-style: inherit;">=</span> chat_completion(messages)</span></code></pre></di
 <div class="cell" data-execution_count="45">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb46" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><span class="im" style="color: #00769E;
+<div class="sourceCode cell-code" id="cb59" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> IPython.display <span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> display, HTML</span>
-<span id="cb46-2"></span>
-<span id="cb46-3">display(HTML(response))</span></code></pre></div>
+<span id="cb59-2"></span>
+<span id="cb59-3">display(HTML(response))</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 
@@ -2868,66 +3076,66 @@ tr:nth-child(even) {
 <div class="cell" data-execution_count="49">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb47" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1">text <span class="op" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb60" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1">text <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> [ </span>
-<span id="cb47-2">  <span class="st" style="color: #20794D;
+<span id="cb60-2">  <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"The girl with the black and white puppies have a ball."</span>,  <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># The girl has a ball.</span></span>
-<span id="cb47-3">  <span class="st" style="color: #20794D;
+<span id="cb60-3">  <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"Yolanda has her notebook."</span>, <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># ok</span></span>
-<span id="cb47-4">  <span class="st" style="color: #20794D;
+<span id="cb60-4">  <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"Its going to be a long day. Does the car need it’s oil changed?"</span>,  <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Homonyms</span></span>
-<span id="cb47-5">  <span class="st" style="color: #20794D;
+<span id="cb60-5">  <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"Their goes my freedom. There going to bring they’re suitcases."</span>,  <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Homonyms</span></span>
-<span id="cb47-6">  <span class="st" style="color: #20794D;
+<span id="cb60-6">  <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"Your going to need you’re notebook."</span>,  <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Homonyms</span></span>
-<span id="cb47-7">  <span class="st" style="color: #20794D;
+<span id="cb60-7">  <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"That medicine effects my ability to sleep. Have you heard of the butterfly affect?"</span>, <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Homonyms</span></span>
-<span id="cb47-8">  <span class="st" style="color: #20794D;
+<span id="cb60-8">  <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"This phrase is to cherck chatGPT for speling abilitty"</span>  <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># spelling</span></span>
-<span id="cb47-9">]</span>
-<span id="cb47-10"></span>
-<span id="cb47-11"><span class="cf" style="color: #003B4F;
+<span id="cb60-9">]</span>
+<span id="cb60-10"></span>
+<span id="cb60-11"><span class="cf" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">for</span> t <span class="kw" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">in</span> text:</span>
-<span id="cb47-12">    prompt <span class="op" style="color: #5E5E5E;
+<span id="cb60-12">    prompt <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">f"""Proofread and correct the following text</span></span>
-<span id="cb47-13"><span class="ss" style="color: #20794D;
+<span id="cb60-13"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">    and rewrite the corrected version. If you don't find</span></span>
-<span id="cb47-14"><span class="ss" style="color: #20794D;
+<span id="cb60-14"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">    and errors, just say "No errors found". Don't use </span></span>
-<span id="cb47-15"><span class="ss" style="color: #20794D;
+<span id="cb60-15"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">    any punctuation around the text:</span></span>
-<span id="cb47-16"><span class="ss" style="color: #20794D;
+<span id="cb60-16"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">    ```</span><span class="sc" style="color: #5E5E5E;
 background-color: null;
@@ -2936,7 +3144,7 @@ background-color: null;
 font-style: inherit;">}</span><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">```"""</span></span>
-<span id="cb47-17">    run_and_print(prompt)</span></code></pre></div>
+<span id="cb60-17">    run_and_print(prompt)</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>The girl with the black and white puppies has a ball.
@@ -2951,12 +3159,12 @@ This phrase is to check chatGPT for spelling ability</code></pre>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb49" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1">text <span class="op" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb62" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb62-1">text <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">f"""Got this for my daughter for her birthday cuz she keeps taking mine from my room.  Yes, adults also like pandas too.  She takes it everywhere with her, and it's super soft and cute.  One of the ears is a bit lower than the other, and I don't think that was designed to be asymmetrical. It's a bit small for what I paid for it though. I think there might be other options that are bigger for the same price.  It arrived a day earlier than expected, so I got to play with it myself before I gave it to my daughter."""</span></span>
-<span id="cb49-2">prompt <span class="op" style="color: #5E5E5E;
+<span id="cb62-2">prompt <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
 background-color: null;
@@ -2967,18 +3175,18 @@ background-color: null;
 font-style: inherit;">}</span><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">```"</span></span>
-<span id="cb49-3">messages <span class="op" style="color: #5E5E5E;
+<span id="cb62-3">messages <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> [</span>
-<span id="cb49-4">    {<span class="st" style="color: #20794D;
+<span id="cb62-4">    {<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'role'</span>: <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'user'</span>, <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'content'</span>: prompt}</span>
-<span id="cb49-5">]</span>
-<span id="cb49-6">response, _ <span class="op" style="color: #5E5E5E;
+<span id="cb62-5">]</span>
+<span id="cb62-6">response, _ <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> chat_completion(messages)</span></code></pre></div>
 </details>
@@ -2986,21 +3194,21 @@ font-style: inherit;">=</span> chat_completion(messages)</span></code></pre></di
 <div class="cell" data-execution_count="54">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb50" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><span class="im" style="color: #00769E;
+<div class="sourceCode cell-code" id="cb63" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb63-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> redlines <span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> Redlines</span>
-<span id="cb50-2"><span class="im" style="color: #00769E;
+<span id="cb63-2"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> IPython.display <span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> display, Markdown</span>
-<span id="cb50-3"></span>
-<span id="cb50-4">diff <span class="op" style="color: #5E5E5E;
+<span id="cb63-3"></span>
+<span id="cb63-4">diff <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> Redlines(text,response)</span>
-<span id="cb50-5">display(Markdown(diff.output_markdown))</span></code></pre></div>
+<span id="cb63-5">display(Markdown(diff.output_markdown))</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <p>Got this for my daughter for her birthday <span style="color:red;font-weight:700;text-decoration:line-through;">cuz </span><span style="color:red;font-weight:700;">because </span>she keeps taking mine from my <span style="color:red;font-weight:700;text-decoration:line-through;">room. </span><span style="color:red;font-weight:700;">room. </span>Yes, adults also like pandas <span style="color:red;font-weight:700;text-decoration:line-through;">too. </span><span style="color:red;font-weight:700;">too. </span>She takes it everywhere with her, and it’s super soft and <span style="color:red;font-weight:700;text-decoration:line-through;">cute. One </span><span style="color:red;font-weight:700;">cute. However, one </span>of the ears is a bit lower than the other, and I don’t think that was designed to be asymmetrical. <span style="color:red;font-weight:700;text-decoration:line-through;">It’s </span><span style="color:red;font-weight:700;">Additionally, it’s </span>a bit small for what I paid for <span style="color:red;font-weight:700;text-decoration:line-through;">it though. </span><span style="color:red;font-weight:700;">it. </span>I <span style="color:red;font-weight:700;text-decoration:line-through;">think </span><span style="color:red;font-weight:700;">believe </span>there might be other options that are bigger for the same <span style="color:red;font-weight:700;text-decoration:line-through;">price. It </span><span style="color:red;font-weight:700;">price. On the positive side, it </span>arrived a day earlier than expected, so I got to play with it myself before I gave it to my daughter.</p>
@@ -3009,21 +3217,21 @@ font-style: inherit;">=</span> Redlines(text,response)</span>
 <div class="cell" data-execution_count="56">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb51" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1">prompt <span class="op" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb64" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb64-1">prompt <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">f"""</span></span>
-<span id="cb51-2"><span class="ss" style="color: #20794D;
+<span id="cb64-2"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">proofread and correct this review. Make it more compelling. </span></span>
-<span id="cb51-3"><span class="ss" style="color: #20794D;
+<span id="cb64-3"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">Ensure it follows APA style guide and targets an advanced reader. </span></span>
-<span id="cb51-4"><span class="ss" style="color: #20794D;
+<span id="cb64-4"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">Output in markdown format.</span></span>
-<span id="cb51-5"><span class="ss" style="color: #20794D;
+<span id="cb64-5"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">Text: ```</span><span class="sc" style="color: #5E5E5E;
 background-color: null;
@@ -3032,26 +3240,26 @@ background-color: null;
 font-style: inherit;">}</span><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">```</span></span>
-<span id="cb51-6"><span class="ss" style="color: #20794D;
+<span id="cb64-6"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"""</span></span>
-<span id="cb51-7"></span>
-<span id="cb51-8">messages <span class="op" style="color: #5E5E5E;
+<span id="cb64-7"></span>
+<span id="cb64-8">messages <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> [</span>
-<span id="cb51-9">    {<span class="st" style="color: #20794D;
+<span id="cb64-9">    {<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'role'</span>: <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'user'</span>, <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'content'</span>: prompt}</span>
-<span id="cb51-10">]</span>
-<span id="cb51-11">response, _ <span class="op" style="color: #5E5E5E;
+<span id="cb64-10">]</span>
+<span id="cb64-11">response, _ <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> chat_completion(messages)</span>
-<span id="cb51-12"></span>
-<span id="cb51-13">display(Markdown(response))</span></code></pre></div>
+<span id="cb64-12"></span>
+<span id="cb64-13">display(Markdown(response))</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <p><strong>Review of a Panda Plush Toy: A Perfect Gift for All Ages</strong></p>
