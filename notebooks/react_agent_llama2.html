@@ -8,7 +8,7 @@
 
 <meta name="dcterms.date" content="2023-08-01">
 
-<title>Limin’s Generative AI Lab - Experiment ReAct using Llama 2</title>
+<title>Limin’s Generative AI Lab - Experiment ReAct prompting with Llama 2 70B-chat</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -164,11 +164,12 @@ div.csl-indent {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Experiment ReAct using Llama 2</h1>
+      <h1 class="title">Experiment ReAct prompting with Llama 2 70B-chat</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">Llama 2</div>
-                <div class="quarto-category">ReAct</div>
                 <div class="quarto-category">Agent</div>
+                <div class="quarto-category">Prompt Engineering</div>
+                <div class="quarto-category">LangChain</div>
               </div>
                   </div>
   </div>
@@ -196,7 +197,7 @@ div.csl-indent {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#load-llama-2-13b-chat" id="toc-load-llama-2-13b-chat" class="nav-link active" data-scroll-target="#load-llama-2-13b-chat">Load Llama 2 13B-chat</a></li>
+  <li><a href="#load-llama-2-70b-chat" id="toc-load-llama-2-70b-chat" class="nav-link active" data-scroll-target="#load-llama-2-70b-chat">Load Llama 2 70B-chat</a></li>
   <li><a href="#set-up-langchain-react-doc-store" id="toc-set-up-langchain-react-doc-store" class="nav-link" data-scroll-target="#set-up-langchain-react-doc-store">Set up LangChain ReAct doc store</a></li>
   <li><a href="#ask-some-questions" id="toc-ask-some-questions" class="nav-link" data-scroll-target="#ask-some-questions">Ask some questions</a></li>
   </ul>
@@ -208,10 +209,16 @@ div.csl-indent {
 
 
 
-<p>ReAct <span class="citation" data-cites="yao2022react">[<a href="#ref-yao2022react" role="doc-biblioref">1</a>]</span> is a method that uses Large Language Models (LLMs) to create reasoning and actions for tasks in an interleaved way. Reasoning helps the model to create, monitor and adjust action plans and handle exceptions. Actions allows the model to access knowledge bases or external environments to obtain more information to support its reasoning.</p>
-<p>This notebook uses LangChain agent to try ReAct using Llama 2.</p>
-<section id="load-llama-2-13b-chat" class="level2">
-<h2 class="anchored" data-anchor-id="load-llama-2-13b-chat">Load Llama 2 13B-chat</h2>
+<div style="text-align: right;">
+<p><a target="_blank" href="https://colab.research.google.com/github/liminma/generative-ai-lab/blob/main/notebooks/react_agent_llama2.ipynb"> <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"> </a></p>
+</div>
+<p>ReAct <span class="citation" data-cites="yao2022react">[<a href="#ref-yao2022react" role="doc-biblioref">1</a>]</span> is a method that uses Large Language Models (LLMs) to create reasoning and actions for tasks in an interleaved way. Reasoning helps the model to create, monitor and adjust action plans and handle exceptions. Actions allows the model to access knowledge bases or external environments to obtain more information to support its reasoning, as illustrated in the following figure:</p>
+<div style="text-align: center;">
+<p><img src="react_agent_llama2_files/figure-html/dfa1deb4-d8be-43ae-bbd4-66803ca98006-1-ce6e6eb2-6aaf-43fc-896f-8042be80af1e.png" class="preview-image img-fluid"> <br>Image source: Yao et al. <span class="citation" data-cites="yao2022react">[<a href="#ref-yao2022react" role="doc-biblioref">1</a>]</span></p>
+</div>
+<p>This notebook uses LangChain agent to try ReAct with Llama 2.</p>
+<section id="load-llama-2-70b-chat" class="level2">
+<h2 class="anchored" data-anchor-id="load-llama-2-70b-chat">Load Llama 2 70B-chat</h2>
 <div class="cell" data-tags="[]" data-execution_count="2">
 <details>
 <summary>Configure HuggingFace token (click to toggle the content)</summary>
@@ -223,21 +230,21 @@ div.csl-indent {
 <pre><code> ········</code></pre>
 </div>
 </div>
-<div class="cell" data-tags="[]" data-execution_count="4">
+<div class="cell" data-tags="[]" data-execution_count="3">
 <details open="">
 <summary>Load the model (click to toggle the content)</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> pipeline, GenerationConfig</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>model_id <span class="op">=</span> <span class="st">'meta-llama/Llama-2-13b-chat-hf'</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>model_id <span class="op">=</span> <span class="st">'meta-llama/Llama-2-70b-chat-hf'</span></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>gen_config <span class="op">=</span> GenerationConfig.from_pretrained(</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    model_id,</span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    token<span class="op">=</span>hf_token</span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>gen_config.max_new_tokens <span class="op">=</span> <span class="dv">4096</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>gen_config.temperature <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>gen_config.max_new_tokens <span class="op">=</span> <span class="dv">2000</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>gen_config.temperature <span class="op">=</span> <span class="fl">1e-10</span></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>pipe <span class="op">=</span> pipeline(</span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    task<span class="op">=</span><span class="st">"text-generation"</span>,</span>
@@ -257,29 +264,14 @@ div.csl-indent {
 </details>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"e7d38b5c0b9a4e3395fc5abf0422d0dd","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
-</script>
-</div>
-<div class="cell-output cell-output-display">
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"c779a3c91a8b40538a2da46f75f32478","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
-</script>
-</div>
-<div class="cell-output cell-output-display">
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"6e9c2ce3db7a48408ccb562146a5478e","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
-</script>
-</div>
-<div class="cell-output cell-output-display">
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"3719eadcd65d4bd7ac2a75e7680e1270","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"a612251675634229ac6128d8dc3a34cc","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 </div>
 </section>
 <section id="set-up-langchain-react-doc-store" class="level2">
 <h2 class="anchored" data-anchor-id="set-up-langchain-react-doc-store">Set up LangChain ReAct doc store</h2>
-<div class="cell" data-tags="[]" data-execution_count="5">
+<div class="cell" data-tags="[]" data-execution_count="4">
 <details open="">
 <summary>Initialize an agent (click to toggle the content)</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain <span class="im">import</span> Wikipedia</span>
@@ -315,63 +307,68 @@ div.csl-indent {
 </section>
 <section id="ask-some-questions" class="level2">
 <h2 class="anchored" data-anchor-id="ask-some-questions">Ask some questions</h2>
-<div class="cell" data-tags="[]" data-execution_count="7">
+<div class="cell" data-tags="[]" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>react_agent.run(<span class="st">'Who are the directors of the movies that caused the Barbenheimer phenomenon?'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 
 &gt; Entering new AgentExecutor chain...
-Thought: I need to search Barbenheimer phenomenon, find the movies that caused it, and find the directors of those movies.
+Thought: I need to search Barbenheimer phenomenon, find the movies associated with it, then find the directors of those movies.
 Action: Search[Barbenheimer phenomenon]
-Observation: Barbenheimer ( BARB-ən-HIGH-mər) is an Internet phenomenon that began circulating on social media before the simultaneous theatrical release of two blockbuster films, Barbie and Oppenheimer, on July 21, 2023, in the United States and several other countries. The word is a portmanteau of the films' titles. The dichotomy of Barbie—a fantasy comedy by Greta Gerwig about the fashion doll Barbie—and Oppenheimer—an epic biographical thriller by Christopher Nolan about physicist J. Robert Oppenheimer, scientific director of the Manhattan Project, which developed the first nuclear weapons during World War II—prompted a comedic response from Internet users, including memes and merchandise. Polygon described the two films as "extreme opposites", and Variety called the phenomenon "the movie event of the year".The films' simultaneous release was initially an instance of counterprogramming. As their release date approached, instead of Barbenheimer creating a rivalry, many suggestions to watch the films as a double feature emerged—as well as in what order to watch them—and cast members of both responded by encouraging audiences to watch the films on the same day. Celebrity participation in this trend included actor Tom Cruise, who purchased tickets to watch both while his latest film, Mission: Impossible – Dead Reckoning Part One, was scheduled to be still playing in theaters.
-Both films received widespread acclaim, and exceeded box-office expectations. While the phenomenon began as a joke about the two films' seemingly endless differences, some media commentators have pointed out some similarities between them; both films have been analyzed as exploring existentialism and the theoretical notion of the Anthropocene, both have an Oscar-nominated director and screenwriter and a large ensemble cast, and both were produced by a husband-and-wife production company.
-Thought: The directors of the movies that caused the Barbenheimer phenomenon are Greta Gerwig and Christopher Nolan.
-Action: Finish[Greta Gerwig and Christopher Nolan]
+Observation: Barbenheimer is a cultural phenomenon that began on the Internet before the simultaneous theatrical release of two blockbuster films: Warner Bros. Pictures's  Barbie and Universal Pictures's Oppenheimer, on July 21, 2023 in the United States and several other countries. The word is a portmanteau of the films' titles. The contrast of Barbie—a fantasy comedy by Greta Gerwig about the fashion doll Barbie—and Oppenheimer—an epic biographical thriller by Christopher Nolan about physicist J. Robert Oppenheimer, scientific director of the Manhattan Project—prompted a comedic response from Internet users, including memes and merchandise. Polygon described the two films as "extreme opposites", and Variety called the phenomenon "the movie event of the year".The phenomenon began on social media before the films' release. The simultaneous release was an instance of counterprogramming. As their release date approached, instead of generating a rivalry, suggestions emerged to watch the films as a double feature—as well as what order to watch them—and cast members of both responded by encouraging audiences to watch the films on the same day. Celebrity participants included actor Tom Cruise, who purchased tickets to watch both while his latest film, Mission: Impossible – Dead Reckoning Part One, was still playing in theaters. 
+Both films received widespread critical acclaim and exceeded box-office expectations. While the phenomenon began as a joke about the two films' seemingly endless differences, some media commentators have pointed out similarities between them; both films have been analyzed as exploring existentialism and the theoretical notion of the Anthropocene, each has an Oscar-nominated director and screenwriter and a large ensemble cast, and both were produced by a husband-and-wife production company.
+Thought: The directors of the movies associated with the Barbenheimer phenomenon are Greta Gerwig (Barbie) and Christopher Nolan (Oppenheimer).
+Action: Finish[Greta Gerwig, Christopher Nolan]
 
 &gt; Finished chain.</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="7">
-<pre><code>'Greta Gerwig and Christopher Nolan'</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>'Greta Gerwig, Christopher Nolan'</code></pre>
 </div>
 </div>
-<div class="cell" data-tags="[]" data-execution_count="8">
+<div class="cell" data-tags="[]" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>react_agent.run(<span class="st">'Who are the authors of the paper that proposed the original transformer model?'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 
 &gt; Entering new AgentExecutor chain...
-Thought: I need to search the original transformer model, find the authors of the paper that proposed it.
-Action: Search[original transformer model]
-Observation: A Transformer is a deep learning architecture that relies on the parallel multi-head attention mechanism. The original Transformer was proposed in the 2017 paper titled 'Attention Is All You Need' by Ashish Vaswani et al, Google Brain team. It is notable for requiring less training time compared to previous recurrent neural architectures, such as long short-term memory (LSTM), and its later variation has been prevalently adopted for training large language models on large (language) datasets, such as the Wikipedia Corpus and Common Crawl, by virtue of the parallelized processing of input sequence.
-Input text is parsed into tokens by a byte pair encoding tokenizer, and each token is converted into a vector via looking up from a word embedding table. At each layer, each token is then contextualized within the scope of the context window with other (unmasked) tokens via parallel multi-head attention mechanism. Though the Transformer model came out in 2017, the core attention mechanism was proposed earlier in 2014 by Bahdanau, Cho, and Bengio for machine translation.
-This architecture is now used not only in natural language processing, computer vision, but also in audio, and multi-modal processing. It has also led to the development of pre-trained systems, such as generative pre-trained transformers (GPTs) and BERT (Bidirectional Encoder Representations from Transformers).
-Thought: The authors of the paper that proposed the original transformer model are Ashish Vaswani et al, Google Brain team.
-Action: Finish[Ashish Vaswani et al]
+Thought: I need to search the paper that proposed the original transformer model, then find its authors.
+Action: Search[transformer model]
+Observation: Could not find [transformer model]. Similar: ['Transformer (machine learning model)', 'Generative pre-trained transformer', 'Transformer', 'BLOOM (language model)', 'GPT-3', 'Large language model', 'Vision transformer', 'BERT (language model)', 'GPT-2', 'Language model']
+Thought: To find the authors, I can search Transformer (machine learning model).
+Action: Search[Transformer (machine learning model)]
+Observation: A transformer is a deep learning architecture that relies on the parallel multi-head attention mechanism. The modern transformer was proposed in the 2017 paper titled 'Attention Is All You Need' by Ashish Vaswani et al., Google Brain team. It is notable for requiring less training time than previous recurrent neural architectures, such as long short-term memory (LSTM), and its later variation has been prevalently adopted for training large language models on large (language) datasets, such as the Wikipedia corpus and Common Crawl, by virtue of the parallelized processing of input sequence.
+Input text is split into n-grams encoded as tokens and each token is converted into a vector via looking up from a word embedding table. At each layer, each token is then contextualized within the scope of the context window with other (unmasked) tokens via a parallel multi-head attention mechanism allowing the signal for key tokens to be amplified and less important tokens to be diminished. Though the transformer paper was published in 2017, the softmax-based attention mechanism was proposed earlier in 2014 by Bahdanau, Cho, and Bengio for machine translation, and the Fast Weight Controller, similar to a transformer, was proposed in 1992 by Schmidhuber.
+This architecture is now used not only in natural language processing and computer vision, but also in audio and multi-modal processing. It has also led to the development of pre-trained systems, such as generative pre-trained transformers (GPTs) and BERT (Bidirectional Encoder Representations from Transformers).
+Thought: Authors of the paper are Ashish Vaswani et al. and the paper is titled Attention Is All You Need.
+Action: Finish[Ashish Vaswani et al., Attention Is All You Need]
 
 &gt; Finished chain.</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="8">
-<pre><code>'Ashish Vaswani et al'</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>'Ashish Vaswani et al., Attention Is All You Need'</code></pre>
 </div>
 </div>
-<div class="cell" data-tags="[]" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>react_agent.run(<span class="st">"What is the movie Terminator about? Use your findings as your answer."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>react_agent.run(<span class="st">'Musician and satirist Allie Goertz wrote a song about the "The Simpsons" character Milhouse, who Matt Groening named after who?'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 
 &gt; Entering new AgentExecutor chain...
-Thought: I need to search Terminator, find what it is about, and provide my answer.
-Action: Search[Terminator]
-Observation: The Terminator is a 1984 American science fiction action film directed by James Cameron. It stars Arnold Schwarzenegger as the Terminator, a cyborg assassin sent back in time from 2029 to 1984 to kill Sarah Connor (Linda Hamilton), whose unborn son will one day save mankind from extinction by Skynet, a hostile artificial intelligence in a post-apocalyptic future. Kyle Reese (Michael Biehn) is a soldier sent back in time to protect Sarah. The screenplay is credited to Cameron and producer Gale Anne Hurd, while co-writer William Wisher Jr. received an "additional dialogue" credit.
-Cameron devised the premise of the film from a fever dream he experienced during the release of his first film, Piranha II: The Spawning (1982), in Rome, and developed the concept in collaboration with Wisher. He sold the rights to the project to fellow New World Pictures alumna Hurd on the condition that she would produce the film only if he were to direct it; Hurd eventually secured a distribution deal with Orion Pictures, while executive producers John Daly and Derek Gibson of Hemdale Film Corporation were instrumental in setting up the film's financing and production. Originally approached by Orion for the role of Reese, Schwarzenegger agreed to play the title character after befriending Cameron. Filming, which took place mostly at night on location in Los Angeles, was delayed because of Schwarzenegger's commitments to Conan the Destroyer (1984), during which Cameron found time to work on the scripts for Rambo: First Blood Part II (1985) and Aliens (1986). The film's special effects, which included miniatures and stop-motion animation, were created by a team of artists led by Stan Winston and Gene Warren Jr.
-Defying low pre-release expectations, The Terminator topped the United States box office for two weeks, eventually grossing $78.3 million against a modest $6.4 million budget. It is credited with launching Cameron's film career and solidifying Schwarzenegger's status as a leading man. The film's success led to a franchise consisting of several sequels, a television series, comic books, novels and video games. In 2008, The Terminator was selected by the Library of Congress for preservation in the United States National Film Registry.
-Thought: The Terminator is a 1984 American science fiction action film directed by James Cameron, starring Arnold Schwarzenegger as the Terminator, a cyborg assassin sent back in time to kill Sarah Connor, whose unborn son will one day save mankind from extinction by Skynet, a hostile artificial intelligence in a post-apocalyptic future.
-Action: Finish[The Terminator is a 1984 American science fiction action film directed by James Cameron, starring Arnold Schwarzenegger as the Terminator, a cyborg assassin sent back in time to kill Sarah Connor, whose unborn son will one day save mankind from extinction by Skynet, a hostile artificial intelligence in a post-apocalyptic future.]
+Thought: The question simplifies to "The Simpsons" character Milhouse is named after who. I only need to search Milhouse and find who it is named after.
+Action: Search[Milhouse]
+Observation: Could not find [Milhouse]. Similar: ['Milhouse Van Houten', 'A Milhouse Divided', 'Treehouse of Horror XIX', 'Pamela Hayden', 'Milhouse of Sand and Fog', "Bart's Friend Falls in Love", "Milhouse Doesn't Live Here Anymore", 'Richard Nixon', 'The Bart of War', 'Paul William Milhouse']
+Thought: To find who Milhouse is named after, I can search Milhouse Van Houten.
+Action: Search[Milhouse Van Houten]
+Observation: Milhouse Mussolini Van Houten is a recurring character in the Fox animated television series The Simpsons voiced by Pamela Hayden and created by Matt Groening. Milhouse is Bart Simpson's best friend in Mrs. Krabappel's fourth grade class at Springfield Elementary School. He is insecure, gullible, and is often led into trouble by Bart, who takes advantage of his friend's naïveté. Milhouse is a regular target for school bully Nelson Muntz and his friends Jimbo Jones, Dolph Starbeam and Kearney Zzyzwicz. He has an unrequited crush on Bart's sister, Lisa, which is a common plot element.
+Milhouse debuted in the 1988 commercial "The Butterfinger Group" while The Simpsons was still airing as a cartoon short series on the Fox variety show The Tracey Ullman Show. When The Simpsons was greenlit for a full series by Fox, Milhouse became one of the series' most prominent recurring characters. Groening chose the name Milhouse, also the middle name of President Richard Nixon, because it was the most "unfortunate name [he] could think of for a kid". Milhouse's appearance is based on that of Rob Cohen.
+Thought: Milhouse was named after U.S. president Richard Nixon, so the answer is Richard Nixon.
+Action: Finish[Richard Nixon]
 
 &gt; Finished chain.</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="9">
-<pre><code>'The Terminator is a 1984 American science fiction action film directed by James Cameron, starring Arnold Schwarzenegger as the Terminator, a cyborg assassin sent back in time to kill Sarah Connor, whose unborn son will one day save mankind from extinction by Skynet, a hostile artificial intelligence in a post-apocalyptic future.'</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>'Richard Nixon'</code></pre>
 </div>
 </div>
 
