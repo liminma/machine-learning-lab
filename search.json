@@ -77,11 +77,11 @@
     "text": "Load Llama 2 70B-chat\n\n\nConfigure HuggingFace token (click to toggle the content)\nfrom getpass import getpass\n\nhf_token = getpass()\n\n\n ········\n\n\n\n\nLoad the model (click to toggle the content)\nimport torch\nfrom transformers import pipeline, GenerationConfig\n\n\nmodel_id = 'meta-llama/Llama-2-70b-chat-hf'\n\ngen_config = GenerationConfig.from_pretrained(\n    model_id,\n    token=hf_token\n)\ngen_config.max_new_tokens = 2000\ngen_config.temperature = 1e-10\n\npipe = pipeline(\n    task=\"text-generation\",\n    model=model_id,\n    return_full_text=True,\n    generation_config=gen_config,\n    device_map='auto',\n    model_kwargs={\n        'load_in_4bit': True,\n        'bnb_4bit_quant_type': 'nf4',\n        'bnb_4bit_use_double_quant': True,\n        'bnb_4bit_compute_dtype': torch.bfloat16,\n    },\n    use_auth_token=hf_token,\n    repetition_penalty=1.1\n)"
   },
   {
-    "objectID": "notebooks/react_agent_llama2.html#set-up-langchain-react-doc-store",
-    "href": "notebooks/react_agent_llama2.html#set-up-langchain-react-doc-store",
+    "objectID": "notebooks/react_agent_llama2.html#set-up-langchain-react-agent",
+    "href": "notebooks/react_agent_llama2.html#set-up-langchain-react-agent",
     "title": "Experiment ReAct prompting with Llama 2 70B-chat",
-    "section": "Set up LangChain ReAct doc store",
-    "text": "Set up LangChain ReAct doc store\n\n\nInitialize an agent (click to toggle the content)\nfrom langchain import Wikipedia\nfrom langchain.llms import HuggingFacePipeline\nfrom langchain.agents import initialize_agent, Tool, AgentType\nfrom langchain.agents.react.base import DocstoreExplorer\n\n\ndocstore = DocstoreExplorer(Wikipedia())\n\ntools = [\n    Tool(\n        name=\"Search\",\n        func=docstore.search,\n        description=\"useful for when you need to ask with search\",\n    ),\n    Tool(\n        name=\"Lookup\",\n        func=docstore.lookup,\n        description=\"useful for when you need to ask with lookup\",\n    )\n]\n\nllm = HuggingFacePipeline(pipeline=pipe)\n\nreact_agent = initialize_agent(\n    tools=tools,\n    llm=llm,\n    agent=AgentType.REACT_DOCSTORE,\n    verbose=True)"
+    "section": "Set up LangChain ReAct agent",
+    "text": "Set up LangChain ReAct agent\n\n\nInitialize an agent (click to toggle the content)\nfrom langchain import Wikipedia\nfrom langchain.llms import HuggingFacePipeline\nfrom langchain.agents import initialize_agent, Tool, AgentType\nfrom langchain.agents.react.base import DocstoreExplorer\n\n\ndocstore = DocstoreExplorer(Wikipedia())\n\ntools = [\n    Tool(\n        name=\"Search\",\n        func=docstore.search,\n        description=\"useful for when you need to ask with search\",\n    ),\n    Tool(\n        name=\"Lookup\",\n        func=docstore.lookup,\n        description=\"useful for when you need to ask with lookup\",\n    )\n]\n\nllm = HuggingFacePipeline(pipeline=pipe)\n\nreact_agent = initialize_agent(\n    tools=tools,\n    llm=llm,\n    agent=AgentType.REACT_DOCSTORE,\n    verbose=True)"
   },
   {
     "objectID": "notebooks/react_agent_llama2.html#ask-some-questions",

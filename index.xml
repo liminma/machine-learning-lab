@@ -147,8 +147,8 @@ font-style: inherit;">1.1</span></span>
 </div>
 </div>
 </section>
-<section id="set-up-langchain-react-doc-store" class="level2">
-<h2 class="anchored" data-anchor-id="set-up-langchain-react-doc-store">Set up LangChain ReAct doc store</h2>
+<section id="set-up-langchain-react-agent" class="level2">
+<h2 class="anchored" data-anchor-id="set-up-langchain-react-agent">Set up LangChain ReAct agent</h2>
 <div class="cell" data-tags="[]" data-execution_count="4">
 <details open="">
 <summary>Initialize an agent (click to toggle the content)</summary>
