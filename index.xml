@@ -10,7 +10,65 @@
 <atom:link href="https://liminma.github.io/generative-ai-lab/index.xml" rel="self" type="application/rss+xml"/>
 <description>My experiments with LLMs and related technologies.</description>
 <generator>quarto-1.3.433</generator>
-<lastBuildDate>Tue, 01 Aug 2023 04:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sat, 05 Aug 2023 04:00:00 GMT</lastBuildDate>
+<item>
+  <title>Understanding Tree-of-Thoughts (ToT)</title>
+  <link>https://liminma.github.io/generative-ai-lab/notebooks/tree-of-thoughts.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>Tree-of-Thoughts (ToT) <span class="citation" data-cites="yao2023tree">[1]</span> is a framework for LLM inference. It allows models to explore multiple reasoning paths and make deliberate decisions for problem solving. ToT generalizes over the Chain-of-Thought (CoT) approach and enables LLMs to generate and evaluate thoughts, which are coherent units of text, as intermediate steps toward a final solution. It organizes thoughts into a data structure of branching tree based on an evaluation score of a thought. Thoughts could be, - a question - a hypothesis - a plan - a partial solution - any texts that help models to solve the problem</p>
+<div style="text-align: center;">
+<p><img src="https://liminma.github.io/generative-ai-lab/notebooks/tree-of-thoughts_files/figure-html/2ad43573-ec26-4da0-85aa-1e11d125bccd-1-8e610d5b-529a-43f5-9b78-7658b3d88316.png" class="preview-image img-fluid"> <br>Image source: Yao et al. <span class="citation" data-cites="yao2023tree">[1]</span></p>
+</div>
+<p>The paper demonstrates that ToT significantly improves the performance of LLMs on three tasks that require non-trivial planning or search: Game of 24, Creative Writing, and Mini Crosswords.</p>
+<section id="how-does-it-work" class="level2">
+<h2 class="anchored" data-anchor-id="how-does-it-work">How does it work?</h2>
+<p>ToT employs a tree-based search method to solve a problem. Each tree node is a state <img src="https://latex.codecogs.com/png.latex?s%20=%20%5Bx,%20z_%7B1%C2%B7%C2%B7%C2%B7i%7D%20%5D"> that consists of the input and the sequence of thoughts generated until that point. This way, ToT can explore different reasoning paths and find the best solution for the given problem.</p>
+<p>ToT follows the following steps:</p>
+<ul>
+<li>use a thought generator to generate thoughts for a tree node. Each thought should be not too “big” and not too “small”.
+<ul>
+<li>for rich thought space: sample i.i.d. thoughts from a CoT prompt because i.i.d. samples lead to diversity</li>
+<li>for more constrained thought space: propose thoughts sequentially by a propose prompt, which could avoid duplication</li>
+</ul></li>
+<li>use a state evaluator as a heuristic for the search algorithm
+<ul>
+<li>evaluate the frontier states based on one of the following two strategies:
+<ul>
+<li>value each state independently</li>
+<li>vote across states</li>
+</ul></li>
+</ul></li>
+<li>use a search algorithm, e.g.&nbsp;BFS or DFS, to traverse through the tree
+<ul>
+<li>select the most promising child node at each level, and generating new thoughts from it
+<ul>
+<li>Breadth-first search (BFS): maintains a set of the most promising states per step
+<ul>
+<li>for tasks where the tree depth is limited and initial thought steps can be evaluated and pruned to a small set</li>
+</ul></li>
+<li>Depth-first search (DFS): picks the most promising state first, until reaching the final output or a dead-end; It backtracks to the parent state to continue exploration</li>
+</ul></li>
+</ul></li>
+</ul>
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body">
+<div id="ref-yao2023tree" class="csl-entry">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline">S. Yao <em>et al.</em>, <span>“<span class="nocase">Tree of Thoughts</span>: Deliberate problem solving with large language models.”</span> 2023. Available: <a href="https://arxiv.org/abs/2305.10601">https://arxiv.org/abs/2305.10601</a></div>
+</div>
+</div></section></div> ]]></description>
+  <category>Prompt Engineering</category>
+  <category>Paper Reading</category>
+  <guid>https://liminma.github.io/generative-ai-lab/notebooks/tree-of-thoughts.html</guid>
+  <pubDate>Sat, 05 Aug 2023 04:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Experiment ReAct prompting with Llama 2 70B-chat</title>
   <link>https://liminma.github.io/generative-ai-lab/notebooks/react_agent_llama2.html</link>

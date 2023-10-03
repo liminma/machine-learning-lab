@@ -1,7 +1,8 @@
 [
   {
-    "listing": "/archive.html",
+    "listing": "/index.html",
     "items": [
+      "/notebooks/tree-of-thoughts.html",
       "/notebooks/react_agent_llama2.html",
       "/notebooks/understanding_react.html",
       "/notebooks/understanding_chain_of_thought.html",
@@ -19,8 +20,9 @@
     ]
   },
   {
-    "listing": "/index.html",
+    "listing": "/archive.html",
     "items": [
+      "/notebooks/tree-of-thoughts.html",
       "/notebooks/react_agent_llama2.html",
       "/notebooks/understanding_react.html",
       "/notebooks/understanding_chain_of_thought.html",
