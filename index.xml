@@ -10,7 +10,1541 @@
 <atom:link href="https://liminma.github.io/generative-ai-lab/index.xml" rel="self" type="application/rss+xml"/>
 <description>My experiments with LLMs and related technologies.</description>
 <generator>quarto-1.3.433</generator>
-<lastBuildDate>Sat, 05 Aug 2023 04:00:00 GMT</lastBuildDate>
+<lastBuildDate>Wed, 25 Oct 2023 04:00:00 GMT</lastBuildDate>
+<item>
+  <title>How to fine-tune, compile and serve Llama2 7B-chat for summarization on a single GPU (12GB)</title>
+  <link>https://liminma.github.io/generative-ai-lab/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<div style="text-align: right;">
+<p><a target="_blank" href="https://colab.research.google.com/github/liminma/generative-ai-lab/blob/main/notebooks/react_agent_llama2.ipynb"> <img src="https://liminma.github.io/generative-ai-lab/notebooks/https:/colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"> </a></p>
+</div>
+<div>
+<img class="preview-image" src="https://liminma.github.io/generative-ai-lab/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060_files/figure-html/80729ad4-1-e50ffe05-7e2c-4c27-957f-c41869f1f68c.jpg" width="800px">
+</div>
+<div style="text-align: right; font-size: 10px; color: grey; margin-bottom: 2em;">
+Source: Photo by <a style="color: grey;" href="https://unsplash.com/@lucaskphoto?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">Lucas Kepner</a> on <a style="color: grey;" href="https://unsplash.com/photos/a-close-up-of-a-sign-in-the-dark-vJ3Lt-mcGP4?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">Unsplash</a>
+</div>
+<p>This notebook is a step-by-step guide to fine-tuning, compiling and serving a Llama 2 7B model for dialogue summarization on a 12GB consumer graphics card. We’ll use <code>SFTTrainer</code> from <code>trl</code> for fine-tuning, and use <a href="https://github.com/mlc-ai/mlc-llm">mlc-llm</a> to compile and serve the fine-tuned model. The training dataset is <a href="https://huggingface.co/datasets/samsum">SAMSum</a>, which can be downloaded from 🤗 Hugging Face.</p>
+<section id="set-up-the-environment" class="level2">
+<h2 class="anchored" data-anchor-id="set-up-the-environment">0. Set up the environment</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!</span>pip install <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb1-2">accelerate<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.23.0</span> bitsandbytes<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.41.1</span> datasets<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2.13.0</span> openai<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.28.1</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb1-3">peft<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.4.0</span> safetensors<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.4.0</span> transformers<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4.34.0</span> trl<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.4.7</span></span></code></pre></div>
+</div>
+</section>
+<section id="load-the-samsum-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="load-the-samsum-dataset">1. Load the SAMSum dataset</h2>
+<p>The <a href="https://huggingface.co/datasets/samsum">SAMSum</a> dataset is a collection of about 16k messenger-like conversations with human-written summaries. It is intended for the task of abstractive dialogue summarization, which aims to generate a concise and informative summary of a dialogue.</p>
+<p>We’ll only load the first 1k training samples for demonstration purposes</p>
+<div class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> datasets <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> load_dataset</span>
+<span id="cb2-2"></span>
+<span id="cb2-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># load 1k samples from the train split</span></span>
+<span id="cb2-4">train_dataset <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> load_dataset(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"samsum"</span>, split<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'train[:1000]'</span>)</span></code></pre></div>
+</div>
+<div class="cell" data-tags="[]" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(train_dataset)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Dataset({
+    features: ['id', 'dialogue', 'summary'],
+    num_rows: 1000
+})</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">train_dataset[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>]</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<pre><code>{'id': '13818513',
+ 'dialogue': "Amanda: I baked  cookies. Do you want some?\r\nJerry: Sure!\r\nAmanda: I'll bring you tomorrow :-)",
+ 'summary': 'Amanda baked cookies and will bring Jerry some tomorrow.'}</code></pre>
+</div>
+</div>
+</section>
+<section id="load-and-fine-tune-the-model-with-qlora" class="level2">
+<h2 class="anchored" data-anchor-id="load-and-fine-tune-the-model-with-qlora">2. Load and fine-tune the model with QLoRA</h2>
+<p>QLoRA <span class="citation" data-cites="dettmers2023qlora">[1]</span> is an efficient fine-tuning method for LLMs that reduces memory usage while preserving the performance of full 16-bit fine-tuning. It backpropagates gradients through a frozen, 4-bit quantized pre-trained model into Low Rank Adapters (LoRA). LoRA adapters are trainable rank decomposition matrices injected into each layer of the Transformer architecture, which reduce the number of trainable parameters for downstream tasks. QLoRA has the following components:</p>
+<ul>
+<li>4-bit NormalFloat (NF4) Quantization: the NormalFloat data type is optimal for zero-centered normally distributed data.</li>
+<li>Double Quantization: a technique for additional memory savings.</li>
+<li>Paged Optimizers: swap optimizer states between CPU and GPU using NVIDIA unified memory to prevent GPU out of memory errors.</li>
+</ul>
+<section id="load-and-prepare-the-model-for-4bit-training" class="level3">
+<h3 class="anchored" data-anchor-id="load-and-prepare-the-model-for-4bit-training">load and prepare the model for 4bit training</h3>
+<div class="cell" data-tags="[]" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> torch</span>
+<span id="cb7-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> transformers <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> AutoModelForCausalLM, BitsAndBytesConfig</span>
+<span id="cb7-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> peft <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> prepare_model_for_kbit_training</span>
+<span id="cb7-4"></span>
+<span id="cb7-5">model_id <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"meta-llama/Llama-2-7b-chat-hf"</span></span>
+<span id="cb7-6"></span>
+<span id="cb7-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># </span></span>
+<span id="cb7-8"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># load model in NF4 quantization with double quantization,</span></span>
+<span id="cb7-9"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># set compute dtype to bfloat16</span></span>
+<span id="cb7-10"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># </span></span>
+<span id="cb7-11">bnb_config <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> BitsAndBytesConfig(</span>
+<span id="cb7-12">    load_in_4bit<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>,</span>
+<span id="cb7-13">    bnb_4bit_quant_type<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"nf4"</span>,</span>
+<span id="cb7-14">    bnb_4bit_use_double_quant<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>,</span>
+<span id="cb7-15">    bnb_4bit_compute_dtype<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>torch.bfloat16</span>
+<span id="cb7-16">)</span>
+<span id="cb7-17">model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> AutoModelForCausalLM.from_pretrained(</span>
+<span id="cb7-18">    model_id,</span>
+<span id="cb7-19">    quantization_config<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>bnb_config,</span>
+<span id="cb7-20">    use_cache<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>,</span>
+<span id="cb7-21">    device_map<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"auto"</span>,</span>
+<span id="cb7-22">)</span>
+<span id="cb7-23">model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> prepare_model_for_kbit_training(model)</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"c0a81123ca3b47f097408c1c5c4ebf16","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+</div>
+</section>
+<section id="use-sfttrainer-from-trl-for-training" class="level3">
+<h3 class="anchored" data-anchor-id="use-sfttrainer-from-trl-for-training">use <code>SFTTrainer</code> from <code>trl</code> for training</h3>
+<section id="first-define-a-utility-function-to-format-prompts." class="level4">
+<h4 class="anchored" data-anchor-id="first-define-a-utility-function-to-format-prompts.">First, define a utility function to format prompts.</h4>
+<div class="cell" data-tags="[]" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> prompt_formatter(sample):</span>
+<span id="cb8-2">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"""&lt;s&gt;### Instruction:</span></span>
+<span id="cb8-3"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">You are a helpful, respectful and honest assistant. </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb8-4"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Your task is to summarize the following dialogue. </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb8-5"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Your answer should be based on the provided dialogue only.</span></span>
+<span id="cb8-6"></span>
+<span id="cb8-7"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">### Dialogue:</span></span>
+<span id="cb8-8"><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>sample[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'dialogue'</span>]<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span></span>
+<span id="cb8-9"></span>
+<span id="cb8-10"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">### Summary:</span></span>
+<span id="cb8-11"><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>sample[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'summary'</span>]<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> &lt;/s&gt;"""</span></span>
+<span id="cb8-12"></span>
+<span id="cb8-13">n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb8-14"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(prompt_formatter(train_dataset[n]))</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;s&gt;### Instruction:
+You are a helpful, respectful and honest assistant. Your task is to summarize the following dialogue. Your answer should be based on the provided dialogue only.
+
+### Dialogue:
+Amanda: I baked  cookies. Do you want some?
+Jerry: Sure!
+Amanda: I'll bring you tomorrow :-)
+
+### Summary:
+Amanda baked cookies and will bring Jerry some tomorrow. &lt;/s&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="then-set-up-a-trainer-and-train." class="level4">
+<h4 class="anchored" data-anchor-id="then-set-up-a-trainer-and-train.">Then, set up a trainer and train.</h4>
+<div class="cell" data-tags="[]" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> transformers <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> TrainingArguments, AutoTokenizer</span>
+<span id="cb10-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> peft <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> LoraConfig, get_peft_model</span>
+<span id="cb10-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> trl <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> SFTTrainer</span>
+<span id="cb10-4"></span>
+<span id="cb10-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># </span></span>
+<span id="cb10-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># construct a Peft model.</span></span>
+<span id="cb10-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># the QLoRA paper recommends LoRA dropout = 0.05 for small models (7B, 13B)</span></span>
+<span id="cb10-8"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># </span></span>
+<span id="cb10-9">peft_config <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> LoraConfig(</span>
+<span id="cb10-10">    r<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>,</span>
+<span id="cb10-11">    lora_alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">16</span>,</span>
+<span id="cb10-12">    lora_dropout<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.05</span>,</span>
+<span id="cb10-13">    bias<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"none"</span>,</span>
+<span id="cb10-14">    task_type<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"CAUSAL_LM"</span>, </span>
+<span id="cb10-15">)</span>
+<span id="cb10-16">model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> get_peft_model(model, peft_config)</span>
+<span id="cb10-17"></span>
+<span id="cb10-18"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># </span></span>
+<span id="cb10-19"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># set up the trainer</span></span>
+<span id="cb10-20"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># </span></span>
+<span id="cb10-21">tokenizer <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> AutoTokenizer.from_pretrained(model_id)</span>
+<span id="cb10-22">tokenizer.pad_token <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tokenizer.eos_token</span>
+<span id="cb10-23">tokenizer.padding_side <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"right"</span></span>
+<span id="cb10-24"></span>
+<span id="cb10-25">args <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> TrainingArguments(</span>
+<span id="cb10-26">    output_dir<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"llama2-7b-chat-samsum"</span>,</span>
+<span id="cb10-27">    num_train_epochs<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,</span>
+<span id="cb10-28">    per_device_train_batch_size<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>,</span>
+<span id="cb10-29">    gradient_accumulation_steps<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,</span>
+<span id="cb10-30">    logging_steps<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>,</span>
+<span id="cb10-31">    save_strategy<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"epoch"</span>,</span>
+<span id="cb10-32">    learning_rate<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2e-4</span>,</span>
+<span id="cb10-33">    optim<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"paged_adamw_32bit"</span>,</span>
+<span id="cb10-34">    bf16<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>,</span>
+<span id="cb10-35">    fp16<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>,</span>
+<span id="cb10-36">    tf32<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>,</span>
+<span id="cb10-37">    max_grad_norm<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.3</span>,</span>
+<span id="cb10-38">    warmup_ratio<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.03</span>,</span>
+<span id="cb10-39">    lr_scheduler_type<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"constant"</span>,</span>
+<span id="cb10-40">    disable_tqdm<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>,</span>
+<span id="cb10-41">)</span>
+<span id="cb10-42">trainer <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> SFTTrainer(</span>
+<span id="cb10-43">    model<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>model,</span>
+<span id="cb10-44">    train_dataset<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>train_dataset,</span>
+<span id="cb10-45">    peft_config<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>peft_config,</span>
+<span id="cb10-46">    max_seq_length<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1024</span>,</span>
+<span id="cb10-47">    tokenizer<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>tokenizer,</span>
+<span id="cb10-48">    packing<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>,</span>
+<span id="cb10-49">    formatting_func<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>prompt_formatter, </span>
+<span id="cb10-50">    args<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>args,</span>
+<span id="cb10-51">)</span></code></pre></div>
+</div>
+<div class="cell" data-tags="[]" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1">trainer.train()</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>You're using a LlamaTokenizerFast tokenizer. Please note that with a fast tokenizer, using the `__call__` method is faster than using a method to encode the text followed by a call to the `pad` method to get a padded encoding.
+/vol04/llmenv/lib/python3.11/site-packages/torch/utils/checkpoint.py:429: UserWarning: torch.utils.checkpoint: please pass in use_reentrant=True or use_reentrant=False explicitly. The default value of use_reentrant will be updated to be False in the future. To maintain current behavior, pass use_reentrant=True. It is recommended that you use use_reentrant=False. Refer to docs for more details on the differences between the two variants.
+  warnings.warn(
+/vol04/llmenv/lib/python3.11/site-packages/torch/utils/checkpoint.py:429: UserWarning: torch.utils.checkpoint: please pass in use_reentrant=True or use_reentrant=False explicitly. The default value of use_reentrant will be updated to be False in the future. To maintain current behavior, pass use_reentrant=True. It is recommended that you use use_reentrant=False. Refer to docs for more details on the differences between the two variants.
+  warnings.warn(</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+
+    <div>
+      
+      <progress value="64" max="250" style="width:300px; height:20px; vertical-align: middle;"></progress>
+      [ 64/250 23:24 &lt; 1:10:14, 0.04 it/s, Epoch 1/2]
+    </div>
+    
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Step</th>
+<th data-quarto-table-cell-role="th">Training Loss</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>4</td>
+<td>2.386100</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td>2.089200</td>
+</tr>
+<tr class="odd">
+<td>12</td>
+<td>1.910900</td>
+</tr>
+<tr class="even">
+<td>16</td>
+<td>1.789500</td>
+</tr>
+<tr class="odd">
+<td>20</td>
+<td>1.757300</td>
+</tr>
+<tr class="even">
+<td>24</td>
+<td>1.767600</td>
+</tr>
+<tr class="odd">
+<td>28</td>
+<td>1.779400</td>
+</tr>
+<tr class="even">
+<td>32</td>
+<td>1.685600</td>
+</tr>
+<tr class="odd">
+<td>36</td>
+<td>1.703700</td>
+</tr>
+<tr class="even">
+<td>40</td>
+<td>1.661000</td>
+</tr>
+<tr class="odd">
+<td>44</td>
+<td>1.638300</td>
+</tr>
+<tr class="even">
+<td>48</td>
+<td>1.594400</td>
+</tr>
+<tr class="odd">
+<td>52</td>
+<td>1.538600</td>
+</tr>
+<tr class="even">
+<td>56</td>
+<td>1.617200</td>
+</tr>
+<tr class="odd">
+<td>60</td>
+<td>1.552800</td>
+</tr>
+<tr class="even">
+<td>64</td>
+<td>1.566100</td>
+</tr>
+</tbody>
+</table>
+<p>
+</p></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>TrainOutput(global_step=64, training_loss=1.7523600682616234, metrics={'train_runtime': 1430.7677, 'train_samples_per_second': 1.398, 'train_steps_per_second': 0.175, 'total_flos': 2.063561480208384e+16, 'train_loss': 1.7523600682616234, 'epoch': 1.26})</code></pre>
+</div>
+</div>
+<p>During training, the GPU memory usage was around 11GB.</p>
+<div style="text-align:center;">
+<p><img src="https://liminma.github.io/generative-ai-lab/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060_files/figure-html/383f57b1-1-afcc2ae1-f06c-4beb-824e-cbeb587814dc.png" width="800px"></p>
+</div>
+</section>
+<section id="save-the-adapter-model" class="level4">
+<h4 class="anchored" data-anchor-id="save-the-adapter-model">Save the adapter model</h4>
+<div class="cell" data-tags="[]" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">trainer.save_model()</span></code></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="run-inference-using-the-fine-tuned-model" class="level2">
+<h2 class="anchored" data-anchor-id="run-inference-using-the-fine-tuned-model">3. Run inference using the fine-tuned model</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> datasets <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> load_dataset</span>
+<span id="cb15-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> random <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> randrange</span>
+<span id="cb15-3"></span>
+<span id="cb15-4">dataset <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> load_dataset(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"samsum"</span>, split<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'validation'</span>)</span></code></pre></div>
+</div>
+<section id="load-the-adapter-and-the-base-model" class="level3">
+<h3 class="anchored" data-anchor-id="load-the-adapter-and-the-base-model">load the adapter and the base model</h3>
+<div class="cell" data-tags="[]" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> torch</span>
+<span id="cb16-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> peft <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> AutoPeftModelForCausalLM</span>
+<span id="cb16-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> transformers <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> AutoTokenizer</span>
+<span id="cb16-4"></span>
+<span id="cb16-5">model_folder <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"llama2-7b-chat-samsum"</span></span>
+<span id="cb16-6"></span>
+<span id="cb16-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># load both the adapter and the base model</span></span>
+<span id="cb16-8">model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> AutoPeftModelForCausalLM.from_pretrained(</span>
+<span id="cb16-9">    model_folder,</span>
+<span id="cb16-10">    low_cpu_mem_usage<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>,</span>
+<span id="cb16-11">    torch_dtype<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>torch.float16,</span>
+<span id="cb16-12">    load_in_4bit<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>,</span>
+<span id="cb16-13">    device_map<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'auto'</span></span>
+<span id="cb16-14">)</span>
+<span id="cb16-15">tokenizer <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> AutoTokenizer.from_pretrained(model_folder)</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"f8ca16a29ca9456ea6214889df14d882","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.</code></pre>
+</div>
+</div>
+<div class="cell" data-jupyter="{&quot;outputs_hidden&quot;:true}" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(model)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>PeftModelForCausalLM(
+  (base_model): LoraModel(
+    (model): LlamaForCausalLM(
+      (model): LlamaModel(
+        (embed_tokens): Embedding(32000, 4096)
+        (layers): ModuleList(
+          (0-31): 32 x LlamaDecoderLayer(
+            (self_attn): LlamaAttention(
+              (q_proj): Linear4bit(
+                in_features=4096, out_features=4096, bias=False
+                (lora_dropout): ModuleDict(
+                  (default): Dropout(p=0.05, inplace=False)
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=4096, out_features=8, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=8, out_features=4096, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+              )
+              (k_proj): Linear4bit(in_features=4096, out_features=4096, bias=False)
+              (v_proj): Linear4bit(
+                in_features=4096, out_features=4096, bias=False
+                (lora_dropout): ModuleDict(
+                  (default): Dropout(p=0.05, inplace=False)
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=4096, out_features=8, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=8, out_features=4096, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+              )
+              (o_proj): Linear4bit(in_features=4096, out_features=4096, bias=False)
+              (rotary_emb): LlamaRotaryEmbedding()
+            )
+            (mlp): LlamaMLP(
+              (gate_proj): Linear4bit(in_features=4096, out_features=11008, bias=False)
+              (up_proj): Linear4bit(in_features=4096, out_features=11008, bias=False)
+              (down_proj): Linear4bit(in_features=11008, out_features=4096, bias=False)
+              (act_fn): SiLUActivation()
+            )
+            (input_layernorm): LlamaRMSNorm()
+            (post_attention_layernorm): LlamaRMSNorm()
+          )
+        )
+        (norm): LlamaRMSNorm()
+      )
+      (lm_head): Linear(in_features=4096, out_features=32000, bias=False)
+    )
+  )
+)</code></pre>
+</div>
+</div>
+</section>
+<section id="pick-a-sample-construct-a-prompt-and-send-it-to-the-model" class="level3">
+<h3 class="anchored" data-anchor-id="pick-a-sample-construct-a-prompt-and-send-it-to-the-model">pick a sample, construct a prompt and send it to the model</h3>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1">sample <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> dataset[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>]</span>
+<span id="cb20-2"></span>
+<span id="cb20-3">prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"""### Instruction:</span></span>
+<span id="cb20-4"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">You are a helpful, respectful and honest assistant. </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb20-5"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Your task is to summarize the following dialogue. </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb20-6"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Your answer should be based on the provided dialogue only.</span></span>
+<span id="cb20-7"></span>
+<span id="cb20-8"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">### Dialogue:</span></span>
+<span id="cb20-9"><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>sample[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'dialogue'</span>]<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span></span>
+<span id="cb20-10"></span>
+<span id="cb20-11"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">### Summary:</span></span>
+<span id="cb20-12"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb20-13"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(prompt)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>### Instruction:
+You are a helpful, respectful and honest assistant. Your task is to summarize the following dialogue. Your answer should be based on the provided dialogue only.
+
+### Dialogue:
+Laura: I need a new printer :/
+Laura: thinking about this one
+Laura: &lt;file_other&gt;
+Jamie: you're sure you need a new one?
+Jamie: I mean you can buy a second hand one
+Laura: could be
+
+### Summary:
+</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb22" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1">input_ids <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tokenizer(prompt, return_tensors<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"pt"</span>).input_ids.cuda()</span>
+<span id="cb22-2">outputs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> model.generate(input_ids<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>input_ids, max_new_tokens<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">50</span>, temperature<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.7</span>)</span>
+<span id="cb22-3"></span>
+<span id="cb22-4"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Output:</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>,</span>
+<span id="cb22-5">      tokenizer.batch_decode(outputs.detach().cpu().numpy(), skip_special_tokens<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>][<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(prompt):])</span>
+<span id="cb22-6"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Ground truth:</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>, sample[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'summary'</span>])</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Output:
+ Laura is looking for a new printer. She is considering buying a second hand one. 
+
+Ground truth:
+ Laura is going to buy a printer.</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="merge-and-save-the-fine-tuned-model" class="level2">
+<h2 class="anchored" data-anchor-id="merge-and-save-the-fine-tuned-model">4. Merge and save the fine-tuned model</h2>
+<div class="cell" data-tags="[]" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> torch</span>
+<span id="cb24-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> peft <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> AutoPeftModelForCausalLM</span>
+<span id="cb24-3"></span>
+<span id="cb24-4">model_folder <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"llama2-7b-chat-samsum"</span></span>
+<span id="cb24-5"></span>
+<span id="cb24-6">model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> AutoPeftModelForCausalLM.from_pretrained(</span>
+<span id="cb24-7">    model_folder,</span>
+<span id="cb24-8">    low_cpu_mem_usage<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>,</span>
+<span id="cb24-9">    torch_dtype<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>torch.float16</span>
+<span id="cb24-10">)</span>
+<span id="cb24-11"></span>
+<span id="cb24-12"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># merge the lora adapter and the base model</span></span>
+<span id="cb24-13">merged_model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> model.merge_and_unload()</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"2ecefcd0054a488abe208a8ac5be8f3f","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+</div>
+<div class="cell" data-tags="[]" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb25" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> transformers <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> AutoTokenizer</span>
+<span id="cb25-2"></span>
+<span id="cb25-3">output_folder <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'merged-llama2-7b-chat-samsum'</span></span>
+<span id="cb25-4"></span>
+<span id="cb25-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># save the merged model and the tokenizer</span></span>
+<span id="cb25-6">merged_model.save_pretrained(output_folder, safe_serialization<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span>
+<span id="cb25-7"></span>
+<span id="cb25-8">tokenizer <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> AutoTokenizer.from_pretrained(model_folder)</span>
+<span id="cb25-9">tokenizer.save_pretrained(output_folder)</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<pre><code>('merged-llama2-7b-chat-samsum/tokenizer_config.json',
+ 'merged-llama2-7b-chat-samsum/special_tokens_map.json',
+ 'merged-llama2-7b-chat-samsum/tokenizer.json')</code></pre>
+</div>
+</div>
+</section>
+<section id="run-inference-using-the-merged-model" class="level2">
+<h2 class="anchored" data-anchor-id="run-inference-using-the-merged-model">5. Run inference using the merged model</h2>
+<div class="cell" data-tags="[]" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb28" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> torch</span>
+<span id="cb28-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> transformers <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> AutoTokenizer, AutoModelForCausalLM</span>
+<span id="cb28-3"></span>
+<span id="cb28-4">model_folder <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'merged-llama2-7b-chat-samsum'</span></span>
+<span id="cb28-5"></span>
+<span id="cb28-6">tokenizer <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> AutoTokenizer.from_pretrained(model_folder)</span>
+<span id="cb28-7"></span>
+<span id="cb28-8">model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> AutoModelForCausalLM.from_pretrained(</span>
+<span id="cb28-9">    model_folder,</span>
+<span id="cb28-10">    low_cpu_mem_usage<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>,</span>
+<span id="cb28-11">    torch_dtype<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>torch.float16,</span>
+<span id="cb28-12">    load_in_4bit<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>,</span>
+<span id="cb28-13">    device_map<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"auto"</span>,</span>
+<span id="cb28-14">)</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"4e071688375447e9944183293b7c611c","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+</div>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb30" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(model)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>LlamaForCausalLM(
+  (model): LlamaModel(
+    (embed_tokens): Embedding(32000, 4096)
+    (layers): ModuleList(
+      (0-31): 32 x LlamaDecoderLayer(
+        (self_attn): LlamaAttention(
+          (q_proj): Linear4bit(in_features=4096, out_features=4096, bias=False)
+          (k_proj): Linear4bit(in_features=4096, out_features=4096, bias=False)
+          (v_proj): Linear4bit(in_features=4096, out_features=4096, bias=False)
+          (o_proj): Linear4bit(in_features=4096, out_features=4096, bias=False)
+          (rotary_emb): LlamaRotaryEmbedding()
+        )
+        (mlp): LlamaMLP(
+          (gate_proj): Linear4bit(in_features=4096, out_features=11008, bias=False)
+          (up_proj): Linear4bit(in_features=4096, out_features=11008, bias=False)
+          (down_proj): Linear4bit(in_features=11008, out_features=4096, bias=False)
+          (act_fn): SiLUActivation()
+        )
+        (input_layernorm): LlamaRMSNorm()
+        (post_attention_layernorm): LlamaRMSNorm()
+      )
+    )
+    (norm): LlamaRMSNorm()
+  )
+  (lm_head): Linear(in_features=4096, out_features=32000, bias=False)
+)</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb32" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> transformers <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pipeline, GenerationConfig</span>
+<span id="cb32-2"></span>
+<span id="cb32-3">gen_config <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> GenerationConfig.from_pretrained(model_folder)</span>
+<span id="cb32-4">gen_config.max_new_tokens <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">50</span></span>
+<span id="cb32-5">gen_config.temperature <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.7</span></span>
+<span id="cb32-6">gen_config.repetition_penalty <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.1</span></span>
+<span id="cb32-7">gen_config.pad_token_id <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tokenizer.eos_token_id</span>
+<span id="cb32-8"></span>
+<span id="cb32-9">pipe <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pipeline(</span>
+<span id="cb32-10">    task<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"text-generation"</span>,</span>
+<span id="cb32-11">    model<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>model,</span>
+<span id="cb32-12">    tokenizer<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>tokenizer,</span>
+<span id="cb32-13">    device_map<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'auto'</span>,</span>
+<span id="cb32-14">    generation_config<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>gen_config,</span>
+<span id="cb32-15">)</span></code></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> datasets <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> load_dataset</span>
+<span id="cb33-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> random <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> randrange</span>
+<span id="cb33-3"></span>
+<span id="cb33-4">dataset <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> load_dataset(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"samsum"</span>, split<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'validation'</span>)</span></code></pre></div>
+</div>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb34" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1">sample <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> dataset[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>]</span>
+<span id="cb34-2"></span>
+<span id="cb34-3">prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"""### Instruction:</span></span>
+<span id="cb34-4"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">You are a helpful, respectful and honest assistant. </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb34-5"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Your task is to summarize the following dialogue. </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb34-6"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Your answer should be based on the provided dialogue only.</span></span>
+<span id="cb34-7"></span>
+<span id="cb34-8"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">### Dialogue:</span></span>
+<span id="cb34-9"><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>sample[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'dialogue'</span>]<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span></span>
+<span id="cb34-10"></span>
+<span id="cb34-11"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">### Summary:</span></span>
+<span id="cb34-12"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb34-13"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(prompt)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>### Instruction:
+You are a helpful, respectful and honest assistant. Your task is to summarize the following dialogue. Your answer should be based on the provided dialogue only.
+
+### Dialogue:
+Laura: I need a new printer :/
+Laura: thinking about this one
+Laura: &lt;file_other&gt;
+Jamie: you're sure you need a new one?
+Jamie: I mean you can buy a second hand one
+Laura: could be
+
+### Summary:
+</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb36" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1">output <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pipe(prompt)</span>
+<span id="cb36-2"></span>
+<span id="cb36-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Output:</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>, output[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'generated_text'</span>][<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(prompt):])</span>
+<span id="cb36-4"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Ground truth:</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>, sample[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'summary'</span>])</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Output:
+ In this dialogue, Laura mentions that she needs a new printer. Jamie asks if she's sure she needs a new one and suggests buying a second-hand one instead. Laura is unsure but open to considering it.
+
+Ground truth:
+ Laura is going to buy a printer.</code></pre>
+</div>
+</div>
+</section>
+<section id="compile-the-merged-model-using-mlc-llm" class="level2">
+<h2 class="anchored" data-anchor-id="compile-the-merged-model-using-mlc-llm">6. Compile the merged model using MLC LLM</h2>
+<p><a href="https://github.com/mlc-ai/mlc-llm">mlc-llm</a> is an open-source project for high-performance native deployment on various devices with machine learning compilation techniques.</p>
+<p>We’ll use a docker container to simplify the process of compiling and serving the merged model from the previous step.</p>
+<p>Here is the Dockerfile:</p>
+<hr>
+<pre><code>FROM nvidia/cuda:12.2.2-devel-ubuntu22.04
+
+SHELL ["/bin/bash", "-ec"]
+
+RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    git \
+    less \
+    tree \
+    vim \
+    wget
+
+ARG miniconda_installer=Miniconda3-py311_23.9.0-0-Linux-x86_64.sh
+
+ENV PATH=/opt/miniconda3/bin:$PATH
+
+RUN wget https://repo.anaconda.com/miniconda/$miniconda_installer &amp;&amp; \
+    bash ./$miniconda_installer -p /opt/miniconda3 -s -b &amp;&amp; \
+    conda install pytorch-cpu==2.1.0 git-lfs==3.4.0 safetensors==0.4.0 -n base -c conda-forge &amp;&amp; \
+    rm -f ./$miniconda_installer
+
+RUN pip install --pre -f https://mlc.ai/wheels \
+    mlc-ai-nightly-cu122 \
+    mlc-chat-nightly-cu122
+
+RUN git clone https://github.com/mlc-ai/mlc-llm.git /mlc-llm
+
+WORkDIR /mlc-llm</code></pre>
+<hr>
+<section id="build-the-docker-image" class="level3">
+<h3 class="anchored" data-anchor-id="build-the-docker-image">Build the docker image</h3>
+<div class="sourceCode" id="cb39" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb39-1"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">docker</span> build <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-t</span> mlcllm-env .</span></code></pre></div>
+</section>
+<section id="launch-a-container" class="level3">
+<h3 class="anchored" data-anchor-id="launch-a-container">Launch a container</h3>
+<div class="sourceCode" id="cb40" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb40-1"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">docker</span> run <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">--rm</span> <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-it</span> <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb40-2">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-v</span> ./merged-llama2-7b-chat-samsum:/llama2-7b-chat-samsum <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb40-3">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-v</span> ./compiled-models:/compiled-models <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb40-4">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">--gpus</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'"device=0"'</span> <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb40-5">    mlcllm-env bash</span></code></pre></div>
+<section id="inside-the-container-run-the-following-command-to-compile-the-merged-model" class="level4">
+<h4 class="anchored" data-anchor-id="inside-the-container-run-the-following-command-to-compile-the-merged-model">Inside the container, run the following command to compile the merged model</h4>
+<div class="sourceCode" id="cb41" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb41-1"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">python3</span> <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-m</span> mlc_llm.build <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb41-2">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">--model</span> /llama2-7b-chat-samsum <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb41-3">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">--target</span> cuda <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb41-4">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">--quantization</span> q4f16_1 <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb41-5">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">--use-safetensors</span> <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb41-6">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">--artifact-path</span> /compiled-models</span></code></pre></div>
+<p>Exit the container after it’s done. The compiled model will be in the <code>./compiled-models</code> folder.</p>
+</section>
+</section>
+</section>
+<section id="service-the-compiled-model-through-rest-api" class="level2">
+<h2 class="anchored" data-anchor-id="service-the-compiled-model-through-rest-api">7. Service the compiled model through Rest API</h2>
+<section id="start-a-container-to-serve-the-compiled-model" class="level3">
+<h3 class="anchored" data-anchor-id="start-a-container-to-serve-the-compiled-model">Start a container to serve the compiled model:</h3>
+<div class="sourceCode" id="cb42" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb42-1"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">docker</span> run <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">--rm</span> <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-it</span> <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb42-2">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-p</span> 9000:9000 <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb42-3">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">--gpus</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'"device=0"'</span> <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb42-4">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-v</span> ./compiled-models/llama2-7b-chat-samsum-q4f16_1:/dist/llama2-7b-chat-samsum-q4f16_1 <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb42-5">    mlcllm-env bash</span></code></pre></div>
+</section>
+<section id="in-the-container-run-the-command" class="level3">
+<h3 class="anchored" data-anchor-id="in-the-container-run-the-command">In the container, run the command:</h3>
+<div class="sourceCode" id="cb43" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb43-1"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">python</span> <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-m</span> mlc_chat.rest <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb43-2">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">--model</span> /dist/llama2-7b-chat-samsum-q4f16_1/params <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb43-3">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">--lib-path</span> /dist/llama2-7b-chat-samsum-q4f16_1/llama2-7b-chat-samsum-q4f16_1-cuda.so <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb43-4">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">--device</span> cuda <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb43-5">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">--host</span> 0.0.0.0 <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb43-6">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">--port</span> 9000</span></code></pre></div>
+<p>Now, open the link <a href="http://localhost:9000/docs">http://localhost:9000/docs</a> in a browser to see the API docs:</p>
+<div style="text-align:center;">
+<p><img style="border: 1px solid #aaa;" src="https://liminma.github.io/generative-ai-lab/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060_files/figure-html/c5d24173-1-bfd861da-89b7-4784-a937-277c6d492e6b.png" width="800px;"></p>
+</div>
+</section>
+<section id="call-the-rest-api" class="level3">
+<h3 class="anchored" data-anchor-id="call-the-rest-api">Call the Rest API</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> datasets <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> load_dataset</span>
+<span id="cb44-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> random <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> randrange</span>
+<span id="cb44-3"></span>
+<span id="cb44-4">dataset <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> load_dataset(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"samsum"</span>, split<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'validation'</span>)</span></code></pre></div>
+</div>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb45" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1">sample <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> dataset[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>]</span>
+<span id="cb45-2"></span>
+<span id="cb45-3">prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"""### Instruction:</span></span>
+<span id="cb45-4"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">You are a helpful, respectful and honest assistant. </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb45-5"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Your task is to summarize the following dialogue. </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb45-6"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Your answer should be based on the provided dialogue only.</span></span>
+<span id="cb45-7"></span>
+<span id="cb45-8"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">### Dialogue:</span></span>
+<span id="cb45-9"><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>sample[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'dialogue'</span>]<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span></span>
+<span id="cb45-10"></span>
+<span id="cb45-11"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">### Summary:</span></span>
+<span id="cb45-12"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb45-13"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(prompt)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>### Instruction:
+You are a helpful, respectful and honest assistant. Your task is to summarize the following dialogue. Your answer should be based on the provided dialogue only.
+
+### Dialogue:
+Laura: I need a new printer :/
+Laura: thinking about this one
+Laura: &lt;file_other&gt;
+Jamie: you're sure you need a new one?
+Jamie: I mean you can buy a second hand one
+Laura: could be
+
+### Summary:
+</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb47" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> openai</span>
+<span id="cb47-2">openai.api_key <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"none"</span></span>
+<span id="cb47-3">openai.api_base <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"http://127.0.0.1:9000/v1"</span></span></code></pre></div>
+</div>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb48" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1">completion <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> openai.ChatCompletion.create(</span>
+<span id="cb48-2">  model<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'none'</span>,</span>
+<span id="cb48-3">  messages<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[{<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"role"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"user"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"content"</span>: prompt}]</span>
+<span id="cb48-4">)</span>
+<span id="cb48-5"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(completion.choices[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>].message.content)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Laura is considering purchasing a new printer, but is unsure if it's necessary. Jamie suggests buying a second-hand printer as an alternative. Laura is open to the idea but wants to explore more options before making a decision.</code></pre>
+</div>
+</div>
+
+
+
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body">
+<div id="ref-dettmers2023qlora" class="csl-entry">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline">T. Dettmers, A. Pagnoni, A. Holtzman, and L. Zettlemoyer, <span>“QLoRA: Efficient finetuning of quantized LLMs.”</span> 2023. Available: <a href="https://arxiv.org/abs/2305.14314">https://arxiv.org/abs/2305.14314</a></div>
+</div>
+</div></section></div> ]]></description>
+  <category>Fine-tuning</category>
+  <category>Llama 2</category>
+  <category>MLC LLM</category>
+  <guid>https://liminma.github.io/generative-ai-lab/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060.html</guid>
+  <pubDate>Wed, 25 Oct 2023 04:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Understanding Tree-of-Thoughts (ToT)</title>
   <link>https://liminma.github.io/generative-ai-lab/notebooks/tree-of-thoughts.html</link>

@@ -2,70 +2,74 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/langchain_memory.html</loc>
-    <lastmod>2023-10-03T22:16:02.532Z</lastmod>
+    <lastmod>2023-11-16T02:11:03.753Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/llama2_prompt_template.html</loc>
-    <lastmod>2023-10-03T22:16:00.816Z</lastmod>
-  </url>
-  <url>
-    <loc>https://liminma.github.io/generative-ai-lab/notebooks/training_eval_loop.html</loc>
-    <lastmod>2023-10-03T22:15:59.456Z</lastmod>
-  </url>
-  <url>
-    <loc>https://liminma.github.io/generative-ai-lab/notebooks/using_Trainer_api.html</loc>
-    <lastmod>2023-10-03T22:15:58.232Z</lastmod>
-  </url>
-  <url>
-    <loc>https://liminma.github.io/generative-ai-lab/notebooks/langchain_localai_demo.html</loc>
-    <lastmod>2023-10-03T22:15:56.940Z</lastmod>
-  </url>
-  <url>
-    <loc>https://liminma.github.io/generative-ai-lab/notebooks/langchain_embed_search_pdf.html</loc>
-    <lastmod>2023-10-03T22:15:55.716Z</lastmod>
-  </url>
-  <url>
-    <loc>https://liminma.github.io/generative-ai-lab/notebooks/training_with_accelarate.html</loc>
-    <lastmod>2023-10-03T22:15:55.128Z</lastmod>
-  </url>
-  <url>
-    <loc>https://liminma.github.io/generative-ai-lab/notebooks/localai_openai_api.html</loc>
-    <lastmod>2023-10-03T22:15:53.516Z</lastmod>
-  </url>
-  <url>
-    <loc>https://liminma.github.io/generative-ai-lab/index.html</loc>
-    <lastmod>2023-10-03T22:15:52.012Z</lastmod>
-  </url>
-  <url>
-    <loc>https://liminma.github.io/generative-ai-lab/archive.html</loc>
-    <lastmod>2023-10-03T22:15:52.736Z</lastmod>
-  </url>
-  <url>
-    <loc>https://liminma.github.io/generative-ai-lab/notebooks/programming_with_chatgpt_api.html</loc>
-    <lastmod>2023-10-03T22:15:54.524Z</lastmod>
-  </url>
-  <url>
-    <loc>https://liminma.github.io/generative-ai-lab/notebooks/preprocessing_dataset_pytorch.html</loc>
-    <lastmod>2023-10-03T22:15:55.424Z</lastmod>
-  </url>
-  <url>
-    <loc>https://liminma.github.io/generative-ai-lab/notebooks/understanding_react.html</loc>
-    <lastmod>2023-10-03T22:15:56.364Z</lastmod>
-  </url>
-  <url>
-    <loc>https://liminma.github.io/generative-ai-lab/notebooks/understanding_chain_of_thought.html</loc>
-    <lastmod>2023-10-03T22:15:57.624Z</lastmod>
-  </url>
-  <url>
-    <loc>https://liminma.github.io/generative-ai-lab/notebooks/react_agent_llama2.html</loc>
-    <lastmod>2023-10-03T22:15:58.832Z</lastmod>
+    <lastmod>2023-11-16T02:11:02.177Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/tree-of-thoughts.html</loc>
-    <lastmod>2023-10-03T22:16:00.096Z</lastmod>
+    <lastmod>2023-11-16T02:11:00.909Z</lastmod>
+  </url>
+  <url>
+    <loc>https://liminma.github.io/generative-ai-lab/notebooks/react_agent_llama2.html</loc>
+    <lastmod>2023-11-16T02:10:59.685Z</lastmod>
+  </url>
+  <url>
+    <loc>https://liminma.github.io/generative-ai-lab/notebooks/understanding_chain_of_thought.html</loc>
+    <lastmod>2023-11-16T02:10:58.477Z</lastmod>
+  </url>
+  <url>
+    <loc>https://liminma.github.io/generative-ai-lab/notebooks/understanding_react.html</loc>
+    <lastmod>2023-11-16T02:10:57.265Z</lastmod>
+  </url>
+  <url>
+    <loc>https://liminma.github.io/generative-ai-lab/notebooks/preprocessing_dataset_pytorch.html</loc>
+    <lastmod>2023-11-16T02:10:56.317Z</lastmod>
+  </url>
+  <url>
+    <loc>https://liminma.github.io/generative-ai-lab/notebooks/programming_with_chatgpt_api.html</loc>
+    <lastmod>2023-11-16T02:10:55.401Z</lastmod>
+  </url>
+  <url>
+    <loc>https://liminma.github.io/generative-ai-lab/archive.html</loc>
+    <lastmod>2023-11-16T02:10:53.813Z</lastmod>
+  </url>
+  <url>
+    <loc>https://liminma.github.io/generative-ai-lab/index.html</loc>
+    <lastmod>2023-11-16T02:10:53.113Z</lastmod>
+  </url>
+  <url>
+    <loc>https://liminma.github.io/generative-ai-lab/notebooks/localai_openai_api.html</loc>
+    <lastmod>2023-11-16T02:10:54.405Z</lastmod>
+  </url>
+  <url>
+    <loc>https://liminma.github.io/generative-ai-lab/notebooks/training_with_accelarate.html</loc>
+    <lastmod>2023-11-16T02:10:56.009Z</lastmod>
+  </url>
+  <url>
+    <loc>https://liminma.github.io/generative-ai-lab/notebooks/langchain_embed_search_pdf.html</loc>
+    <lastmod>2023-11-16T02:10:56.625Z</lastmod>
+  </url>
+  <url>
+    <loc>https://liminma.github.io/generative-ai-lab/notebooks/langchain_localai_demo.html</loc>
+    <lastmod>2023-11-16T02:10:57.809Z</lastmod>
+  </url>
+  <url>
+    <loc>https://liminma.github.io/generative-ai-lab/notebooks/using_Trainer_api.html</loc>
+    <lastmod>2023-11-16T02:10:59.085Z</lastmod>
+  </url>
+  <url>
+    <loc>https://liminma.github.io/generative-ai-lab/notebooks/training_eval_loop.html</loc>
+    <lastmod>2023-11-16T02:11:00.297Z</lastmod>
+  </url>
+  <url>
+    <loc>https://liminma.github.io/generative-ai-lab/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060.html</loc>
+    <lastmod>2023-11-16T02:11:01.489Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/generative-ai-lab/notebooks/experiment_with_prompt_engineering.html</loc>
-    <lastmod>2023-10-03T22:16:01.864Z</lastmod>
+    <lastmod>2023-11-16T02:11:03.157Z</lastmod>
   </url>
 </urlset>
