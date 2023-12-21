@@ -2,14 +2,13 @@ project:
   type: website
 
 website:
-  title: "Limin's Generative AI Lab"
-  site-url: https://liminma.github.io/generative-ai-lab
-  description: "My experiments with LLMs and related technologies."
+  title: "Limin's Machine Learning Lab"
+  site-url: https://liminma.github.io/machine-learning-lab
   page-navigation: true
   navbar:
     right:
       - icon: github
-        href: https://github.com/liminma
+        href: https://github.com/liminma/machine-learning-lab
       - icon: linkedin
         href: https://www.linkedin.com/in/liminma2021
       - text: Archive
@@ -18,6 +17,3 @@ format:
   html:
     theme: cosmo
     css: styles.css
-
-
-
