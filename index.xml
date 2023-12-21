@@ -5,25 +5,25 @@
       xmlns:dc="http://purl.org/dc/elements/1.1/" 
       version="2.0">
 <channel>
-<title>Limin&#39;s Generative AI Lab</title>
-<link>https://liminma.github.io/generative-ai-lab/index.html</link>
-<atom:link href="https://liminma.github.io/generative-ai-lab/index.xml" rel="self" type="application/rss+xml"/>
-<description>My experiments with LLMs and related technologies.</description>
+<title>Limin&#39;s Machine Learning Lab</title>
+<link>https://liminma.github.io/machine-learning-lab/index.html</link>
+<atom:link href="https://liminma.github.io/machine-learning-lab/index.xml" rel="self" type="application/rss+xml"/>
+<description></description>
 <generator>quarto-1.3.433</generator>
 <lastBuildDate>Wed, 25 Oct 2023 04:00:00 GMT</lastBuildDate>
 <item>
   <title>How to fine-tune, compile and serve Llama2 7B-chat for summarization on a single GPU (12GB)</title>
-  <link>https://liminma.github.io/generative-ai-lab/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060.html</link>
+  <link>https://liminma.github.io/machine-learning-lab/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060.html</link>
   <description><![CDATA[ 
 
 
 
 
 <div style="text-align: right;">
-<p><a target="_blank" href="https://github.com/liminma/generative-ai-lab/blob/main/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060.ipynb"> <img src="https://liminma.github.io/generative-ai-lab/notebooks/https:/colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"> </a></p>
+<p><a target="_blank" href="https://colab.research.google.com/github/liminma/machine-learning-lab/blob/main/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060.ipynb"> <img src="https://liminma.github.io/machine-learning-lab/notebooks/https:/colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"> </a></p>
 </div>
 <div>
-<img class="preview-image" src="https://liminma.github.io/generative-ai-lab/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060_files/figure-html/d870babc-1-e50ffe05-7e2c-4c27-957f-c41869f1f68c.jpg" width="800px">
+<img class="preview-image" src="https://liminma.github.io/machine-learning-lab/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060_files/figure-html/a8ce0f97-1-e50ffe05-7e2c-4c27-957f-c41869f1f68c.jpg" width="800px">
 </div>
 <div style="text-align: right; font-size: 10px; color: grey; margin-bottom: 2em;">
 Source: Photo by <a style="color: grey;" href="https://unsplash.com/@lucaskphoto?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">Lucas Kepner</a> on <a style="color: grey;" href="https://unsplash.com/photos/a-close-up-of-a-sign-in-the-dark-vJ3Lt-mcGP4?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">Unsplash</a>
@@ -583,7 +583,7 @@ font-style: inherit;">=</span>args,</span>
 </div>
 <p>During training, the GPU memory usage was around 11GB.</p>
 <div style="text-align:center;">
-<p><img src="https://liminma.github.io/generative-ai-lab/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060_files/figure-html/8f798b6d-1-afcc2ae1-f06c-4beb-824e-cbeb587814dc.png" width="800px"></p>
+<p><img src="https://liminma.github.io/machine-learning-lab/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060_files/figure-html/63fc6a49-1-afcc2ae1-f06c-4beb-824e-cbeb587814dc.png" width="800px"></p>
 </div>
 </section>
 <section id="save-the-adapter-model" class="level4">
@@ -1396,7 +1396,7 @@ background-color: null;
 font-style: inherit;">--port</span> 9000</span></code></pre></div>
 <p>Now, open the link <a href="http://localhost:9000/docs">http://localhost:9000/docs</a> in a browser to see the API docs:</p>
 <div style="text-align:center;">
-<p><img style="border: 1px solid #aaa;" src="https://liminma.github.io/generative-ai-lab/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060_files/figure-html/6e6ad07f-1-bfd861da-89b7-4784-a937-277c6d492e6b.png" width="800px;"></p>
+<p><img style="border: 1px solid #aaa;" src="https://liminma.github.io/machine-learning-lab/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060_files/figure-html/997deb22-1-bfd861da-89b7-4784-a937-277c6d492e6b.png" width="800px;"></p>
 </div>
 </section>
 <section id="call-the-rest-api" class="level3">
@@ -1542,12 +1542,12 @@ font-style: inherit;">0</span>].message.content)</span></code></pre></div>
   <category>Fine-tuning</category>
   <category>Llama 2</category>
   <category>MLC LLM</category>
-  <guid>https://liminma.github.io/generative-ai-lab/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060.html</guid>
+  <guid>https://liminma.github.io/machine-learning-lab/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060.html</guid>
   <pubDate>Wed, 25 Oct 2023 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Understanding Tree-of-Thoughts (ToT)</title>
-  <link>https://liminma.github.io/generative-ai-lab/notebooks/tree-of-thoughts.html</link>
+  <link>https://liminma.github.io/machine-learning-lab/notebooks/tree-of-thoughts.html</link>
   <description><![CDATA[ 
 
 
@@ -1555,7 +1555,7 @@ font-style: inherit;">0</span>].message.content)</span></code></pre></div>
 
 <p>Tree-of-Thoughts (ToT) <span class="citation" data-cites="yao2023tree">[1]</span> is a framework for LLM inference. It allows models to explore multiple reasoning paths and make deliberate decisions for problem solving. ToT generalizes over the Chain-of-Thought (CoT) approach and enables LLMs to generate and evaluate thoughts, which are coherent units of text, as intermediate steps toward a final solution. It organizes thoughts into a data structure of branching tree based on an evaluation score of a thought. Thoughts could be, - a question - a hypothesis - a plan - a partial solution - any texts that help models to solve the problem</p>
 <div style="text-align: center;">
-<p><img src="https://liminma.github.io/generative-ai-lab/notebooks/tree-of-thoughts_files/figure-html/2ad43573-ec26-4da0-85aa-1e11d125bccd-1-8e610d5b-529a-43f5-9b78-7658b3d88316.png" class="preview-image img-fluid"> <br>Image source: Yao et al. <span class="citation" data-cites="yao2023tree">[1]</span></p>
+<p><img src="https://liminma.github.io/machine-learning-lab/notebooks/tree-of-thoughts_files/figure-html/2ad43573-ec26-4da0-85aa-1e11d125bccd-1-8e610d5b-529a-43f5-9b78-7658b3d88316.png" class="preview-image img-fluid"> <br>Image source: Yao et al. <span class="citation" data-cites="yao2023tree">[1]</span></p>
 </div>
 <p>The paper demonstrates that ToT significantly improves the performance of LLMs on three tasks that require non-trivial planning or search: Game of 24, Creative Writing, and Mini Crosswords.</p>
 <section id="how-does-it-work" class="level2">
@@ -1600,23 +1600,23 @@ font-style: inherit;">0</span>].message.content)</span></code></pre></div>
 </div></section></div> ]]></description>
   <category>Prompt Engineering</category>
   <category>Paper Reading</category>
-  <guid>https://liminma.github.io/generative-ai-lab/notebooks/tree-of-thoughts.html</guid>
+  <guid>https://liminma.github.io/machine-learning-lab/notebooks/tree-of-thoughts.html</guid>
   <pubDate>Sat, 05 Aug 2023 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Experiment ReAct prompting with Llama 2 70B-chat</title>
-  <link>https://liminma.github.io/generative-ai-lab/notebooks/react_agent_llama2.html</link>
+  <link>https://liminma.github.io/machine-learning-lab/notebooks/react_agent_llama2.html</link>
   <description><![CDATA[ 
 
 
 
 
 <div style="text-align: right;">
-<p><a target="_blank" href="https://colab.research.google.com/github/liminma/generative-ai-lab/blob/main/notebooks/react_agent_llama2.ipynb"> <img src="https://liminma.github.io/generative-ai-lab/notebooks/https:/colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"> </a></p>
+<p><a target="_blank" href="https://colab.research.google.com/github/liminma/machine-learning-lab/blob/main/notebooks/react_agent_llama2.ipynb"> <img src="https://liminma.github.io/machine-learning-lab/notebooks/https:/colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"> </a></p>
 </div>
 <p>ReAct <span class="citation" data-cites="yao2022react">[1]</span> is a method that uses Large Language Models (LLMs) to create reasoning and actions for tasks in an interleaved way. Reasoning helps the model to create, monitor and adjust action plans and handle exceptions. Actions allows the model to access knowledge bases or external environments to obtain more information to support its reasoning, as illustrated in the following figure:</p>
 <div style="text-align: center;">
-<p><img src="https://liminma.github.io/generative-ai-lab/notebooks/react_agent_llama2_files/figure-html/dfa1deb4-d8be-43ae-bbd4-66803ca98006-1-ce6e6eb2-6aaf-43fc-896f-8042be80af1e.png" class="preview-image img-fluid"> <br>Image source: Yao et al. <span class="citation" data-cites="yao2022react">[1]</span></p>
+<p><img src="https://liminma.github.io/machine-learning-lab/notebooks/react_agent_llama2_files/figure-html/dfa1deb4-d8be-43ae-bbd4-66803ca98006-1-ce6e6eb2-6aaf-43fc-896f-8042be80af1e.png" class="preview-image img-fluid"> <br>Image source: Yao et al. <span class="citation" data-cites="yao2022react">[1]</span></p>
 </div>
 <p>This notebook uses LangChain agent to try ReAct with Llama 2.</p>
 <section id="load-llama-2-70b-chat" class="level2">
@@ -1917,12 +1917,12 @@ Action: Finish[Richard Nixon]
   <category>Agent</category>
   <category>Prompt Engineering</category>
   <category>LangChain</category>
-  <guid>https://liminma.github.io/generative-ai-lab/notebooks/react_agent_llama2.html</guid>
+  <guid>https://liminma.github.io/machine-learning-lab/notebooks/react_agent_llama2.html</guid>
   <pubDate>Tue, 01 Aug 2023 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Understanding ReAct Prompting</title>
-  <link>https://liminma.github.io/generative-ai-lab/notebooks/understanding_react.html</link>
+  <link>https://liminma.github.io/machine-learning-lab/notebooks/understanding_react.html</link>
   <description><![CDATA[ 
 
 
@@ -1930,7 +1930,7 @@ Action: Finish[Richard Nixon]
 
 <p>In their paper, Yao et al. <span class="citation" data-cites="yao2022react">[1]</span> introduce ReAct, a method that leverages the reasoning and decision-making capabilities of large language models (LLMs) to solve complex tasks. ReAct can generate <strong>verbal reasoning traces</strong> and <strong>task specific actions</strong> in an interleaved fashion. This allows LLMs to solve tasks by creating and adjusting action plans, handling exceptions, and interacting with external sources. ReAct combines the pretrained internal knowledge of LLMs with additional information from external sources, such as knowledge bases or environments, as illustrated in the following figure <span class="citation" data-cites="reactblog2022">[2]</span>:</p>
 <div style="text-align: center;">
-<img src="https://liminma.github.io/generative-ai-lab/notebooks/understanding_react_files/figure-html/680db070-78c8-4d58-9994-0b64ea1d4d6f-1-af9ed347-96bf-4908-b170-f4759d053482.png" class="img-fluid">
+<img src="https://liminma.github.io/machine-learning-lab/notebooks/understanding_react_files/figure-html/680db070-78c8-4d58-9994-0b64ea1d4d6f-1-af9ed347-96bf-4908-b170-f4759d053482.png" class="img-fluid">
 </div>
 <p>According to the authors,</p>
 <ul>
@@ -1974,12 +1974,12 @@ Action: Finish[Richard Nixon]
   <category>Paper Reading</category>
   <category>Prompt Engineering</category>
   <category>Agent</category>
-  <guid>https://liminma.github.io/generative-ai-lab/notebooks/understanding_react.html</guid>
+  <guid>https://liminma.github.io/machine-learning-lab/notebooks/understanding_react.html</guid>
   <pubDate>Sat, 29 Jul 2023 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Understanding Chain-of-Thought (CoT)</title>
-  <link>https://liminma.github.io/generative-ai-lab/notebooks/understanding_chain_of_thought.html</link>
+  <link>https://liminma.github.io/machine-learning-lab/notebooks/understanding_chain_of_thought.html</link>
   <description><![CDATA[ 
 
 
@@ -1989,7 +1989,7 @@ Action: Finish[Richard Nixon]
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>Chain-of-Thought (CoT) <span class="citation" data-cites="wei2022chain">[1]</span> is a technique that enhances the reasoning capabilities of large language models (LLMs). It breaks down complex tasks into multiple intermediate reasoning steps to help LLMs to reach the final answer. It uses LLMs’ capability to do few-shot prompting for reasoning taks. The basic idea is to include chain of thought example(s) in prompting, as illustrated in the following figure:</p>
 <div style="text-align: center;">
-<p><img src="https://liminma.github.io/generative-ai-lab/notebooks/understanding_chain_of_thought_files/figure-html/680db070-78c8-4d58-9994-0b64ea1d4d6f-1-daa95e67-73c7-4031-a826-7dfe4ad266a0.png" class="img-fluid"></p>
+<p><img src="https://liminma.github.io/machine-learning-lab/notebooks/understanding_chain_of_thought_files/figure-html/680db070-78c8-4d58-9994-0b64ea1d4d6f-1-daa95e67-73c7-4031-a826-7dfe4ad266a0.png" class="img-fluid"></p>
 <p>Source: Wei et al. <span class="citation" data-cites="wei2022chain">[1]</span></p>
 </div>
 <p>The authors listed several attractive properties of CoT prompting:</p>
@@ -2308,18 +2308,18 @@ Choice: E</code></pre>
 </div></section></div> ]]></description>
   <category>Paper Reading</category>
   <category>Prompt Engineering</category>
-  <guid>https://liminma.github.io/generative-ai-lab/notebooks/understanding_chain_of_thought.html</guid>
+  <guid>https://liminma.github.io/machine-learning-lab/notebooks/understanding_chain_of_thought.html</guid>
   <pubDate>Wed, 26 Jul 2023 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>How to construct prompts for Llama 2 and chat with it?</title>
-  <link>https://liminma.github.io/generative-ai-lab/notebooks/llama2_prompt_template.html</link>
+  <link>https://liminma.github.io/machine-learning-lab/notebooks/llama2_prompt_template.html</link>
   <description><![CDATA[ 
 
 
 
 
-<img src="https://liminma.github.io/generative-ai-lab/notebooks/llama2_prompt_template_files/figure-html/b693ec84-00f6-4855-b2e7-e0bcd4bbc185-1-9aa851a5-2570-42b1-a25a-b4e75f2c2a32.jpg" class="img-fluid">
+<img src="https://liminma.github.io/machine-learning-lab/notebooks/llama2_prompt_template_files/figure-html/b693ec84-00f6-4855-b2e7-e0bcd4bbc185-1-9aa851a5-2570-42b1-a25a-b4e75f2c2a32.jpg" class="img-fluid">
 <div style="text-align: right; font-size: 10px; color: grey; margin-bottom: 2em;">
 Source: Photo by <a style="color: grey;" href="https://unsplash.com/@chris23?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Chris</a> on <a style="color: grey;" href="https://unsplash.com/photos/ZhF-9SKetvs?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a>
 </div>
@@ -2889,12 +2889,12 @@ Please note that this is a basic recipe and you can always adjust it to your lik
  ]]></description>
   <category>Llama 2</category>
   <category>Prompt Engineering</category>
-  <guid>https://liminma.github.io/generative-ai-lab/notebooks/llama2_prompt_template.html</guid>
+  <guid>https://liminma.github.io/machine-learning-lab/notebooks/llama2_prompt_template.html</guid>
   <pubDate>Mon, 24 Jul 2023 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Experiment with Prompt Engineering</title>
-  <link>https://liminma.github.io/generative-ai-lab/notebooks/experiment_with_prompt_engineering.html</link>
+  <link>https://liminma.github.io/machine-learning-lab/notebooks/experiment_with_prompt_engineering.html</link>
   <description><![CDATA[ 
 
 
@@ -5258,12 +5258,12 @@ font-style: inherit;">=</span> chat_completion(messages)</span>
  ]]></description>
   <category>openai</category>
   <category>Prompt Engineering</category>
-  <guid>https://liminma.github.io/generative-ai-lab/notebooks/experiment_with_prompt_engineering.html</guid>
+  <guid>https://liminma.github.io/machine-learning-lab/notebooks/experiment_with_prompt_engineering.html</guid>
   <pubDate>Sat, 15 Jul 2023 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Programming with ChatGPT API</title>
-  <link>https://liminma.github.io/generative-ai-lab/notebooks/programming_with_chatgpt_api.html</link>
+  <link>https://liminma.github.io/machine-learning-lab/notebooks/programming_with_chatgpt_api.html</link>
   <description><![CDATA[ 
 
 
@@ -9184,12 +9184,12 @@ font-style: inherit;">print</span>(evaluation_output)</span></code></pre></div>
  ]]></description>
   <category>openai</category>
   <category>Prompt Engineering</category>
-  <guid>https://liminma.github.io/generative-ai-lab/notebooks/programming_with_chatgpt_api.html</guid>
+  <guid>https://liminma.github.io/machine-learning-lab/notebooks/programming_with_chatgpt_api.html</guid>
   <pubDate>Sun, 09 Jul 2023 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Embedding and Searching PDF</title>
-  <link>https://liminma.github.io/generative-ai-lab/notebooks/langchain_embed_search_pdf.html</link>
+  <link>https://liminma.github.io/machine-learning-lab/notebooks/langchain_embed_search_pdf.html</link>
   <description><![CDATA[ 
 
 
@@ -9513,12 +9513,12 @@ While for small values of dkthe two mechanisms perform similarly, additive atten
 
  ]]></description>
   <category>LangChain</category>
-  <guid>https://liminma.github.io/generative-ai-lab/notebooks/langchain_embed_search_pdf.html</guid>
+  <guid>https://liminma.github.io/machine-learning-lab/notebooks/langchain_embed_search_pdf.html</guid>
   <pubDate>Sun, 09 Jul 2023 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Training with accelerate</title>
-  <link>https://liminma.github.io/generative-ai-lab/notebooks/training_with_accelarate.html</link>
+  <link>https://liminma.github.io/machine-learning-lab/notebooks/training_with_accelarate.html</link>
   <description><![CDATA[ 
 
 
@@ -9866,12 +9866,12 @@ font-style: inherit;">'labels'</span>])</span>
 
  ]]></description>
   <category>PyTorch</category>
-  <guid>https://liminma.github.io/generative-ai-lab/notebooks/training_with_accelarate.html</guid>
+  <guid>https://liminma.github.io/machine-learning-lab/notebooks/training_with_accelarate.html</guid>
   <pubDate>Thu, 29 Jun 2023 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Training and Evaluation Loop</title>
-  <link>https://liminma.github.io/generative-ai-lab/notebooks/training_eval_loop.html</link>
+  <link>https://liminma.github.io/machine-learning-lab/notebooks/training_eval_loop.html</link>
   <description><![CDATA[ 
 
 
@@ -10324,12 +10324,12 @@ font-style: inherit;">'labels'</span>])</span>
 
  ]]></description>
   <category>PyTorch</category>
-  <guid>https://liminma.github.io/generative-ai-lab/notebooks/training_eval_loop.html</guid>
+  <guid>https://liminma.github.io/machine-learning-lab/notebooks/training_eval_loop.html</guid>
   <pubDate>Thu, 29 Jun 2023 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Preprocessing Datasets Using PyTorch</title>
-  <link>https://liminma.github.io/generative-ai-lab/notebooks/preprocessing_dataset_pytorch.html</link>
+  <link>https://liminma.github.io/machine-learning-lab/notebooks/preprocessing_dataset_pytorch.html</link>
   <description><![CDATA[ 
 
 
@@ -10619,12 +10619,12 @@ font-style: inherit;">32</span></span></code></pre></div>
 
  ]]></description>
   <category>PyTorch</category>
-  <guid>https://liminma.github.io/generative-ai-lab/notebooks/preprocessing_dataset_pytorch.html</guid>
+  <guid>https://liminma.github.io/machine-learning-lab/notebooks/preprocessing_dataset_pytorch.html</guid>
   <pubDate>Mon, 26 Jun 2023 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Using Trainer API</title>
-  <link>https://liminma.github.io/generative-ai-lab/notebooks/using_Trainer_api.html</link>
+  <link>https://liminma.github.io/machine-learning-lab/notebooks/using_Trainer_api.html</link>
   <description><![CDATA[ 
 
 
@@ -10937,12 +10937,12 @@ You're using a BertTokenizerFast tokenizer. Please note that with a fast tokeniz
 
  ]]></description>
   <category>PyTorch</category>
-  <guid>https://liminma.github.io/generative-ai-lab/notebooks/using_Trainer_api.html</guid>
+  <guid>https://liminma.github.io/machine-learning-lab/notebooks/using_Trainer_api.html</guid>
   <pubDate>Mon, 26 Jun 2023 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>openai API with LocalAI</title>
-  <link>https://liminma.github.io/generative-ai-lab/notebooks/localai_openai_api.html</link>
+  <link>https://liminma.github.io/machine-learning-lab/notebooks/localai_openai_api.html</link>
   <description><![CDATA[ 
 
 
@@ -11138,12 +11138,12 @@ Elapsed time: 26.65933546423912</code></pre>
 
  ]]></description>
   <category>openai</category>
-  <guid>https://liminma.github.io/generative-ai-lab/notebooks/localai_openai_api.html</guid>
+  <guid>https://liminma.github.io/machine-learning-lab/notebooks/localai_openai_api.html</guid>
   <pubDate>Sat, 17 Jun 2023 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>LangChain with LocalAI</title>
-  <link>https://liminma.github.io/generative-ai-lab/notebooks/langchain_localai_demo.html</link>
+  <link>https://liminma.github.io/machine-learning-lab/notebooks/langchain_localai_demo.html</link>
   <description><![CDATA[ 
 
 
@@ -11296,12 +11296,12 @@ Bonjour, comment vas-tu ?</code></pre>
 
  ]]></description>
   <category>LangChain</category>
-  <guid>https://liminma.github.io/generative-ai-lab/notebooks/langchain_localai_demo.html</guid>
+  <guid>https://liminma.github.io/machine-learning-lab/notebooks/langchain_localai_demo.html</guid>
   <pubDate>Sat, 17 Jun 2023 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Using LangChain Memory</title>
-  <link>https://liminma.github.io/generative-ai-lab/notebooks/langchain_memory.html</link>
+  <link>https://liminma.github.io/machine-learning-lab/notebooks/langchain_memory.html</link>
   <description><![CDATA[ 
 
 
@@ -11745,8 +11745,447 @@ AI:
 
  ]]></description>
   <category>LangChain</category>
-  <guid>https://liminma.github.io/generative-ai-lab/notebooks/langchain_memory.html</guid>
+  <guid>https://liminma.github.io/machine-learning-lab/notebooks/langchain_memory.html</guid>
   <pubDate>Sat, 17 Jun 2023 04:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Information Measures</title>
+  <link>https://liminma.github.io/machine-learning-lab/notebooks/information_measures.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<section id="information-measures" class="level1">
+<h1>Information Measures</h1>
+<p>A list of information measure formulas <span class="citation" data-cites="DBLP:journals/corr/abs-1802-05968">[1]</span>.</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> math</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb1-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pandas <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pd</span>
+<span id="cb1-4"></span>
+<span id="cb1-5"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> scipy.stats <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> entropy</span></code></pre></div>
+</div>
+<div class="cell" data-outputid="95689cbe-b9ac-4156-ec8b-d55f9f5d6df4" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># generate random samples</span></span>
+<span id="cb2-2">rng <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.random.default_rng()</span>
+<span id="cb2-3">x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> rng.choice([<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'strongly agree'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'agree'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'neither agree nor disagree'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'disagree'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'strongly disagree'</span>],</span>
+<span id="cb2-4">               size <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1000</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>),</span>
+<span id="cb2-5">               p<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.3</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.2</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.3</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>])</span>
+<span id="cb2-6">y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> rng.choice([<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'female'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'male'</span>],size <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1000</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>))</span>
+<span id="cb2-7">data <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.concatenate((x,y), axis<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb2-8">df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.DataFrame(data, columns<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'X'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Y'</span>])</span>
+<span id="cb2-9">df.head()</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">X</th>
+<th data-quarto-table-cell-role="th">Y</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>neither agree nor disagree</td>
+<td>male</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>strongly disagree</td>
+<td>female</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>disagree</td>
+<td>female</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>agree</td>
+<td>female</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>neither agree nor disagree</td>
+<td>female</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="cell" data-outputid="c12934d0-fc22-482e-82d6-fe88d06b4fa6" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># probablities of X</span></span>
+<span id="cb3-2">P_X <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df.X.value_counts(normalize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span>
+<span id="cb3-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(P_X)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>X
+agree                         0.313
+disagree                      0.286
+neither agree nor disagree    0.198
+strongly disagree             0.102
+strongly agree                0.101
+Name: proportion, dtype: float64</code></pre>
+</div>
+</div>
+<div class="cell" data-outputid="3a5f821e-7747-4a1b-84e4-3f101f122fd6" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># probablities of Y</span></span>
+<span id="cb5-2">P_Y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df.Y.value_counts(normalize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span>
+<span id="cb5-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(P_Y)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Y
+male      0.509
+female    0.491
+Name: proportion, dtype: float64</code></pre>
+</div>
+</div>
+<div class="cell" data-outputid="bd38719c-a439-4c4a-a205-04e95c7bc2f0" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># joint probabilities of X, Y</span></span>
+<span id="cb7-2">P_XY <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df.value_counts([<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'X'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Y'</span>], normalize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, sort<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>)</span>
+<span id="cb7-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(P_XY)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>X                           Y     
+agree                       female    0.149
+                            male      0.164
+disagree                    female    0.144
+                            male      0.142
+neither agree nor disagree  female    0.095
+                            male      0.103
+strongly agree              female    0.050
+                            male      0.051
+strongly disagree           female    0.053
+                            male      0.049
+Name: proportion, dtype: float64</code></pre>
+</div>
+</div>
+<section id="entropy" class="level2">
+<h2 class="anchored" data-anchor-id="entropy">Entropy</h2>
+<p>Given a discrete random variable <img src="https://latex.codecogs.com/png.latex?X">, the entropy of <img src="https://latex.codecogs.com/png.latex?X"> is:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation%7D%0A%5Cbegin%7Bsplit%7D%0AH(X)%20&amp;%20=%20-%20%5Csum_%7Bx%20%5Cin%20%5Cmathcal%7BX%7D%7D%20p(x)%20%5Clog%20p(x)%0A%5Cend%7Bsplit%7D%0A%5Cend%7Bequation%7D%0A"></p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># calculation using the above formula</span></span>
+<span id="cb9-2">H_X <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>(P_X <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> np.log2(P_X))</span>
+<span id="cb9-3">H_Y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>(P_Y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> np.log2(P_Y))</span>
+<span id="cb9-4"></span>
+<span id="cb9-5"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(H_X, H_Y)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>2.1736058278387715 0.9997662707810439</code></pre>
+</div>
+</div>
+<div class="cell" data-outputid="4c969e86-a7f4-43ec-98f6-c14b3cd15285" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># verify by scipy.stats.entropy</span></span>
+<span id="cb11-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(math.isclose(H_X, entropy(P_X, base<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)))</span>
+<span id="cb11-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(math.isclose(H_Y, entropy(P_Y, base<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)))</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>True
+True</code></pre>
+</div>
+</div>
+</section>
+<section id="joint-and-conditional-entropy" class="level2">
+<h2 class="anchored" data-anchor-id="joint-and-conditional-entropy">Joint and Conditional Entropy</h2>
+<p>Given two discrete random variables <img src="https://latex.codecogs.com/png.latex?X,%20Y">, the joint entropy of <img src="https://latex.codecogs.com/png.latex?X"> and <img src="https://latex.codecogs.com/png.latex?Y"> is:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation%7D%0A%5Cbegin%7Bsplit%7D%0AH(X,Y)%20&amp;%20=%20-%5Csum_%7Bx%5Cin%20%5Cmathcal%7BX%7D,%20y%5Cin%20%5Cmathcal%7BY%7D%7D%20p(x,y)%5Clog%20p(x,y)%0A%5Cend%7Bsplit%7D%0A%5Cend%7Bequation%7D%0A"></p>
+<div class="cell" data-outputid="8536c2fb-b7e3-457e-aa99-a4313ad79bf7" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># calculation using the above formula</span></span>
+<span id="cb13-2">H_XY <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>(P_XY <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> np.log2(P_XY))</span>
+<span id="cb13-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(H_XY)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>3.172723449704413</code></pre>
+</div>
+</div>
+<div class="cell" data-outputid="78828f68-f0af-4548-99bc-035dfa881f02" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># verify by scipy.stats.entropy method</span></span>
+<span id="cb15-2">math.isclose(H_XY, entropy(P_XY, base<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>))</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>True</code></pre>
+</div>
+</div>
+<p>The conditional entropy of Y given X is:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation%7D%0A%5Cbegin%7Bsplit%7D%0AH(Y%7CX)%20&amp;%20=-%5Csum_%7Bx%5Cin%20%5Cmathcal%7BX%7D,%20y%5Cin%20%5Cmathcal%7BY%7D%7D%20p(x,y)%20%5Clog%20p(y%7Cx)%0A%5Cend%7Bsplit%7D%0A%5Cend%7Bequation%7D%0A"></p>
+<div class="cell" data-outputid="d707d27d-8154-46ad-d7a9-22af1eb997b8" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># compute using the formula; replace p(y|x) with p(x,y)/p(x)</span></span>
+<span id="cb17-2">H_Y_X <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>(P_XY[x,y] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> np.log2(P_XY[x,y]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>P_X[x])</span>
+<span id="cb17-3">            <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> x <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> df.X.unique() <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> y <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> df.Y.unique())</span>
+<span id="cb17-4"></span>
+<span id="cb17-5"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(H_Y_X)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0.999117621865641</code></pre>
+</div>
+</div>
+<p>The chain rule of entropy,</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation%7D%0A%5Cbegin%7Bsplit%7D%0AH(X,Y)%20&amp;%20=%20H(X%7CY)%20+%20H(Y)%20%5C%5C%0A&amp;%20=%20H(Y%7CX)%20+%20H(X)%20%5C%5C%0A%5Cend%7Bsplit%7D%0A%5Cend%7Bequation%7D%0A"></p>
+<div class="cell" data-outputid="f0d5a1f7-d7b8-42b2-8c40-ea775d0d62c9" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># verify H(X,Y) = H(X|Y) + H(Y)</span></span>
+<span id="cb19-2">math.isclose(H_XY, H_Y_X <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> H_X)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>True</code></pre>
+</div>
+</div>
+</section>
+<section id="mutual-information" class="level2">
+<h2 class="anchored" data-anchor-id="mutual-information">Mutual Information</h2>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation%7D%0A%5Cbegin%7Bsplit%7D%0AI(X,Y)%20&amp;%20=%20%5Csum_%7Bx%20%5Cin%20%5Cmathcal%7BX%7D,%20y%20%5Cin%20%5Cmathcal%7BY%7D%7D%20p(x,y)%20%5Clog%20%5Cfrac%7Bp(x,y)%7D%7Bp(x)p(y)%7D%20%5C%5C%0A&amp;%20=%20H(X)%20+%20H(Y)%20-%20H(X,Y)%20%5C%5C%0A&amp;%20=%20H(X)%20-%20H(X%7CY)%20%5C%5C%0A&amp;%20=%20H(Y)%20-%20H(Y%7CX)%20%5C%5C%0A&amp;%20=%20H(X,Y)%20-%20H(X%7CY)%20-%20H(Y%7CX)%0A%5Cend%7Bsplit%7D%0A%5Cend%7Bequation%7D%0A"></p>
+<div class="cell" data-outputid="34918718-94b0-4c12-e28a-d947b59b6781" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># using the probability formula</span></span>
+<span id="cb21-2">I_XY <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>(P_XY[x,y] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> np.log2(P_XY[x,y] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> (P_X[x] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> P_Y[y]))</span>
+<span id="cb21-3">           <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> x <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> df.X.unique() <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> y <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> df.Y.unique())</span>
+<span id="cb21-4"></span>
+<span id="cb21-5"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(I_XY)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0.0006486489154028196</code></pre>
+</div>
+</div>
+<div class="cell" data-outputid="1ef3c744-8bb0-491c-ca27-2998e5585bd2" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb23" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1">math.isclose(I_XY, H_X <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> H_Y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> H_XY)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<pre><code>True</code></pre>
+</div>
+</div>
+<div class="cell" data-outputid="5f4a3346-424b-4a01-e607-ebcd665f3e8a" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb25" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1">math.isclose(I_XY, H_Y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> H_Y_X)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<pre><code>True</code></pre>
+</div>
+</div>
+
+
+
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body">
+<div id="ref-DBLP:journals/corr/abs-1802-05968" class="csl-entry">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline">J. V. Stone, <span>“Information theory: <span>A</span> tutorial introduction,”</span> <em>CoRR</em>, vol. abs/1802.05968, 2018, Available: <a href="http://arxiv.org/abs/1802.05968">http://arxiv.org/abs/1802.05968</a></div>
+</div>
+</div></section></div> ]]></description>
+  <category>Information Theory</category>
+  <guid>https://liminma.github.io/machine-learning-lab/notebooks/information_measures.html</guid>
+  <pubDate>Wed, 17 Aug 2022 04:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>

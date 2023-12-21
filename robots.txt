@@ -1,1 +1,1 @@
-Sitemap: https://liminma.github.io/generative-ai-lab/sitemap.xml
+Sitemap: https://liminma.github.io/machine-learning-lab/sitemap.xml
