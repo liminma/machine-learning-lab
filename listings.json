@@ -3,6 +3,7 @@
     "listing": "/index.html",
     "items": [
       "/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060.html",
+      "/notebooks/original-transformer-model.html",
       "/notebooks/tree-of-thoughts.html",
       "/notebooks/react_agent_llama2.html",
       "/notebooks/understanding_react.html",
@@ -18,6 +19,7 @@
       "/notebooks/localai_openai_api.html",
       "/notebooks/langchain_localai_demo.html",
       "/notebooks/langchain_memory.html",
+      "/notebooks/bahdanau-attention.html",
       "/notebooks/information_measures.html"
     ]
   },
@@ -25,6 +27,7 @@
     "listing": "/archive.html",
     "items": [
       "/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060.html",
+      "/notebooks/original-transformer-model.html",
       "/notebooks/tree-of-thoughts.html",
       "/notebooks/react_agent_llama2.html",
       "/notebooks/understanding_react.html",
@@ -40,6 +43,7 @@
       "/notebooks/localai_openai_api.html",
       "/notebooks/langchain_localai_demo.html",
       "/notebooks/langchain_memory.html",
+      "/notebooks/bahdanau-attention.html",
       "/notebooks/information_measures.html"
     ]
   }

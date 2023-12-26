@@ -19,11 +19,8 @@
 
 
 
-<div style="text-align: right;">
-<p><a target="_blank" href="https://colab.research.google.com/github/liminma/machine-learning-lab/blob/main/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060.ipynb"> <img src="https://liminma.github.io/machine-learning-lab/notebooks/https:/colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"> </a></p>
-</div>
 <div>
-<img class="preview-image" src="https://liminma.github.io/machine-learning-lab/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060_files/figure-html/a8ce0f97-1-e50ffe05-7e2c-4c27-957f-c41869f1f68c.jpg" width="800px">
+<img class="preview-image" src="https://liminma.github.io/machine-learning-lab/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060_files/figure-html/04d48baa-1-e50ffe05-7e2c-4c27-957f-c41869f1f68c.jpg" width="800px">
 </div>
 <div style="text-align: right; font-size: 10px; color: grey; margin-bottom: 2em;">
 Source: Photo by <a style="color: grey;" href="https://unsplash.com/@lucaskphoto?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">Lucas Kepner</a> on <a style="color: grey;" href="https://unsplash.com/photos/a-close-up-of-a-sign-in-the-dark-vJ3Lt-mcGP4?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">Unsplash</a>
@@ -583,7 +580,7 @@ font-style: inherit;">=</span>args,</span>
 </div>
 <p>During training, the GPU memory usage was around 11GB.</p>
 <div style="text-align:center;">
-<p><img src="https://liminma.github.io/machine-learning-lab/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060_files/figure-html/63fc6a49-1-afcc2ae1-f06c-4beb-824e-cbeb587814dc.png" width="800px"></p>
+<p><img src="https://liminma.github.io/machine-learning-lab/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060_files/figure-html/8c51b291-1-afcc2ae1-f06c-4beb-824e-cbeb587814dc.png" width="800px"></p>
 </div>
 </section>
 <section id="save-the-adapter-model" class="level4">
@@ -1396,7 +1393,7 @@ background-color: null;
 font-style: inherit;">--port</span> 9000</span></code></pre></div>
 <p>Now, open the link <a href="http://localhost:9000/docs">http://localhost:9000/docs</a> in a browser to see the API docs:</p>
 <div style="text-align:center;">
-<p><img style="border: 1px solid #aaa;" src="https://liminma.github.io/machine-learning-lab/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060_files/figure-html/997deb22-1-bfd861da-89b7-4784-a937-277c6d492e6b.png" width="800px;"></p>
+<p><img style="border: 1px solid #aaa;" src="https://liminma.github.io/machine-learning-lab/notebooks/finetune-compile-serve-llama2-7b-using-rtx3060_files/figure-html/4cc1a968-1-bfd861da-89b7-4784-a937-277c6d492e6b.png" width="800px;"></p>
 </div>
 </section>
 <section id="call-the-rest-api" class="level3">
@@ -1546,6 +1543,2594 @@ font-style: inherit;">0</span>].message.content)</span></code></pre></div>
   <pubDate>Wed, 25 Oct 2023 04:00:00 GMT</pubDate>
 </item>
 <item>
+  <title>Implementing the original Transformer model in PyTorch</title>
+  <link>https://liminma.github.io/machine-learning-lab/notebooks/original-transformer-model.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>My implementation of the Transformer model proposed in the original Transformer paper <span class="citation" data-cites="VaswaniSPUJGKP17">[1]</span> in PyTorch.</p>
+<p style="text-align:center;">
+<img class="preview-image" src="https://liminma.github.io/machine-learning-lab/notebooks/original-transformer-model_files/figure-html/24f5e9e0-f499-45f2-8755-af99409d7e4e-1-38bfaaab-bc81-48aa-a868-301f4fc444ec.png" width="500px;"> <br>Image source: Vaswani et al. <span class="citation" data-cites="VaswaniSPUJGKP17">[1]</span>
+</p>
+<section id="the-components-of-the-transformer-architecture" class="level2">
+<h2 class="anchored" data-anchor-id="the-components-of-the-transformer-architecture">The components of the Transformer architecture</h2>
+<section id="attention" class="level3">
+<h3 class="anchored" data-anchor-id="attention">Attention</h3>
+<section id="scaled-dot-product-attention" class="level4">
+<h4 class="anchored" data-anchor-id="scaled-dot-product-attention">Scaled dot-product attention</h4>
+<p>It’s computed as a weighted sum of the values,</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathrm%7BAttention%7D(Q,%20K,%20V)%20=%20softmax(%5Cfrac%7BQK%5E%5Ctop%7D%7B%5Csqrt%7Bd_k%7D%7D)V%0A"></p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> torch</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> torch.nn <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> nn</span></code></pre></div>
+</div>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> scaled_dot_product_attention(q, k, v, mask, dropout):</span>
+<span id="cb2-2">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># q: (batch_size, n_heads, q_length, dim_key)</span></span>
+<span id="cb2-3">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># k: (batch_size, n_heads, k_length, dim_key)</span></span>
+<span id="cb2-4">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># v: (batch_size, n_heads, k_length, dim_value)</span></span>
+<span id="cb2-5">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># mask:</span></span>
+<span id="cb2-6">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#   encoder self-attn: (batch_size, 1, 1, k_length)</span></span>
+<span id="cb2-7">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#   decoder self-attn: (batch_size, 1, q_length, k_length)</span></span>
+<span id="cb2-8">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#   decoder cross-attn: (batch_size, 1, 1, k_length)</span></span>
+<span id="cb2-9"></span>
+<span id="cb2-10">    scores <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.matmul(</span>
+<span id="cb2-11">        q, k.transpose(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb2-12">    ) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> torch.math.sqrt(k.size(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, n_heads, q_length, k_length)</span></span>
+<span id="cb2-13"></span>
+<span id="cb2-14">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> mask <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">is</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">not</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span>:</span>
+<span id="cb2-15">        scores <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> scores.masked_fill(mask<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, value<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=-</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1e10</span>)</span>
+<span id="cb2-16"></span>
+<span id="cb2-17">    attention_weights <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> scores.softmax(dim<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, n_heads, q_length, k_length)</span></span>
+<span id="cb2-18">    </span>
+<span id="cb2-19">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> dropout <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">is</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">not</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span>:</span>
+<span id="cb2-20">        attentions <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> dropout(attention_weights)</span>
+<span id="cb2-21">    attentions <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.matmul(attentions, v) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, n_heads, q_length, dim_value)</span></span>
+<span id="cb2-22"></span>
+<span id="cb2-23">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> attentions, attention_weights</span></code></pre></div>
+</div>
+</section>
+<section id="multi-head-attention" class="level4">
+<h4 class="anchored" data-anchor-id="multi-head-attention">Multi-head attention</h4>
+<p>Multi-head attention computes attention functions on multiple projections of the input queries, keys and values. This allows the model to capture different features of the input data from different subspaces and at different locations. The output of each attention function is then concatenated and projected to produce the final values.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathrm%7BMultiHead%7D(Q,K,V)=%5Cmathrm%7BConcat%7D(head_1,%20%5Cdots,%20head_h)W%5EO%0A"> <img src="https://latex.codecogs.com/png.latex?%0Awhere%5C%20%5Cmathrm%7Bhead_i%7D=%5Cmathrm%7BAttention%7D(QW_i%5EQ,KW_i%5EK,VW_i%5EV)%0A"> <img src="https://latex.codecogs.com/png.latex?%0AW_i%5EQ%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bd_%7Bmodel%7D%20%5Ctimes%20d_k%7D,%20W_i%5EK%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bd_%7Bmodel%7D%20%5Ctimes%20d_k%7D,%20W_i%5EV%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bd_%7Bmodel%7D%20%5Ctimes%20d_v%7D,%20W_i%5EO%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bhd_v%20%5Ctimes%20d_%7Bmodel%7D%7D%0A"></p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> MultiheadAttention(nn.Module):</span>
+<span id="cb3-2">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, n_heads, dim_model, dim_value, dropout_p):</span>
+<span id="cb3-3">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">super</span>().<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>()</span>
+<span id="cb3-4"></span>
+<span id="cb3-5">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.dim_model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> dim_model</span>
+<span id="cb3-6">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.n_heads <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> n_heads</span>
+<span id="cb3-7">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.dim_value <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> dim_value</span>
+<span id="cb3-8">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># dim_model should be divisible by n_heads</span></span>
+<span id="cb3-9">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># the values from the paper are: dim_value=512, n_heads=8</span></span>
+<span id="cb3-10">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">assert</span> dim_model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span> n_heads <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Invalid values: dim_model should be divisible by n_heads.'</span></span>
+<span id="cb3-11">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.dim_key <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> dim_model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">//</span> n_heads</span>
+<span id="cb3-12"></span>
+<span id="cb3-13">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># q, k, v projections</span></span>
+<span id="cb3-14">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.wq <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.Linear(dim_model, dim_model)</span>
+<span id="cb3-15">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.wk <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.Linear(dim_model, dim_model)</span>
+<span id="cb3-16">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.wv <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.Linear(dim_model, n_heads<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>dim_value)</span>
+<span id="cb3-17"></span>
+<span id="cb3-18">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.wo <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.Linear(n_heads<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>dim_value, dim_model)</span>
+<span id="cb3-19">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.dropout <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.Dropout(dropout_p)</span>
+<span id="cb3-20"></span>
+<span id="cb3-21">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> forward(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, q, k, v, mask):</span>
+<span id="cb3-22">        query <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.wq(q) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, q_length, dim_model)</span></span>
+<span id="cb3-23">        </span>
+<span id="cb3-24">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># key and value will have the same sequence length</span></span>
+<span id="cb3-25">        key <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.wk(k) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, k_length, dim_model)</span></span>
+<span id="cb3-26">        value <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.wv(v) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, k_length, dim_model)</span></span>
+<span id="cb3-27"></span>
+<span id="cb3-28">        query <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> query.view(</span>
+<span id="cb3-29">            query.size(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>), query.size(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>), <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.n_heads, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.dim_key</span>
+<span id="cb3-30">        ).transpose(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, n_heads, q_length, dim_key)</span></span>
+<span id="cb3-31">        key <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> key.view(</span>
+<span id="cb3-32">            key.size(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>), key.size(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>), <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.n_heads, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.dim_key</span>
+<span id="cb3-33">        ).transpose(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, n_heads, k_length, dim_key)</span></span>
+<span id="cb3-34">        value <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> value.view(</span>
+<span id="cb3-35">            value.size(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>), value.size(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>), <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.n_heads, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.dim_value</span>
+<span id="cb3-36">        ).transpose(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, n_heads, k_length, dim_value)</span></span>
+<span id="cb3-37"></span>
+<span id="cb3-38">        attentions, attention_weights <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> scaled_dot_product_attention(</span>
+<span id="cb3-39">            query, key, value, mask, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.dropout</span>
+<span id="cb3-40">        )</span>
+<span id="cb3-41"></span>
+<span id="cb3-42">        attentions <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> attentions.transpose(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>).contiguous() <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, q_length, n_heads, dim_value)</span></span>
+<span id="cb3-43">        attentions <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> attentions.view(</span>
+<span id="cb3-44">            attentions.size(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>), attentions.size(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>), <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb3-45">        ) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, q_length, n_heads*dim_value)</span></span>
+<span id="cb3-46">        attentions <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.wo(attentions)</span>
+<span id="cb3-47"></span>
+<span id="cb3-48">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># attentions: (batch_size, q_length, dim_model)</span></span>
+<span id="cb3-49">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># attention_weights: (batch_size, n_heads, q_length, k_length)</span></span>
+<span id="cb3-50">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> attentions, attention_weights</span></code></pre></div>
+</div>
+</section>
+</section>
+<section id="position-wise-feed-forward-networks" class="level3">
+<h3 class="anchored" data-anchor-id="position-wise-feed-forward-networks">Position-wise Feed-Forward Networks</h3>
+<p>Contains 2 linear layers with a ReLU activation in between, <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathrm%7BFFN%7D(x)=%5Cmax(0,%20xW_1%20+%20b_1)%20W_2%20+%20b_2%0A"></p>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> FFN(nn.Module):</span>
+<span id="cb4-2">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, dim_model, dim_ffn, dropout_p):</span>
+<span id="cb4-3">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">super</span>().<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>()</span>
+<span id="cb4-4">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.linear1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.Linear(dim_model, dim_ffn)</span>
+<span id="cb4-5">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.linear2 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.Linear(dim_ffn, dim_model)</span>
+<span id="cb4-6">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.dropout <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.Dropout(dropout_p)</span>
+<span id="cb4-7"></span>
+<span id="cb4-8">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> forward(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, x):</span>
+<span id="cb4-9">        x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.linear1(x)</span>
+<span id="cb4-10">        x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.relu(x)</span>
+<span id="cb4-11">        x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.dropout(x)</span>
+<span id="cb4-12">        x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.linear2(x)</span>
+<span id="cb4-13">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> x</span></code></pre></div>
+</div>
+</section>
+<section id="embedding-positional-encoding" class="level3">
+<h3 class="anchored" data-anchor-id="embedding-positional-encoding">Embedding &amp; Positional Encoding</h3>
+<p>Embeddings are learned. Embedding weights are multiplied by <img src="https://latex.codecogs.com/png.latex?%5Csqrt%7Bd_%7Bmodel%7D%7D"> .</p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> Embeddings(nn.Module):</span>
+<span id="cb5-2">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, dim_model, vocab_size):</span>
+<span id="cb5-3">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">super</span>().<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>()</span>
+<span id="cb5-4">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.dim_model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> dim_model</span>
+<span id="cb5-5">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.embedding <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.Embedding(vocab_size, dim_model)</span>
+<span id="cb5-6"></span>
+<span id="cb5-7">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> forward(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, x):</span>
+<span id="cb5-8">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># x: (batch_size, seq_length)</span></span>
+<span id="cb5-9">        x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.embedding(x) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, seq_length, dim_model)</span></span>
+<span id="cb5-10">        x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> torch.math.sqrt(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.dim_model)</span>
+<span id="cb5-11">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> x</span></code></pre></div>
+</div>
+<p>Positional encoding is used to inject information about positions of the tokens in the sequence. It’s computed using a combination of sine and cosine functions, <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0APE_%7B(pos,%202i)%7D%20&amp;=sin(pos/10000%5E%7B2i/d_%7Bmodel%7D%7D)%20%5C%5C%0APE_%7B(pos,%202i+1)%7D%20&amp;=cos(pos/10000%5E%7B2i/d_%7Bmodel%7D%7D)%0A%5Cend%7Baligned%7D%0A"> where <img src="https://latex.codecogs.com/png.latex?pos"> is the position, and <img src="https://latex.codecogs.com/png.latex?i"> is the dimension.</p>
+<p>Since it’s more efficient to compute power in log space, the term of denominator can be calculated as, <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0Au%20&amp;=%20e%5E%7Bln(u)%7D,%20%5Cmathrm%7Bwhere%7D%5C%20u=%201/10000%5E%7B2i/d_%7Bmodel%7D%7D%20%20%5C%5C%0Aln(u)%20&amp;=%202i(-ln(10000)/d_%7Bmodel%7D)%20%5C%5C%0Au%20&amp;=%20e%5E%7B2i(-ln(10000)/d_%7Bmodel%7D)%7D%0A%5Cend%7Baligned%7D%0A"></p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> PositionalEncoding(nn.Module):</span>
+<span id="cb6-2">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, max_seq_length, dim_model, dropout_p):</span>
+<span id="cb6-3">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">super</span>().<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>()</span>
+<span id="cb6-4">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.dropout <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.Dropout(dropout_p)</span>
+<span id="cb6-5"></span>
+<span id="cb6-6">        pe <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.zeros(max_seq_length, dim_model) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (max_seq_length, dim_model)</span></span>
+<span id="cb6-7">        positions <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.arange(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, max_seq_length, dtype<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>torch.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>).unsqueeze(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (max_seq_length, 1)</span></span>
+<span id="cb6-8">        u <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.exp(</span>
+<span id="cb6-9">            torch.arange(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, dim_model, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>() <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>torch.math.log(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10000.0</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> dim_model)</span>
+<span id="cb6-10">        ) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (max_seq_length,)</span></span>
+<span id="cb6-11">        pe[:, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>::<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.sin(positions <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> u)</span>
+<span id="cb6-12">        pe[:, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>::<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.cos(positions <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> u)</span>
+<span id="cb6-13">        pe <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pe.unsqueeze(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (1, max_seq_length, dim_model)</span></span>
+<span id="cb6-14"></span>
+<span id="cb6-15">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.register_buffer(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'pe'</span>, pe)</span>
+<span id="cb6-16"></span>
+<span id="cb6-17">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> forward(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, x):</span>
+<span id="cb6-18">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># x: (batch_size, seq_length, dim_model)</span></span>
+<span id="cb6-19">        x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> (<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.pe[:, :x.size(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>), :]).requires_grad_(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>)</span>
+<span id="cb6-20">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.dropout(x) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, seq_length, dim_model)</span></span></code></pre></div>
+</div>
+</section>
+<section id="add-norm" class="level3">
+<h3 class="anchored" data-anchor-id="add-norm">Add &amp; Norm</h3>
+<p>This is done by applying a residual connection around sublayers (multihead attention layer, FFN layer), and then a layer normalization, i.e., <img src="https://latex.codecogs.com/png.latex?%5Cmathrm%7BLayerNorm%7D(x+%5Cmathrm%7BSublayer%7D(x))"></p>
+<p>Layer normalization is computed as, <img src="https://latex.codecogs.com/png.latex?%0Ay%20=%20%5Cfrac%7Bx%20-%20%5Cmathrm%7BE%7D%5Bx%5D%7D%7B%20%5Csqrt%7B%5Cmathrm%7BVar%7D%5Bx%5D%20+%20%5Cepsilon%7D%7D%20*%20%5Cgamma%20+%20%5Cbeta%0A"> where <img src="https://latex.codecogs.com/png.latex?%5Cgamma"> and <img src="https://latex.codecogs.com/png.latex?%5Cbeta"> are learnable parameters. The PyTorch implementation is <code>nn.LayerNorm</code>.</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> AddNorm(nn.Module):</span>
+<span id="cb7-2">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, normalized_shape, dropout_p):</span>
+<span id="cb7-3">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">super</span>().<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>()</span>
+<span id="cb7-4">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.layernorm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.LayerNorm(normalized_shape<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>normalized_shape)</span>
+<span id="cb7-5">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.dropout <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.Dropout(dropout_p)</span>
+<span id="cb7-6"></span>
+<span id="cb7-7">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> forward(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, x, sublayer_output):</span>
+<span id="cb7-8">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.layernorm(x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.dropout(sublayer_output))</span></code></pre></div>
+</div>
+</section>
+<section id="encoder" class="level3">
+<h3 class="anchored" data-anchor-id="encoder">Encoder</h3>
+<p>Encoder creates a sequence of context vectors corresponding to input tokens.</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> EncoderBlock(nn.Module):</span>
+<span id="cb8-2">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, self_attn, ffn, dropout_p):</span>
+<span id="cb8-3">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">super</span>().<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>()</span>
+<span id="cb8-4">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.self_attn <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> self_attn</span>
+<span id="cb8-5">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.ffn <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ffn</span>
+<span id="cb8-6">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.add_norm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.ModuleList(</span>
+<span id="cb8-7">            [AddNorm(self_attn.dim_model, dropout_p) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> _ <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)]</span>
+<span id="cb8-8">        )</span>
+<span id="cb8-9"></span>
+<span id="cb8-10">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> forward(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, x, src_mask):</span>
+<span id="cb8-11">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># x: (batch_size, src_length, dim_model)</span></span>
+<span id="cb8-12">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># src_mask: (batch_size, 1, 1, src_length)</span></span>
+<span id="cb8-13">        sublayer_output, _ <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.self_attn(x, x, x, src_mask)</span>
+<span id="cb8-14">        x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.add_norm[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>](x, sublayer_output) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, src_length, dim_model)</span></span>
+<span id="cb8-15">        x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.add_norm[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>](x, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.ffn(x)) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, src_length, dim_model)</span></span>
+<span id="cb8-16">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> x</span>
+<span id="cb8-17"></span>
+<span id="cb8-18"></span>
+<span id="cb8-19"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> Encoder(nn.Module):</span>
+<span id="cb8-20">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, N, n_heads, dim_model, dim_value, dim_ffn, dropout_p):</span>
+<span id="cb8-21">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">super</span>().<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>()</span>
+<span id="cb8-22"></span>
+<span id="cb8-23">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.blocks <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.ModuleList()</span>
+<span id="cb8-24">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> _ <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(N):</span>
+<span id="cb8-25">            encoder_block <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> EncoderBlock(</span>
+<span id="cb8-26">                MultiheadAttention(n_heads, dim_model, dim_value, dropout_p),</span>
+<span id="cb8-27">                FFN(dim_model, dim_ffn, dropout_p),</span>
+<span id="cb8-28">                dropout_p</span>
+<span id="cb8-29">            )</span>
+<span id="cb8-30">            <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.blocks.append(encoder_block)</span>
+<span id="cb8-31"></span>
+<span id="cb8-32">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> forward(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, x, src_mask):</span>
+<span id="cb8-33">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># x: (batch_size, src_length, dim_model)</span></span>
+<span id="cb8-34">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># src_mask: (batch_size, 1, 1, src_length)</span></span>
+<span id="cb8-35">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> block <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.blocks:</span>
+<span id="cb8-36">            x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> block(x, src_mask)</span>
+<span id="cb8-37">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> x <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, src_length, dim_model)</span></span></code></pre></div>
+</div>
+</section>
+<section id="decoder" class="level3">
+<h3 class="anchored" data-anchor-id="decoder">Decoder</h3>
+<p>Decoder takes the context vectors from the encoder to produce output tokens. It has a masked self-attention layer and also a cross-attention layer over the encoder output.</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> DecoderBlock(nn.Module):</span>
+<span id="cb9-2">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, self_attn, cross_attn, ffn, dropout_p):</span>
+<span id="cb9-3">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">super</span>().<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>()</span>
+<span id="cb9-4">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.self_attn <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> self_attn</span>
+<span id="cb9-5">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.cross_attn <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> cross_attn</span>
+<span id="cb9-6">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.ffn <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ffn</span>
+<span id="cb9-7">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.add_norm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.ModuleList(</span>
+<span id="cb9-8">            [AddNorm(self_attn.dim_model, dropout_p) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> _ <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>)]</span>
+<span id="cb9-9">        )</span>
+<span id="cb9-10"></span>
+<span id="cb9-11">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> forward(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, x, tgt_mask, encoder_memory, src_mask):</span>
+<span id="cb9-12">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># x: (batch_size, tgt_length, dim_model)</span></span>
+<span id="cb9-13">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># tgt_mask: (batch_size, 1, tgt_length, tgt_length)</span></span>
+<span id="cb9-14">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># encoder_memory: (batch_size, src_length, dim_model)</span></span>
+<span id="cb9-15">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># src_mask: (batch_size, 1, 1, src_length)</span></span>
+<span id="cb9-16">        sublayer_output, _ <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.self_attn(x, x, x, tgt_mask)</span>
+<span id="cb9-17">        x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.add_norm[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>](x, sublayer_output) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, tgt_length, dim_model)</span></span>
+<span id="cb9-18">        </span>
+<span id="cb9-19">        sublayer_output, attention_weights <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.cross_attn(x, encoder_memory, encoder_memory, src_mask)</span>
+<span id="cb9-20">        x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.add_norm[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>](x, sublayer_output) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, tgt_length, dim_model)</span></span>
+<span id="cb9-21">        </span>
+<span id="cb9-22">        x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.add_norm[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>](x, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.ffn(x))</span>
+<span id="cb9-23"></span>
+<span id="cb9-24">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># attention_weights: (batch_size, n_heads, tgt_length, src_length)</span></span>
+<span id="cb9-25">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># x: (batch_size, tgt_length, dim_model)</span></span>
+<span id="cb9-26">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> x, attention_weights</span>
+<span id="cb9-27"></span>
+<span id="cb9-28"></span>
+<span id="cb9-29"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> Decoder(nn.Module):</span>
+<span id="cb9-30">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, N, n_heads, dim_model, dim_value, dim_ffn, dropout_p):</span>
+<span id="cb9-31">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">super</span>().<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>()</span>
+<span id="cb9-32"></span>
+<span id="cb9-33">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.blocks <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.ModuleList()</span>
+<span id="cb9-34">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> _ <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(N):</span>
+<span id="cb9-35">            decoder_block <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> DecoderBlock(</span>
+<span id="cb9-36">                MultiheadAttention(n_heads, dim_model, dim_value, dropout_p),</span>
+<span id="cb9-37">                MultiheadAttention(n_heads, dim_model, dim_value, dropout_p),</span>
+<span id="cb9-38">                FFN(dim_model, dim_ffn, dropout_p),</span>
+<span id="cb9-39">                dropout_p</span>
+<span id="cb9-40">            )</span>
+<span id="cb9-41">            <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.blocks.append(decoder_block)</span>
+<span id="cb9-42"></span>
+<span id="cb9-43">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> forward(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, x, tgt_mask, encoder_memory, src_mask):</span>
+<span id="cb9-44">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> block <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.blocks:</span>
+<span id="cb9-45">            x, attention_weights <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> block(x, tgt_mask, encoder_memory, src_mask)</span>
+<span id="cb9-46"></span>
+<span id="cb9-47">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> x, attention_weights</span></code></pre></div>
+</div>
+</section>
+<section id="model-head" class="level3">
+<h3 class="anchored" data-anchor-id="model-head">Model head</h3>
+<p>A learned linear projection.</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> ModelHead(nn.Module):</span>
+<span id="cb10-2">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, dim_model, vocab_size):</span>
+<span id="cb10-3">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">super</span>().<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>()</span>
+<span id="cb10-4">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.linear <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.Linear(dim_model, vocab_size)</span>
+<span id="cb10-5"></span>
+<span id="cb10-6">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> forward(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, x):</span>
+<span id="cb10-7">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.linear(x)</span></code></pre></div>
+</div>
+</section>
+</section>
+<section id="the-transformer-model" class="level2">
+<h2 class="anchored" data-anchor-id="the-transformer-model">The Transformer model</h2>
+<p>Put everything together.</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> Transformer(nn.Module):</span>
+<span id="cb11-2">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, encoder, decoder, src_embed, tgt_embed, model_head, src_pad_token_id, tgt_pad_token_id):</span>
+<span id="cb11-3">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">super</span>().<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>()</span>
+<span id="cb11-4">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.encoder <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> encoder</span>
+<span id="cb11-5">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.decoder <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> decoder</span>
+<span id="cb11-6">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.src_embed <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> src_embed</span>
+<span id="cb11-7">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.tgt_embed <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tgt_embed</span>
+<span id="cb11-8">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.model_head <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> model_head</span>
+<span id="cb11-9">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.src_pad_token_id <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> src_pad_token_id</span>
+<span id="cb11-10">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.tgt_pad_token_id <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tgt_pad_token_id</span>
+<span id="cb11-11"></span>
+<span id="cb11-12">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> get_src_mask(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, src_input):</span>
+<span id="cb11-13">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># src_input: (batch_size, src_length)</span></span>
+<span id="cb11-14">        src_mask <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (</span>
+<span id="cb11-15">            src_input <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.src_pad_token_id</span>
+<span id="cb11-16">        ).unsqueeze(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>).unsqueeze(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>()</span>
+<span id="cb11-17">        </span>
+<span id="cb11-18">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> src_mask <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># src_mask: (batch_size, 1, 1, src_length)</span></span>
+<span id="cb11-19"></span>
+<span id="cb11-20">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> get_tgt_mask(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, tgt_input):</span>
+<span id="cb11-21">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># tgt_input: (batch_size, tgt_length)</span></span>
+<span id="cb11-22">        tgt_padding_mask <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (</span>
+<span id="cb11-23">            tgt_input <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.tgt_pad_token_id</span>
+<span id="cb11-24">        ).unsqueeze(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>).unsqueeze(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>() <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># tgt_padding_mask: (batch_size, 1, 1, tgt_length)</span></span>
+<span id="cb11-25">        </span>
+<span id="cb11-26">        tgt_decoding_mask <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.tril(</span>
+<span id="cb11-27">            torch.ones(tgt_input.size(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>), tgt_input.size(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>))</span>
+<span id="cb11-28">        ).unsqueeze(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>).unsqueeze(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>().to(tgt_input.device) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># tgt_decoding_mask: (1, 1, tgt_length, tgt_length)</span></span>
+<span id="cb11-29">        </span>
+<span id="cb11-30">        tgt_mask <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tgt_padding_mask <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> tgt_decoding_mask</span>
+<span id="cb11-31"></span>
+<span id="cb11-32">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> tgt_mask <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># tgt_mask: (batch_size, 1, tgt_length, tgt_length)</span></span>
+<span id="cb11-33"></span>
+<span id="cb11-34">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> forward(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, src_input, tgt_input):</span>
+<span id="cb11-35">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># src_input: (batch_size, src_length)</span></span>
+<span id="cb11-36">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># tgt_input: (batch_size, tgt_length)</span></span>
+<span id="cb11-37"></span>
+<span id="cb11-38">        src_mask <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.get_src_mask(src_input)</span>
+<span id="cb11-39">        encoder_output <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.encoder(</span>
+<span id="cb11-40">            <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.src_embed(src_input), <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, src_length, dim_model)</span></span>
+<span id="cb11-41">            src_mask <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, 1, 1, src_length)</span></span>
+<span id="cb11-42">        ) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, src_length, dim_model)</span></span>
+<span id="cb11-43">        </span>
+<span id="cb11-44">        tgt_mask <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.get_tgt_mask(tgt_input)</span>
+<span id="cb11-45">        decoder_output, attention_weights <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.decoder(</span>
+<span id="cb11-46">            <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.tgt_embed(tgt_input), <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, tgt_length, dim_model)</span></span>
+<span id="cb11-47">            tgt_mask, <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, 1, tgt_length, tgt_length)</span></span>
+<span id="cb11-48">            encoder_output, <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, src_length, dim_model)</span></span>
+<span id="cb11-49">            src_mask <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, 1, 1, src_length)</span></span>
+<span id="cb11-50">        ) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, tgt_length, dim_model)</span></span>
+<span id="cb11-51">        </span>
+<span id="cb11-52">        output <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.model_head(decoder_output) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, tgt_length, tgt_vocab_size)</span></span>
+<span id="cb11-53">        </span>
+<span id="cb11-54">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> output, attention_weights</span></code></pre></div>
+</div>
+</section>
+<section id="training" class="level2">
+<h2 class="anchored" data-anchor-id="training">Training</h2>
+<section id="load-prepare-data-for-training" class="level3">
+<h3 class="anchored" data-anchor-id="load-prepare-data-for-training">1. load &amp; prepare data for training</h3>
+<section id="load-data" class="level4">
+<h4 class="anchored" data-anchor-id="load-data">1.1. load data</h4>
+<p>Use the Multi30k dataset <span class="citation" data-cites="elliott-EtAl:2016:VL16">[2]</span>, which contains translations from English to German. It has 3 splits: train, validation and test.</p>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> datasets <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> load_dataset</span>
+<span id="cb12-2"></span>
+<span id="cb12-3">train_ds, val_ds, test_ds <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> load_dataset(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'bentrevett/multi30k'</span>, split<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'train'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'validation'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'test'</span>])</span>
+<span id="cb12-4"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(train_ds, val_ds, test_ds)</span>
+<span id="cb12-5">train_ds[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>]</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Dataset({
+    features: ['en', 'de'],
+    num_rows: 29000
+}) Dataset({
+    features: ['en', 'de'],
+    num_rows: 1014
+}) Dataset({
+    features: ['en', 'de'],
+    num_rows: 1000
+})</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>{'en': 'Two young, White males are outside near many bushes.',
+ 'de': 'Zwei junge weiße Männer sind im Freien in der Nähe vieler Büsche.'}</code></pre>
+</div>
+</div>
+</section>
+<section id="init-tokenizers-build-vocabularies" class="level4">
+<h4 class="anchored" data-anchor-id="init-tokenizers-build-vocabularies">1.2. init tokenizers &amp; build vocabularies</h4>
+<p><code>Spacy</code> is a good choice for multilingual tokenization.</p>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> spacy</span>
+<span id="cb15-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> torchtext.transforms <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> T</span>
+<span id="cb15-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> torchtext.vocab <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> build_vocab_from_iterator</span></code></pre></div>
+</div>
+<div class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># languages</span></span>
+<span id="cb16-2">EN <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'en'</span></span>
+<span id="cb16-3">DE <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'de'</span></span>
+<span id="cb16-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># special tokens</span></span>
+<span id="cb16-5">PAD <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'&lt;pad&gt;'</span></span>
+<span id="cb16-6">UNK <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'&lt;unk&gt;'</span></span>
+<span id="cb16-7">SOS <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'&lt;sos&gt;'</span></span>
+<span id="cb16-8">EOS <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'&lt;eos&gt;'</span></span>
+<span id="cb16-9"></span>
+<span id="cb16-10">tokenizers <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {EN: spacy.load(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'en_core_web_sm'</span>).tokenizer,</span>
+<span id="cb16-11">              DE: spacy.load(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'de_core_news_sm'</span>).tokenizer}</span></code></pre></div>
+</div>
+<div class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> tokenize_sentence(sentence, tokenizers, lang):</span>
+<span id="cb17-2">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> [token.text <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> token <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> tokenizers[lang](sentence)]</span>
+<span id="cb17-3"></span>
+<span id="cb17-4"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> get_tokens(ds, tokenizers, lang):</span>
+<span id="cb17-5">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> sample <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> ds:</span>
+<span id="cb17-6">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">yield</span> tokenize_sentence(sample[lang], tokenizers, lang)</span></code></pre></div>
+</div>
+<p>Tokenize the first sample.</p>
+<div class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">next</span>(get_tokens(train_ds, tokenizers, EN)))</span>
+<span id="cb18-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">next</span>(get_tokens(train_ds, tokenizers, DE)))</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>['Two', 'young', ',', 'White', 'males', 'are', 'outside', 'near', 'many', 'bushes', '.']
+['Zwei', 'junge', 'weiße', 'Männer', 'sind', 'im', 'Freien', 'in', 'der', 'Nähe', 'vieler', 'Büsche', '.']</code></pre>
+</div>
+</div>
+<p>Build vocabularies for both English and German.</p>
+<div class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1">en_vocab <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> build_vocab_from_iterator(</span>
+<span id="cb20-2">    get_tokens(train_ds, tokenizers, EN),</span>
+<span id="cb20-3">    min_freq<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,</span>
+<span id="cb20-4">    specials<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[PAD, UNK, SOS, EOS])</span>
+<span id="cb20-5">en_vocab.set_default_index(en_vocab[UNK])</span>
+<span id="cb20-6"></span>
+<span id="cb20-7">de_vocab <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> build_vocab_from_iterator(</span>
+<span id="cb20-8">    get_tokens(train_ds, tokenizers, DE),</span>
+<span id="cb20-9">    min_freq<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,</span>
+<span id="cb20-10">    specials<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[PAD, UNK, SOS, EOS])</span>
+<span id="cb20-11">de_vocab.set_default_index(de_vocab[UNK])</span>
+<span id="cb20-12"></span>
+<span id="cb20-13">vocabs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {EN: en_vocab, DE: de_vocab}</span>
+<span id="cb20-14"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'EN vocab size: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(en_vocab)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">DE vocab size: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(de_vocab)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>EN vocab size: 6191
+DE vocab size: 8014</code></pre>
+</div>
+</div>
+</section>
+<section id="tokenize-and-transform-data" class="level4">
+<h4 class="anchored" data-anchor-id="tokenize-and-transform-data">1.3. tokenize and transform data</h4>
+<div class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb22" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> tokenize_data(vocabs, tokenizers):</span>
+<span id="cb22-2">    transforms <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">dict</span>()</span>
+<span id="cb22-3">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> lang, vocab <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> vocabs.items():</span>
+<span id="cb22-4">        transforms[lang] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> T.Sequential(</span>
+<span id="cb22-5">            T.VocabTransform(vocab),</span>
+<span id="cb22-6">            T.AddToken(vocab[SOS], begin<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>),</span>
+<span id="cb22-7">            T.AddToken(vocab[EOS], begin<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>)</span>
+<span id="cb22-8">        )</span>
+<span id="cb22-9"></span>
+<span id="cb22-10">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> process(sample):</span>
+<span id="cb22-11">        result <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">dict</span>()</span>
+<span id="cb22-12">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> lang, sentence <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> sample.items():</span>
+<span id="cb22-13">            result[lang] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> transforms[lang](</span>
+<span id="cb22-14">                [token.text <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> token <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> tokenizers[lang](sentence)]</span>
+<span id="cb22-15">            )</span>
+<span id="cb22-16">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> result</span>
+<span id="cb22-17"></span>
+<span id="cb22-18">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> process</span></code></pre></div>
+</div>
+<div class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb23" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1">tokenized_train_ds <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> train_ds.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">map</span>(tokenize_data(vocabs, tokenizers))</span>
+<span id="cb23-2">tokenized_val_ds <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> val_ds.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">map</span>(tokenize_data(vocabs, tokenizers))</span>
+<span id="cb23-3">tokenized_test_ds <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> test_ds.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">map</span>(tokenize_data(vocabs, tokenizers))</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"857f5d7ee0454089baac2b4e2489f2e4","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"fd629ee332a14a1a8d3d8353c206074a","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"0cba0f4805634867a343f8f628e4a930","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+</div>
+<div class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(tokenized_train_ds, tokenized_val_ds, tokenized_test_ds)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Dataset({
+    features: ['en', 'de'],
+    num_rows: 29000
+}) Dataset({
+    features: ['en', 'de'],
+    num_rows: 1014
+}) Dataset({
+    features: ['en', 'de'],
+    num_rows: 1000
+})</code></pre>
+</div>
+</div>
+<p>The first training sample.</p>
+<div class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb26" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1">tokenized_train_ds[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>]</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="21">
+<pre><code>{'en': [2, 19, 25, 15, 1169, 808, 17, 57, 84, 336, 1339, 5, 3],
+ 'de': [2, 21, 85, 257, 31, 87, 22, 94, 7, 16, 112, 7910, 3209, 4, 3]}</code></pre>
+</div>
+</div>
+<p>Decode token ids to words.</p>
+<div class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb28" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> decode_tokens(ids, vocab):</span>
+<span id="cb28-2">    words_list <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> vocab.get_itos()</span>
+<span id="cb28-3">    s <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [words_list[<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">id</span>] <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">id</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> ids]</span>
+<span id="cb28-4">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">' '</span>.join(s)</span></code></pre></div>
+</div>
+<div class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb29" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1">decode_tokens(tokenized_train_ds[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>][EN], vocabs[EN])</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="23">
+<pre><code>'&lt;sos&gt; Two young , White males are outside near many bushes . &lt;eos&gt;'</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb31" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1">decode_tokens(tokenized_train_ds[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>][DE], vocabs[DE])</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="24">
+<pre><code>'&lt;sos&gt; Zwei junge weiße Männer sind im Freien in der Nähe vieler Büsche . &lt;eos&gt;'</code></pre>
+</div>
+</div>
+</section>
+<section id="init-dataloaders" class="level4">
+<h4 class="anchored" data-anchor-id="init-dataloaders">1.4. init dataloaders</h4>
+<div class="cell" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb33" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> torch</span>
+<span id="cb33-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> torch.nn.utils.rnn <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pad_sequence</span>
+<span id="cb33-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> torch.utils.data <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> DataLoader</span></code></pre></div>
+</div>
+<div class="cell" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb34" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> get_collate_fn(vocabs):</span>
+<span id="cb34-2">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb34-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    Dynamically padding to the max length of the batch.</span></span>
+<span id="cb34-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    """</span></span>
+<span id="cb34-5">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> collate_fn(batch):</span>
+<span id="cb34-6">        langs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(batch[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>].keys())</span>
+<span id="cb34-7">        src_lang <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> langs[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>]</span>
+<span id="cb34-8">        tgt_lang <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> langs[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]</span>
+<span id="cb34-9">        </span>
+<span id="cb34-10">        src_batch <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> []</span>
+<span id="cb34-11">        tgt_batch <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> []</span>
+<span id="cb34-12">        label_batch <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> []</span>
+<span id="cb34-13">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> row <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> batch:</span>
+<span id="cb34-14">            src_batch.append(torch.tensor(row[src_lang]))</span>
+<span id="cb34-15">            tgt_batch.append(torch.tensor(row[tgt_lang])[:<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>])</span>
+<span id="cb34-16">            label_batch.append(torch.tensor(row[tgt_lang])[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>:])</span>
+<span id="cb34-17">        </span>
+<span id="cb34-18">        src_batch <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pad_sequence(src_batch, batch_first<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, padding_value<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>vocabs[src_lang][PAD])</span>
+<span id="cb34-19">        tgt_batch <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pad_sequence(tgt_batch, batch_first<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, padding_value<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>vocabs[tgt_lang][PAD])</span>
+<span id="cb34-20">        label_batch <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pad_sequence(label_batch, batch_first<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, padding_value<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>vocabs[tgt_lang][PAD])</span>
+<span id="cb34-21"></span>
+<span id="cb34-22">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> src_batch, tgt_batch, label_batch</span>
+<span id="cb34-23"></span>
+<span id="cb34-24">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> collate_fn</span></code></pre></div>
+</div>
+<div class="cell" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb35" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1">train_dataloader <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> DataLoader(tokenized_train_ds, batch_size<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">64</span>, shuffle<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, collate_fn<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>get_collate_fn(vocabs))</span>
+<span id="cb35-2">val_dataloader <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> DataLoader(tokenized_val_ds, batch_size<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">64</span>, shuffle<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, collate_fn<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>get_collate_fn(vocabs))</span></code></pre></div>
+</div>
+<p>Take a quick look at a sample</p>
+<div class="cell" data-execution_count="28">
+<div class="sourceCode cell-code" id="cb36" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1">batch <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">next</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">iter</span>(train_dataloader))</span>
+<span id="cb36-2"></span>
+<span id="cb36-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'Source: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>decode_tokens(batch[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>][<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>], vocabs[EN])<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb36-4"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'Target: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>decode_tokens(batch[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>][<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>], vocabs[DE])<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb36-5"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'Label: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>decode_tokens(batch[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>][<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>], vocabs[DE])<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Source: &lt;sos&gt; A woman looks down from a high point above a calm blue ocean . &lt;eos&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt;
+
+Target: &lt;sos&gt; Eine Frau blickt von einem hohen Aussichtspunkt über den ruhigen blauen Ozean . &lt;pad&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt;
+
+Label: Eine Frau blickt von einem hohen Aussichtspunkt über den ruhigen blauen Ozean . &lt;eos&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt; &lt;pad&gt;</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="train" class="level3">
+<h3 class="anchored" data-anchor-id="train">2. train</h3>
+<div class="cell" data-execution_count="29">
+<div class="sourceCode cell-code" id="cb38" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> tqdm <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> tqdm</span></code></pre></div>
+</div>
+<div class="cell" data-execution_count="30">
+<div class="sourceCode cell-code" id="cb39" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> build_model(src_vocab_size,</span>
+<span id="cb39-2">                tgt_vocab_size,</span>
+<span id="cb39-3">                max_seq_length,</span>
+<span id="cb39-4">                src_pad_token_id,</span>
+<span id="cb39-5">                tgt_pad_token_id,</span>
+<span id="cb39-6">                dim_model<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">512</span>,</span>
+<span id="cb39-7">                dim_value<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">64</span>,</span>
+<span id="cb39-8">                dim_ffn<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2048</span>,</span>
+<span id="cb39-9">                n_heads<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>,</span>
+<span id="cb39-10">                N<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span>,</span>
+<span id="cb39-11">                dropout_p<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>):</span>
+<span id="cb39-12">    src_embed <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.Sequential(</span>
+<span id="cb39-13">        Embeddings(dim_model, src_vocab_size),</span>
+<span id="cb39-14">        PositionalEncoding(max_seq_length, dim_model, dropout_p)</span>
+<span id="cb39-15">    )</span>
+<span id="cb39-16">    tgt_embed <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.Sequential(</span>
+<span id="cb39-17">        Embeddings(dim_model, tgt_vocab_size),</span>
+<span id="cb39-18">        PositionalEncoding(max_seq_length, dim_model, dropout_p)</span>
+<span id="cb39-19">    )</span>
+<span id="cb39-20">    encoder <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Encoder(N, n_heads, dim_model, dim_value, dim_ffn, dropout_p)</span>
+<span id="cb39-21">    decoder <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Decoder(N, n_heads, dim_model, dim_value, dim_ffn, dropout_p)</span>
+<span id="cb39-22">    model_head <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ModelHead(dim_model, tgt_vocab_size)</span>
+<span id="cb39-23"></span>
+<span id="cb39-24">    model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Transformer(encoder, decoder, src_embed, tgt_embed, model_head, src_pad_token_id, tgt_pad_token_id)</span>
+<span id="cb39-25"></span>
+<span id="cb39-26">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># initialize parameters with Xavier uniform.</span></span>
+<span id="cb39-27">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> p <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> model.parameters():</span>
+<span id="cb39-28">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> p.dim() <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>:</span>
+<span id="cb39-29">            nn.init.xavier_uniform_(p)</span>
+<span id="cb39-30">            </span>
+<span id="cb39-31">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> model</span></code></pre></div>
+</div>
+<div class="cell" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb40" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> run_one_epoch(model, dataloader, optimizer, loss_fn, device):</span>
+<span id="cb40-2">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> device.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">type</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'cuda'</span>:</span>
+<span id="cb40-3">        torch.cuda.empty_cache()</span>
+<span id="cb40-4">    model.train()</span>
+<span id="cb40-5"></span>
+<span id="cb40-6">    total_loss <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb40-7">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> batch <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> dataloader:</span>
+<span id="cb40-8">        src_input <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> batch[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>].to(device)</span>
+<span id="cb40-9">        tgt_input <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> batch[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>].to(device)</span>
+<span id="cb40-10">        labels <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> batch[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>].to(device)</span>
+<span id="cb40-11"></span>
+<span id="cb40-12">        optimizer.zero_grad()</span>
+<span id="cb40-13">        output, _ <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> model(src_input, tgt_input)</span>
+<span id="cb40-14">        loss <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> loss_fn(</span>
+<span id="cb40-15">            output.view(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, output.size(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)),</span>
+<span id="cb40-16">            labels.view(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb40-17">        )</span>
+<span id="cb40-18">        loss.backward()</span>
+<span id="cb40-19">        optimizer.step()</span>
+<span id="cb40-20">        </span>
+<span id="cb40-21">        total_loss <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+=</span> loss.item()</span>
+<span id="cb40-22">        dataloader.set_postfix({<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'training loss'</span>: <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>loss<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>item()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:8.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>})</span>
+<span id="cb40-23"></span>
+<span id="cb40-24">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> total_loss <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(dataloader)</span>
+<span id="cb40-25"></span>
+<span id="cb40-26"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> evaluation(model, dataloader, loss_fn, device):</span>
+<span id="cb40-27">    model.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">eval</span>()</span>
+<span id="cb40-28">    </span>
+<span id="cb40-29">    total_loss <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb40-30">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">with</span> torch.no_grad():</span>
+<span id="cb40-31">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> batch <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> dataloader:</span>
+<span id="cb40-32">            src_input <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> batch[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>].to(device)</span>
+<span id="cb40-33">            tgt_input <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> batch[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>].to(device)</span>
+<span id="cb40-34">            labels <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> batch[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>].to(device)</span>
+<span id="cb40-35"></span>
+<span id="cb40-36">            output, _ <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> model(src_input, tgt_input)</span>
+<span id="cb40-37">            loss <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> loss_fn(</span>
+<span id="cb40-38">                output.view(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, output.size(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)),</span>
+<span id="cb40-39">                labels.view(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb40-40">            )</span>
+<span id="cb40-41"></span>
+<span id="cb40-42">            total_loss <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+=</span> loss.item()</span>
+<span id="cb40-43"></span>
+<span id="cb40-44">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> total_loss <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(dataloader)</span></code></pre></div>
+</div>
+<div class="cell" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb41" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># find out the max sequence length that is required by the model's positional encoding</span></span>
+<span id="cb41-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> get_max_length(datasets):</span>
+<span id="cb41-3">    max_len <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb41-4">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> ds <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> datasets:</span>
+<span id="cb41-5">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> sample <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> ds:</span>
+<span id="cb41-6">            <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> _, ids <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> sample.items():</span>
+<span id="cb41-7">                max_len <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">max</span>(max_len, <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(ids))</span>
+<span id="cb41-8">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> max_len</span></code></pre></div>
+</div>
+<div class="cell" data-execution_count="33">
+<div class="sourceCode cell-code" id="cb42" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1">max_seq_length <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> get_max_length([tokenized_train_ds, tokenized_val_ds, tokenized_test_ds])</span>
+<span id="cb42-2">max_seq_length</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="33">
+<pre><code>46</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="34">
+<div class="sourceCode cell-code" id="cb44" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1">device <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.device(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'cuda'</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> torch.cuda.is_available() <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">else</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'cpu'</span>)</span>
+<span id="cb44-2"></span>
+<span id="cb44-3">model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> build_model(</span>
+<span id="cb44-4">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(vocabs[EN]),</span>
+<span id="cb44-5">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(vocabs[DE]),</span>
+<span id="cb44-6">    max_seq_length,</span>
+<span id="cb44-7">    vocabs[EN][PAD],</span>
+<span id="cb44-8">    vocabs[DE][PAD]</span>
+<span id="cb44-9">).to(device)</span>
+<span id="cb44-10"></span>
+<span id="cb44-11">optimizer <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.optim.Adam(model.parameters(), lr<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1e-4</span>, eps<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1e-9</span>)</span>
+<span id="cb44-12">loss_fn <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.CrossEntropyLoss(</span>
+<span id="cb44-13">    ignore_index<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>vocabs[DE][PAD],</span>
+<span id="cb44-14">    label_smoothing<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span></span>
+<span id="cb44-15">).to(device)</span>
+<span id="cb44-16"></span>
+<span id="cb44-17"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> total_params(model):</span>
+<span id="cb44-18">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>([param.numel() <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> param <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> model.parameters() <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> param.requires_grad])</span>
+<span id="cb44-19"></span>
+<span id="cb44-20"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'Total parameters: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>total_params(model)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:,}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Total parameters: 55,522,638</code></pre>
+</div>
+</div>
+<div class="cell" data-scrolled="true" data-execution_count="35">
+<div class="sourceCode cell-code" id="cb46" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1">epochs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span></span>
+<span id="cb46-2"></span>
+<span id="cb46-3">training_losses <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> []</span>
+<span id="cb46-4">val_losses <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> []</span>
+<span id="cb46-5"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> epoch <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(epochs):</span>
+<span id="cb46-6">    train_iterator <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tqdm(train_dataloader, desc<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'epoch </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>epoch<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:02d}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb46-7">    avg_loss <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> run_one_epoch(model, train_iterator, optimizer, loss_fn, device)</span>
+<span id="cb46-8">    training_losses.append(avg_loss)</span>
+<span id="cb46-9">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># get validation loss</span></span>
+<span id="cb46-10">    avg_loss <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> evaluation(model, val_dataloader, loss_fn, device)</span>
+<span id="cb46-11">    val_losses.append(avg_loss)</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>epoch 00: 100%|██████████| 454/454 [00:26&lt;00:00, 17.33it/s, training loss=5.2297]
+epoch 01: 100%|██████████| 454/454 [00:26&lt;00:00, 17.14it/s, training loss=4.4458]
+epoch 02: 100%|██████████| 454/454 [00:26&lt;00:00, 17.10it/s, training loss=4.2431]
+epoch 03: 100%|██████████| 454/454 [00:26&lt;00:00, 17.07it/s, training loss=3.8277]
+epoch 04: 100%|██████████| 454/454 [00:26&lt;00:00, 17.08it/s, training loss=3.3935]
+epoch 05: 100%|██████████| 454/454 [00:26&lt;00:00, 17.03it/s, training loss=3.3311]</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="36">
+<div class="sourceCode cell-code" id="cb48" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> plt</span>
+<span id="cb48-2"></span>
+<span id="cb48-3">plt.plot(training_losses, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'training loss'</span>)</span>
+<span id="cb48-4">plt.plot(val_losses, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'val loss'</span>)</span>
+<span id="cb48-5">plt.legend()</span>
+<span id="cb48-6">plt.show()<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span></code></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="https://liminma.github.io/machine-learning-lab/notebooks/original-transformer-model_files/figure-html/cell-37-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="inference" class="level2">
+<h2 class="anchored" data-anchor-id="inference">Inference</h2>
+<p>During inference, tokens are generated one at a time.</p>
+<div class="cell" data-execution_count="37">
+<div class="sourceCode cell-code" id="cb49" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> translate(sample, max_gen_length<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">50</span>):</span>
+<span id="cb49-2">    process_fn <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tokenize_data(vocabs, tokenizers)</span>
+<span id="cb49-3">    sample_ids <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> process_fn(sample)</span>
+<span id="cb49-4">    </span>
+<span id="cb49-5">    model.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">eval</span>()</span>
+<span id="cb49-6">    </span>
+<span id="cb49-7">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># compute context vectors</span></span>
+<span id="cb49-8">    src_input <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> sample_ids[EN]</span>
+<span id="cb49-9">    src_input <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.LongTensor(src_input).unsqueeze(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>).to(device)</span>
+<span id="cb49-10">    src_mask <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> model.get_src_mask(src_input)</span>
+<span id="cb49-11">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">with</span> torch.no_grad():</span>
+<span id="cb49-12">        encoder_output <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> model.encoder(model.src_embed(src_input), src_mask)</span>
+<span id="cb49-13"></span>
+<span id="cb49-14">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># generate output tokens</span></span>
+<span id="cb49-15">    translation <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> []</span>
+<span id="cb49-16">    tgt_input <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [vocabs[DE][SOS]]</span>
+<span id="cb49-17">    tgt_input <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.LongTensor(tgt_input).unsqueeze(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>).to(device)</span>
+<span id="cb49-18">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> _ <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(max_gen_length):</span>
+<span id="cb49-19">        tgt_mask <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> model.get_tgt_mask(tgt_input)</span>
+<span id="cb49-20">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">with</span> torch.no_grad():</span>
+<span id="cb49-21">            decoder_output, attention_weights <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> model.decoder(</span>
+<span id="cb49-22">                model.tgt_embed(tgt_input),</span>
+<span id="cb49-23">                tgt_mask,</span>
+<span id="cb49-24">                encoder_output,</span>
+<span id="cb49-25">                src_mask</span>
+<span id="cb49-26">            )</span>
+<span id="cb49-27">            output <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> model.model_head(decoder_output)</span>
+<span id="cb49-28">        </span>
+<span id="cb49-29">        pred <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> output.argmax(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)[:, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>] <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># the last token is the predicted</span></span>
+<span id="cb49-30">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> pred.item() <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> vocabs[DE][EOS]:</span>
+<span id="cb49-31">            <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># reached &lt;eos&gt; token</span></span>
+<span id="cb49-32">            <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">break</span></span>
+<span id="cb49-33">    </span>
+<span id="cb49-34">        translation.append(pred.item())</span>
+<span id="cb49-35">        tgt_input <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.cat((tgt_input, pred.unsqueeze(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)), dim<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb49-36">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> translation, attention_weights</span></code></pre></div>
+</div>
+<div class="cell" data-execution_count="38">
+<div class="sourceCode cell-code" id="cb50" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1">de_words_list <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> vocabs[DE].get_itos()</span></code></pre></div>
+</div>
+<div class="cell" data-execution_count="39">
+<div class="sourceCode cell-code" id="cb51" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1">sample <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> test_ds[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>]</span>
+<span id="cb51-2"></span>
+<span id="cb51-3">translation, attention_weights <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> translate(sample)</span>
+<span id="cb51-4">translation <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">' '</span>.join([de_words_list[<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">id</span>] <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">id</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> translation])</span>
+<span id="cb51-5"></span>
+<span id="cb51-6"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'label: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>sample[DE]<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">preds: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>translation<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>label: Ein Mann mit einem orangefarbenen Hut, der etwas anstarrt.
+preds: Ein Mann mit einem Hut schaut auf einen Tisch .</code></pre>
+</div>
+</div>
+</section>
+<section id="visualize-attentions" class="level2">
+<h2 class="anchored" data-anchor-id="visualize-attentions">Visualize attentions</h2>
+<div class="cell" data-execution_count="40">
+<div class="sourceCode cell-code" id="cb53" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1">en_words <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'&lt;sos&gt;'</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>tokenize_sentence(sample[EN], tokenizers, EN)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'&lt;eos&gt;'</span>]</span>
+<span id="cb53-2">de_words <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> translation.split(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">' '</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'&lt;eos&gt;'</span>]</span>
+<span id="cb53-3">values <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> attention_weights.detach().cpu().numpy().squeeze(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)</span>
+<span id="cb53-4"></span>
+<span id="cb53-5">fig <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> plt.figure(figsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">22</span>))</span>
+<span id="cb53-6">xticks <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(en_words)))</span>
+<span id="cb53-7">yticks <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(de_words)))</span>
+<span id="cb53-8"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>):</span>
+<span id="cb53-9">    ax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> fig.add_subplot(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, i<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb53-10">    ax.matshow(values[i], cmap<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'gray'</span>)</span>
+<span id="cb53-11">    </span>
+<span id="cb53-12">    ax.set_xticks(xticks)</span>
+<span id="cb53-13">    ax.set_xticklabels(en_words, rotation<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">50</span>)</span>
+<span id="cb53-14">    ax.set_yticks(yticks)</span>
+<span id="cb53-15">    ax.set_yticklabels(de_words)</span>
+<span id="cb53-16"></span>
+<span id="cb53-17">plt.show()</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="https://liminma.github.io/machine-learning-lab/notebooks/original-transformer-model_files/figure-html/cell-41-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body">
+<div id="ref-VaswaniSPUJGKP17" class="csl-entry">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline">A. Vaswani <em>et al.</em>, <span>“Attention is all you need,”</span> <em>CoRR</em>, vol. abs/1706.03762, 2017, Available: <a href="http://arxiv.org/abs/1706.03762">http://arxiv.org/abs/1706.03762</a></div>
+</div>
+<div id="ref-elliott-EtAl:2016:VL16" class="csl-entry">
+<div class="csl-left-margin">[2] </div><div class="csl-right-inline">D. Elliott, S. Frank, K. Sima’an, and L. Specia, <span>“Multi30K: Multilingual english-german image descriptions,”</span> pp. 70–74, 2016.</div>
+</div>
+</div></section></div> ]]></description>
+  <category>Paper Reading</category>
+  <category>Attention Mechanism</category>
+  <category>Transformer</category>
+  <category>PyTorch</category>
+  <guid>https://liminma.github.io/machine-learning-lab/notebooks/original-transformer-model.html</guid>
+  <pubDate>Sat, 07 Oct 2023 04:00:00 GMT</pubDate>
+</item>
+<item>
   <title>Understanding Tree-of-Thoughts (ToT)</title>
   <link>https://liminma.github.io/machine-learning-lab/notebooks/tree-of-thoughts.html</link>
   <description><![CDATA[ 
@@ -1611,9 +4196,6 @@ font-style: inherit;">0</span>].message.content)</span></code></pre></div>
 
 
 
-<div style="text-align: right;">
-<p><a target="_blank" href="https://colab.research.google.com/github/liminma/machine-learning-lab/blob/main/notebooks/react_agent_llama2.ipynb"> <img src="https://liminma.github.io/machine-learning-lab/notebooks/https:/colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"> </a></p>
-</div>
 <p>ReAct <span class="citation" data-cites="yao2022react">[1]</span> is a method that uses Large Language Models (LLMs) to create reasoning and actions for tasks in an interleaved way. Reasoning helps the model to create, monitor and adjust action plans and handle exceptions. Actions allows the model to access knowledge bases or external environments to obtain more information to support its reasoning, as illustrated in the following figure:</p>
 <div style="text-align: center;">
 <p><img src="https://liminma.github.io/machine-learning-lab/notebooks/react_agent_llama2_files/figure-html/dfa1deb4-d8be-43ae-bbd4-66803ca98006-1-ce6e6eb2-6aaf-43fc-896f-8042be80af1e.png" class="preview-image img-fluid"> <br>Image source: Yao et al. <span class="citation" data-cites="yao2022react">[1]</span></p>
@@ -11747,6 +14329,176 @@ AI:
   <category>LangChain</category>
   <guid>https://liminma.github.io/machine-learning-lab/notebooks/langchain_memory.html</guid>
   <pubDate>Sat, 17 Jun 2023 04:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Bahdanau Attention</title>
+  <link>https://liminma.github.io/machine-learning-lab/notebooks/bahdanau-attention.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>Basic encoder-decoder architecture encodes the input sequence into a fixed-length context vector, which is a performance bottleneck according to Bahdanau et al. <span class="citation" data-cites="bahdanau2016neural">[1]</span>. They proposed a attention mechanism to improve the performance of RNN encoder-decoder models by helping the decoder to focus on the most relevant parts of the input sequence when generating the output sequence.</p>
+<section id="how-does-the-attention-mechanism-work" class="level2">
+<h2 class="anchored" data-anchor-id="how-does-the-attention-mechanism-work">How does the attention mechanism work?</h2>
+<p>The purpose of the attention is to compute a context vector for the decoder to generate output sequence. The whole process is done in 3 steps, as illustrated in the following figure <span class="citation" data-cites="bahdanau2016neural">[1]</span>:</p>
+<ol type="1">
+<li>the encoder computes annotations for every word in the input sequence.</li>
+<li>the decode use an alignment model to compute attention scores based on the annotations from the encoder</li>
+<li>finally, the decoder compute the context vector using the attention scores and the annotations</li>
+</ol>
+<p style="text-align:center;">
+<img class="preview-image" src="https://liminma.github.io/machine-learning-lab/notebooks/bahdanau-attention_files/figure-html/81ba9a2d-f52d-4ca1-9bd5-c583a1883c12-1-bc69f07b-77c2-43d2-a3d6-6c8fad8bf40a.png" width="300px;"> <br>Image source: Bahdanau et al. <span class="citation" data-cites="bahdanau2016neural">[1]</span>
+</p>
+<section id="step-1-compute-annotations" class="level3">
+<h3 class="anchored" data-anchor-id="step-1-compute-annotations">Step 1: compute annotations</h3>
+<p>The encoder uses a bidirectional RNN (BiRNN) so that the annotation of each word <img src="https://latex.codecogs.com/png.latex?j"> summarizes both the preceding and following words. The results are a forward hidden state <img src="https://latex.codecogs.com/png.latex?%5Coverrightarrow%7Bh_j%7D"> and a backward hidden state <img src="https://latex.codecogs.com/png.latex?%5Coverleftarrow%7Bh_j%7D">, which are concatenated to form the annotation: <img src="https://latex.codecogs.com/png.latex?h_j=%5Cleft%5B%5Cbegin%7Barray%7D%7Bc%7D%5Coverrightarrow%7Bh%7D_j%20%5C%5C%20%5Coverleftarrow%7Bh%7D_j%5Cend%7Barray%7D%5Cright%5D"></p>
+</section>
+<section id="step-2-compute-attention-scores" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-compute-attention-scores">step 2: compute attention scores</h3>
+<p>The decoder uses an alignment model to compute attention scores. The authors chose a single-layer MLP as the alignment model, <img src="https://latex.codecogs.com/png.latex?%0Aa(s_%7Bi-1%7D,%20h_j)%20=%20v_a%5E%5Cintercal%5C%20tanh(W_a%20s_%7Bi-1%7D%20+%20U_a%20h_j)%0A"> <img src="https://latex.codecogs.com/png.latex?W_a">, <img src="https://latex.codecogs.com/png.latex?U_a"> and <img src="https://latex.codecogs.com/png.latex?v_a"> are weight matrices. <img src="https://latex.codecogs.com/png.latex?h_j"> is the <img src="https://latex.codecogs.com/png.latex?j">-th annotation from the source sequence. <img src="https://latex.codecogs.com/png.latex?s_%7Bi-1%7D"> is the decoder state at time <img src="https://latex.codecogs.com/png.latex?i-1">.</p>
+<p>At time <img src="https://latex.codecogs.com/png.latex?i">, given the <img src="https://latex.codecogs.com/png.latex?j">-th annotation <img src="https://latex.codecogs.com/png.latex?h_j">, the attention score <img src="https://latex.codecogs.com/png.latex?e_%7Bij%7D"> is computed using the previous decoder state <img src="https://latex.codecogs.com/png.latex?s_%7Bi-1%7D">, <img src="https://latex.codecogs.com/png.latex?%0Ae_%7Bij%7D%20=%20a(s_%7Bi-1%7D,%20h_j)%0A"></p>
+</section>
+<section id="step-3-compute-context-vector" class="level3">
+<h3 class="anchored" data-anchor-id="step-3-compute-context-vector">step 3: compute context vector</h3>
+<p>A context vector is a weighted sum of annotations. At time <img src="https://latex.codecogs.com/png.latex?i">, the context vector can be defined as, <img src="https://latex.codecogs.com/png.latex?%0Ac_i%20=%20%5Csum_%7Bj=1%7D%5E%7BT_x%7D%20%5Calpha_%7Bij%7Dh_j%0A"> Here, <img src="https://latex.codecogs.com/png.latex?T_x"> is the length of the source sequence. The weights <img src="https://latex.codecogs.com/png.latex?%5Calpha_%7Bij%7D"> are the results of appying softmax to the attention scores from step 2.</p>
+</section>
+</section>
+<section id="implement-bahdanau-attention-using-pytorch" class="level2">
+<h2 class="anchored" data-anchor-id="implement-bahdanau-attention-using-pytorch">Implement Bahdanau Attention using PyTorch</h2>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> torch</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> torch <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> nn</span>
+<span id="cb1-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> torch.nn.functional <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> F</span></code></pre></div>
+</div>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> BahdanauAttention(nn.Module):</span>
+<span id="cb2-2">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, enc_hidden_dim, dec_hidden_dim):</span>
+<span id="cb2-3">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">super</span>().<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>()</span>
+<span id="cb2-4">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.Wa <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.Linear(dec_hidden_dim, dec_hidden_dim)</span>
+<span id="cb2-5">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.Ua <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.Linear(enc_hidden_dim<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, dec_hidden_dim)</span>
+<span id="cb2-6">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.va <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nn.Linear(dec_hidden_dim, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb2-7"></span>
+<span id="cb2-8">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> forward(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, s_prev, hs):</span>
+<span id="cb2-9">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb2-10"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        s_prev: previous decoder hidden state, size: (batch_size, dec_hidden_dim)</span></span>
+<span id="cb2-11"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        hs: encoder annotations, size: (batch_size, src_seq_length, enc_hidden_dim*2)</span></span>
+<span id="cb2-12"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        """</span></span>
+<span id="cb2-13">        attn_scores <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.va(</span>
+<span id="cb2-14">            torch.tanh(</span>
+<span id="cb2-15">                <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.Wa(s_prev).unsqueeze(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.Ua(hs)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, src_seq_length, dec_hidden_dim)</span></span>
+<span id="cb2-16">            )</span>
+<span id="cb2-17">        ).squeeze(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, src_seq_length)</span></span>
+<span id="cb2-18"></span>
+<span id="cb2-19">        weights <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> F.softmax(attn_scores, dim<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, src_seq_length)</span></span>
+<span id="cb2-20">        context <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.bmm(weights.unsqueeze(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>), hs).squeeze(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (batch_size, enc_hidden_dim*2)</span></span>
+<span id="cb2-21"></span>
+<span id="cb2-22">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> context, weights</span></code></pre></div>
+</div>
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body">
+<div id="ref-bahdanau2016neural" class="csl-entry">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline">D. Bahdanau, K. Cho, and Y. Bengio, <span>“Neural machine translation by jointly learning to align and translate.”</span> 2016. Available: <a href="https://arxiv.org/abs/1409.0473">https://arxiv.org/abs/1409.0473</a></div>
+</div>
+</div></section></div> ]]></description>
+  <category>Paper Reading</category>
+  <category>Attention Mechanism</category>
+  <guid>https://liminma.github.io/machine-learning-lab/notebooks/bahdanau-attention.html</guid>
+  <pubDate>Tue, 06 Jun 2023 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Information Measures</title>
