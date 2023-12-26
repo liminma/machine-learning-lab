@@ -20,7 +20,13 @@
       "/notebooks/langchain_localai_demo.html",
       "/notebooks/langchain_memory.html",
       "/notebooks/bahdanau-attention.html",
-      "/notebooks/information_measures.html"
+      "/notebooks/information_measures.html",
+      "/notebooks/keras_learningrate_scheduler.html",
+      "/notebooks/decision_boundary.html",
+      "/notebooks/conv_layer_viz.html",
+      "/notebooks/callbacks.html",
+      "/notebooks/vector_projection_on_line.html",
+      "/notebooks/matrix_rank_factorization.html"
     ]
   },
   {
@@ -44,7 +50,13 @@
       "/notebooks/langchain_localai_demo.html",
       "/notebooks/langchain_memory.html",
       "/notebooks/bahdanau-attention.html",
-      "/notebooks/information_measures.html"
+      "/notebooks/information_measures.html",
+      "/notebooks/keras_learningrate_scheduler.html",
+      "/notebooks/decision_boundary.html",
+      "/notebooks/conv_layer_viz.html",
+      "/notebooks/callbacks.html",
+      "/notebooks/vector_projection_on_line.html",
+      "/notebooks/matrix_rank_factorization.html"
     ]
   }
 ]
