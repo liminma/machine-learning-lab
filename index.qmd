@@ -4,6 +4,7 @@ listing:
   contents: notebooks
   sort: "date desc"
   type: default
+  page-size: 10
   categories: true
   filter-ui: true
   fields: [date, title, description, categories, image]
@@ -11,5 +12,3 @@ listing:
 page-layout: full
 title-block-banner: false
 ---
-
-
