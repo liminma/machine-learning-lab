@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.41">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Limin's Machine Learning Lab – &nbsp;</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-listing/list.min.js"></script>
+<script src="site_libs/quarto-listing/quarto-listing.js"></script>
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    const listingTargetEl = window.document.querySelector('#listing-listing .list');
+    if (!listingTargetEl) {
+      // No listing discovered, do not attach.
+      return; 
+    }
+
+    const options = {
+      valueNames: ['listing-date','listing-title','listing-description','listing-categories','listing-image',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      page: 10,
+    pagination: { item: "<li class='page-item'><a class='page page-link' href='#'></a></li>" },
+      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
+    };
+
+    window['quarto-listings'] = window['quarto-listings'] || {};
+    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
+
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  });
+
+  window.addEventListener('hashchange',() => {
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  })
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+<link rel="alternate" type="application/rss+xml" title="Limin's Machine Learning Lab" href="index.xml" data-external="1"></head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Limin’s Machine Learning Lab</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/liminma/machine-learning-lab"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/liminma2021"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./archive.html"> 
+<span class="menu-text">Archive</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(29)</span></div><div class="category" data-category="Agent">Agent <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Attention Mechanism">Attention Mechanism <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Fine-tuning">Fine-tuning <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Function calling">Function calling <span class="quarto-category-count">(3)</span></div><div class="category" data-category="Information Theory">Information Theory <span class="quarto-category-count">(1)</span></div><div class="category" data-category="LangChain">LangChain <span class="quarto-category-count">(4)</span></div><div class="category" data-category="Linear Algebra">Linear Algebra <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Llama 2">Llama 2 <span class="quarto-category-count">(3)</span></div><div class="category" data-category="LlamaIndex">LlamaIndex <span class="quarto-category-count">(1)</span></div><div class="category" data-category="MLC LLM">MLC LLM <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Mistral">Mistral <span class="quarto-category-count">(4)</span></div><div class="category" data-category="Paper Reading">Paper Reading <span class="quarto-category-count">(5)</span></div><div class="category" data-category="Prompt Engineering">Prompt Engineering <span class="quarto-category-count">(7)</span></div><div class="category" data-category="PyTorch">PyTorch <span class="quarto-category-count">(5)</span></div><div class="category" data-category="Tabular data">Tabular data <span class="quarto-category-count">(2)</span></div><div class="category" data-category="TensorFlow">TensorFlow <span class="quarto-category-count">(4)</span></div><div class="category" data-category="Transformer">Transformer <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Visualization">Visualization <span class="quarto-category-count">(3)</span></div><div class="category" data-category="openai">openai <span class="quarto-category-count">(3)</span></div></div></div>
+<!-- main -->
+<main class="content column-page-left" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">&nbsp;</h1>
+</div>
+
+
+
+<div class="quarto-title-meta column-page-left">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+
+
+
+
+<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
+<div class="listing-actions-group">
+    <div class="input-group input-group-sm quarto-listing-filter">
+      <span class="input-group-text"><i class="bi bi-search"></i></span>
+      <input type="text" class="search form-control" placeholder="Filter">
+    </div>
+</div>
+<div class="list quarto-listing-default">
+<div class="quarto-post image-right" data-index="0" data-categories="Mistral,Function calling,LlamaIndex" data-listing-date-sort="1717646400000" data-listing-file-modified-sort="1718837214225" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="63">
+<div class="thumbnail">
+<p><a href="./notebooks/function-calling-agent-doc-qa.html" class="no-external"></a></p><a href="./notebooks/function-calling-agent-doc-qa.html" class="no-external">
+<p class="card-img-top"><img src="notebooks/function-calling-agent-doc-qa_files/figure-html/7df6ebad-ca81-4c87-ba25-b881e778a9c3-1-b53a125a-6e3b-43f0-a6f9-42e63cf5d8fd.png"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./notebooks/function-calling-agent-doc-qa.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/function-calling-agent-doc-qa.html" class="no-external">A function calling agent for document QA</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/function-calling-agent-doc-qa.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Mistral'); return false;">
+Mistral
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Function calling'); return false;">
+Function calling
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('LlamaIndex'); return false;">
+LlamaIndex
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/function-calling-agent-doc-qa.html" class="no-external">
+
+</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/function-calling-agent-doc-qa.html" class="no-external">
+<div class="listing-date">
+Jun 6, 2024
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-categories="Mistral,Function calling,Tabular data" data-listing-date-sort="1716955200000" data-listing-file-modified-sort="1718837214117" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="70">
+<div class="thumbnail">
+<p><a href="./notebooks/Mixtral-8x22B-function-calling-examples.html" class="no-external"></a></p><a href="./notebooks/Mixtral-8x22B-function-calling-examples.html" class="no-external">
+<p class="card-img-top"><img src="notebooks/Mixtral-8x22B-function-calling-examples_files/figure-html/430cd6e9-111f-456d-9208-0908aa2aa712-1-02d3c1f1-a188-45b5-a592-a147a4747d12.png"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./notebooks/Mixtral-8x22B-function-calling-examples.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/Mixtral-8x22B-function-calling-examples.html" class="no-external">Function calling with Mixtral-8x22B-Instruct-v0.1</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/Mixtral-8x22B-function-calling-examples.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Mistral'); return false;">
+Mistral
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Function calling'); return false;">
+Function calling
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Tabular data'); return false;">
+Tabular data
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/Mixtral-8x22B-function-calling-examples.html" class="no-external">
+
+</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/Mixtral-8x22B-function-calling-examples.html" class="no-external">
+<div class="listing-date">
+May 29, 2024
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="2" data-categories="Mistral,Function calling,Tabular data" data-listing-date-sort="1716696000000" data-listing-file-modified-sort="1718837214105" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="19">
+<div class="thumbnail">
+<p><a href="./notebooks/Mistral-7B-Instruct-v0.3-function-calling.html" class="no-external"></a></p><a href="./notebooks/Mistral-7B-Instruct-v0.3-function-calling.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./notebooks/Mistral-7B-Instruct-v0.3-function-calling.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/Mistral-7B-Instruct-v0.3-function-calling.html" class="no-external">Function calling with Mistral-7B-Instruct-v0.3</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/Mistral-7B-Instruct-v0.3-function-calling.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Mistral'); return false;">
+Mistral
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Function calling'); return false;">
+Function calling
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Tabular data'); return false;">
+Tabular data
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/Mistral-7B-Instruct-v0.3-function-calling.html" class="no-external">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im">import</span> json</span>
+<span id="cb1-2"><span class="im">import</span> os</span>
+<span id="cb1-3"><span class="im">import</span> sqlite3</span>
+<span id="cb1-4"><span class="im">import</span> torch</span>
+<span id="cb1-5"></span>
+<span id="cb1-6"><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb1-7"></span>
+<span id="cb1-8"><span class="im">from</span> mistral_inference.model <span class="im">import</span> Transformer</span>
+<span id="cb1-9"><span class="im">from</span> mistral_inference.generate <span class="im">import</span> generate</span>
+<span id="cb1-10"><span class="im">…</span><span class="im"></span></span><span id="cb1-11"><span class="im"></span><span class="im"></span></span><span id="cb1-12"><span class="im"></span><span class="im"></span></span><span id="cb1-13"><span class="im"></span><span class="im"></span></span></code></pre></div></a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/Mistral-7B-Instruct-v0.3-function-calling.html" class="no-external">
+<div class="listing-date">
+May 26, 2024
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="3" data-categories="Fine-tuning,Mistral" data-listing-date-sort="1704862800000" data-listing-file-modified-sort="1718837214169" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="67">
+<div class="thumbnail">
+<p><a href="./notebooks/fine-tune-mistral-7b-instruct-for-datasets-generation.html" class="no-external"></a></p><a href="./notebooks/fine-tune-mistral-7b-instruct-for-datasets-generation.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./notebooks/fine-tune-mistral-7b-instruct-for-datasets-generation.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/fine-tune-mistral-7b-instruct-for-datasets-generation.html" class="no-external">Fine-tuning Mistral-7B-Instruct-v0.2 for synthetic datasets generation</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/fine-tune-mistral-7b-instruct-for-datasets-generation.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Fine-tuning'); return false;">
+Fine-tuning
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Mistral'); return false;">
+Mistral
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/fine-tune-mistral-7b-instruct-for-datasets-generation.html" class="no-external">Fine-tune Mistral-7B-Instruct-v0.2 for generating prompts based on given texts. The fine-tuned model could be used to generate synthetic datasets for a certain domain, which…</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/fine-tune-mistral-7b-instruct-for-datasets-generation.html" class="no-external">
+<div class="listing-date">
+Jan 10, 2024
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="4" data-categories="Fine-tuning,Llama 2,MLC LLM" data-listing-date-sort="1698206400000" data-listing-file-modified-sort="1718837214189" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="664">
+<div class="thumbnail">
+<p><a href="./notebooks/finetune-compile-serve-llama2-7b-using-rtx3060.html" class="no-external"></a></p><a href="./notebooks/finetune-compile-serve-llama2-7b-using-rtx3060.html" class="no-external">
+<p class="card-img-top"><img src="notebooks/finetune-compile-serve-llama2-7b-using-rtx3060_files/figure-html/cell-1-1-e50ffe05-7e2c-4c27-957f-c41869f1f68c.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./notebooks/finetune-compile-serve-llama2-7b-using-rtx3060.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/finetune-compile-serve-llama2-7b-using-rtx3060.html" class="no-external">How to fine-tune, compile and serve Llama2 7B-chat for summarization on a single GPU (12GB)</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/finetune-compile-serve-llama2-7b-using-rtx3060.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Fine-tuning'); return false;">
+Fine-tuning
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Llama 2'); return false;">
+Llama 2
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('MLC LLM'); return false;">
+MLC LLM
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/finetune-compile-serve-llama2-7b-using-rtx3060.html" class="no-external">This notebook is a step-by-step guide to fine-tuning, compiling and serving a Llama 2 7B model for dialogue summarization on a 12GB consumer graphics card. We’ll use <code>SFTTrain…</code><code></code></a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/finetune-compile-serve-llama2-7b-using-rtx3060.html" class="no-external">
+<div class="listing-date">
+Oct 25, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="5" data-categories="Paper Reading,Attention Mechanism,Transformer,PyTorch" data-listing-date-sort="1696651200000" data-listing-file-modified-sort="1718837214297" data-listing-date-modified-sort="1702184400000" data-listing-reading-time-sort="2" data-listing-word-count-sort="392">
+<div class="thumbnail">
+<p><a href="./notebooks/original-transformer-model.html" class="no-external"></a></p><a href="./notebooks/original-transformer-model.html" class="no-external">
+<p class="card-img-top"><img src="notebooks/original-transformer-model_files/figure-html/24f5e9e0-f499-45f2-8755-af99409d7e4e-1-38bfaaab-bc81-48aa-a868-301f4fc444ec.png"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./notebooks/original-transformer-model.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/original-transformer-model.html" class="no-external">Implementing the original Transformer model in PyTorch</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/original-transformer-model.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Paper Reading'); return false;">
+Paper Reading
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Attention Mechanism'); return false;">
+Attention Mechanism
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Transformer'); return false;">
+Transformer
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('PyTorch'); return false;">
+PyTorch
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/original-transformer-model.html" class="no-external">My implementation of the Transformer model proposed in the original Transformer paper <span class="citation" data-cites="VaswaniSPUJGKP17">[1]</span> in PyTorch.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/original-transformer-model.html" class="no-external">
+<div class="listing-date">
+Oct 7, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="6" data-categories="Prompt Engineering,Paper Reading" data-listing-date-sort="1691208000000" data-listing-file-modified-sort="1718837214341" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="386">
+<div class="thumbnail">
+<p><a href="./notebooks/tree-of-thoughts.html" class="no-external"></a></p><a href="./notebooks/tree-of-thoughts.html" class="no-external">
+<p class="card-img-top"><img src="notebooks/tree-of-thoughts_files/figure-html/2ad43573-ec26-4da0-85aa-1e11d125bccd-1-8e610d5b-529a-43f5-9b78-7658b3d88316.png"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./notebooks/tree-of-thoughts.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/tree-of-thoughts.html" class="no-external">Understanding Tree-of-Thoughts (ToT)</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/tree-of-thoughts.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Prompt Engineering'); return false;">
+Prompt Engineering
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Paper Reading'); return false;">
+Paper Reading
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/tree-of-thoughts.html" class="no-external">Tree-of-Thoughts (ToT) <span class="citation" data-cites="yao2023tree">[1]</span> is a framework for LLM inference. It allows models to explore multiple reasoning paths and make deliberate decisions for problem solving. ToT…</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/tree-of-thoughts.html" class="no-external">
+<div class="listing-date">
+Aug 5, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="7" data-categories="Llama 2,Agent,Prompt Engineering,LangChain" data-listing-date-sort="1690862400000" data-listing-file-modified-sort="1718837214329" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="86">
+<div class="thumbnail">
+<p><a href="./notebooks/react_agent_llama2.html" class="no-external"></a></p><a href="./notebooks/react_agent_llama2.html" class="no-external">
+<p class="card-img-top"><img src="notebooks/react_agent_llama2_files/figure-html/dfa1deb4-d8be-43ae-bbd4-66803ca98006-1-ce6e6eb2-6aaf-43fc-896f-8042be80af1e.png"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./notebooks/react_agent_llama2.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/react_agent_llama2.html" class="no-external">Experiment ReAct prompting with Llama 2 70B-chat</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/react_agent_llama2.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Llama 2'); return false;">
+Llama 2
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Agent'); return false;">
+Agent
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Prompt Engineering'); return false;">
+Prompt Engineering
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('LangChain'); return false;">
+LangChain
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/react_agent_llama2.html" class="no-external">ReAct <span class="citation" data-cites="yao2022react">[1]</span> is a method that uses Large Language Models (LLMs) to create reasoning and actions for tasks in an interleaved way. Reasoning helps the model to create, monitor…</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/react_agent_llama2.html" class="no-external">
+<div class="listing-date">
+Aug 1, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="8" data-categories="Paper Reading,Prompt Engineering,Agent" data-listing-date-sort="1690603200000" data-listing-file-modified-sort="1718837214357" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="459">
+<div class="thumbnail">
+<p><a href="./notebooks/understanding_react.html" class="no-external"></a></p><a href="./notebooks/understanding_react.html" class="no-external">
+<p class="card-img-top"><img src="notebooks/understanding_react_files/figure-html/680db070-78c8-4d58-9994-0b64ea1d4d6f-1-af9ed347-96bf-4908-b170-f4759d053482.png"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./notebooks/understanding_react.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/understanding_react.html" class="no-external">Understanding ReAct Prompting</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/understanding_react.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Paper Reading'); return false;">
+Paper Reading
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Prompt Engineering'); return false;">
+Prompt Engineering
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Agent'); return false;">
+Agent
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/understanding_react.html" class="no-external">In their paper, Yao et al. <span class="citation" data-cites="yao2022react">[1]</span> introduce ReAct, a method that leverages the reasoning and decision-making capabilities of large language models (LLMs) to solve complex…<strong></strong><strong></strong><span class="citation" data-cites="reactblog2022"></span></a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/understanding_react.html" class="no-external">
+<div class="listing-date">
+Jul 29, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="9" data-categories="Paper Reading,Prompt Engineering" data-listing-date-sort="1690344000000" data-listing-file-modified-sort="1718837214353" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="349">
+<div class="thumbnail">
+<p><a href="./notebooks/understanding_chain_of_thought.html" class="no-external"></a></p><a href="./notebooks/understanding_chain_of_thought.html" class="no-external">
+<p class="card-img-top"><img src="notebooks/understanding_chain_of_thought_files/figure-html/680db070-78c8-4d58-9994-0b64ea1d4d6f-1-daa95e67-73c7-4031-a826-7dfe4ad266a0.png"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./notebooks/understanding_chain_of_thought.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/understanding_chain_of_thought.html" class="no-external">Understanding Chain-of-Thought (CoT)</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/understanding_chain_of_thought.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Paper Reading'); return false;">
+Paper Reading
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Prompt Engineering'); return false;">
+Prompt Engineering
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/understanding_chain_of_thought.html" class="no-external">Chain-of-Thought (CoT) <span class="citation" data-cites="wei2022chain">[1]</span> is a technique that enhances the reasoning capabilities of large language models (LLMs). It breaks down complex tasks into multiple intermediate…</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/understanding_chain_of_thought.html" class="no-external">
+<div class="listing-date">
+Jul 26, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="10" data-categories="Llama 2,Prompt Engineering" data-listing-date-sort="1690171200000" data-listing-file-modified-sort="1718837214249" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="403">
+<div class="thumbnail">
+<p><a href="./notebooks/llama2_prompt_template.html" class="no-external"></a></p><a href="./notebooks/llama2_prompt_template.html" class="no-external">
+<p class="card-img-top"><img data-src="notebooks/llama2_prompt_template_files/figure-html/b693ec84-00f6-4855-b2e7-e0bcd4bbc185-1-9aa851a5-2570-42b1-a25a-b4e75f2c2a32.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./notebooks/llama2_prompt_template.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/llama2_prompt_template.html" class="no-external">How to construct prompts for Llama 2 and chat with it?</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/llama2_prompt_template.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Llama 2'); return false;">
+Llama 2
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Prompt Engineering'); return false;">
+Prompt Engineering
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/llama2_prompt_template.html" class="no-external">In order to get the best results from Large Language Models (LLMs), prompts should be optimized to tell LLMs what to do and how to do it. One important consideration is that…</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/llama2_prompt_template.html" class="no-external">
+<div class="listing-date">
+Jul 24, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="11" data-categories="openai,Prompt Engineering" data-listing-date-sort="1689393600000" data-listing-file-modified-sort="1718837214161" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="174">
+<div class="thumbnail">
+<p><a href="./notebooks/experiment_with_prompt_engineering.html" class="no-external"></a></p><a href="./notebooks/experiment_with_prompt_engineering.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./notebooks/experiment_with_prompt_engineering.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/experiment_with_prompt_engineering.html" class="no-external">Experiment with Prompt Engineering</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/experiment_with_prompt_engineering.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('openai'); return false;">
+openai
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Prompt Engineering'); return false;">
+Prompt Engineering
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/experiment_with_prompt_engineering.html" class="no-external">This notebook contains study notes of the short course ChatGPT Prompt Engineering for Developers of DeepLearning.AI.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/experiment_with_prompt_engineering.html" class="no-external">
+<div class="listing-date">
+Jul 15, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="12" data-categories="openai,Prompt Engineering" data-listing-date-sort="1688875200000" data-listing-file-modified-sort="1718837214309" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="130">
+<div class="thumbnail">
+<p><a href="./notebooks/programming_with_chatgpt_api.html" class="no-external"></a></p><a href="./notebooks/programming_with_chatgpt_api.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./notebooks/programming_with_chatgpt_api.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/programming_with_chatgpt_api.html" class="no-external">Programming with ChatGPT API</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/programming_with_chatgpt_api.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('openai'); return false;">
+openai
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Prompt Engineering'); return false;">
+Prompt Engineering
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/programming_with_chatgpt_api.html" class="no-external">This notebook contains study notes of the short course Building Systems with the ChatGPT API of DeepLearning.AI.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/programming_with_chatgpt_api.html" class="no-external">
+<div class="listing-date">
+Jul 9, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="13" data-categories="LangChain" data-listing-date-sort="1688875200000" data-listing-file-modified-sort="1718837214241" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="73">
+<div class="thumbnail">
+<p><a href="./notebooks/langchain_embed_search_pdf.html" class="no-external"></a></p><a href="./notebooks/langchain_embed_search_pdf.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./notebooks/langchain_embed_search_pdf.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/langchain_embed_search_pdf.html" class="no-external">Embedding and Searching PDF</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/langchain_embed_search_pdf.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('LangChain'); return false;">
+LangChain
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/langchain_embed_search_pdf.html" class="no-external">LangChain has a <code>PyPDFLoader</code> data loader that can load a PDF file. It requires the <code>pypdf</code> package to be installed.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/langchain_embed_search_pdf.html" class="no-external">
+<div class="listing-date">
+Jul 9, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="14" data-categories="PyTorch" data-listing-date-sort="1688011200000" data-listing-file-modified-sort="1718837214329" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="12">
+<div class="thumbnail">
+<p><a href="./notebooks/training_with_accelarate.html" class="no-external"></a></p><a href="./notebooks/training_with_accelarate.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./notebooks/training_with_accelarate.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/training_with_accelarate.html" class="no-external">Training with <code>accelerate</code></a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/training_with_accelarate.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('PyTorch'); return false;">
+PyTorch
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/training_with_accelarate.html" class="no-external">Accelerate is a library from HuggingFace.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/training_with_accelarate.html" class="no-external">
+<div class="listing-date">
+Jun 29, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="15" data-categories="PyTorch" data-listing-date-sort="1688011200000" data-listing-file-modified-sort="1718837214329" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="33">
+<div class="thumbnail">
+<p><a href="./notebooks/training_eval_loop.html" class="no-external"></a></p><a href="./notebooks/training_eval_loop.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./notebooks/training_eval_loop.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/training_eval_loop.html" class="no-external">Training and Evaluation Loop</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/training_eval_loop.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('PyTorch'); return false;">
+PyTorch
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/training_eval_loop.html" class="no-external">Preparation steps before starting training.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/training_eval_loop.html" class="no-external">
+<div class="listing-date">
+Jun 29, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="16" data-categories="PyTorch" data-listing-date-sort="1687752000000" data-listing-file-modified-sort="1718837214301" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="32">
+<div class="thumbnail">
+<p><a href="./notebooks/preprocessing_dataset_pytorch.html" class="no-external"></a></p><a href="./notebooks/preprocessing_dataset_pytorch.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./notebooks/preprocessing_dataset_pytorch.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/preprocessing_dataset_pytorch.html" class="no-external">Preprocessing Datasets Using PyTorch</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/preprocessing_dataset_pytorch.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('PyTorch'); return false;">
+PyTorch
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/preprocessing_dataset_pytorch.html" class="no-external">GLUE SST-2 is a dataset containing movie reviews and their sentiments as labels.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/preprocessing_dataset_pytorch.html" class="no-external">
+<div class="listing-date">
+Jun 26, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="17" data-categories="PyTorch" data-listing-date-sort="1687752000000" data-listing-file-modified-sort="1718837214357" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="16">
+<div class="thumbnail">
+<p><a href="./notebooks/using_Trainer_api.html" class="no-external"></a></p><a href="./notebooks/using_Trainer_api.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./notebooks/using_Trainer_api.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/using_Trainer_api.html" class="no-external">Using <code>Trainer</code> API</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/using_Trainer_api.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('PyTorch'); return false;">
+PyTorch
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/using_Trainer_api.html" class="no-external">The function <code>load_dataset</code> allows to load a subset of data.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/using_Trainer_api.html" class="no-external">
+<div class="listing-date">
+Jun 26, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="18" data-categories="openai" data-listing-date-sort="1686974400000" data-listing-file-modified-sort="1718837214269" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="7">
+<div class="thumbnail">
+<p><a href="./notebooks/localai_openai_api.html" class="no-external"></a></p><a href="./notebooks/localai_openai_api.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./notebooks/localai_openai_api.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/localai_openai_api.html" class="no-external">openai API with LocalAI</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/localai_openai_api.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('openai'); return false;">
+openai
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/localai_openai_api.html" class="no-external">Using <code>openai</code> API with locally running LLMs.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/localai_openai_api.html" class="no-external">
+<div class="listing-date">
+Jun 17, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="19" data-categories="LangChain" data-listing-date-sort="1686974400000" data-listing-file-modified-sort="1718837214241" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="43">
+<div class="thumbnail">
+<p><a href="./notebooks/langchain_localai_demo.html" class="no-external"></a></p><a href="./notebooks/langchain_localai_demo.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./notebooks/langchain_localai_demo.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/langchain_localai_demo.html" class="no-external">LangChain with LocalAI</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/langchain_localai_demo.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('LangChain'); return false;">
+LangChain
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/langchain_localai_demo.html" class="no-external">LocalAI is able to run LLMs locally, and offers REST API compatible with OpenAI API.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/langchain_localai_demo.html" class="no-external">
+<div class="listing-date">
+Jun 17, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="20" data-categories="LangChain" data-listing-date-sort="1686974400000" data-listing-file-modified-sort="1718837214241" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="6">
+<div class="thumbnail">
+<p><a href="./notebooks/langchain_memory.html" class="no-external"></a></p><a href="./notebooks/langchain_memory.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./notebooks/langchain_memory.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/langchain_memory.html" class="no-external">Using LangChain Memory</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/langchain_memory.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('LangChain'); return false;">
+LangChain
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/langchain_memory.html" class="no-external">Play with LangChain memories.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/langchain_memory.html" class="no-external">
+<div class="listing-date">
+Jun 17, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="21" data-categories="Paper Reading,Attention Mechanism" data-listing-date-sort="1686024000000" data-listing-file-modified-sort="1718837214133" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="318">
+<div class="thumbnail">
+<p><a href="./notebooks/bahdanau-attention.html" class="no-external"></a></p><a href="./notebooks/bahdanau-attention.html" class="no-external">
+<p class="card-img-top"><img data-src="notebooks/bahdanau-attention_files/figure-html/81ba9a2d-f52d-4ca1-9bd5-c583a1883c12-1-bc69f07b-77c2-43d2-a3d6-6c8fad8bf40a.png"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./notebooks/bahdanau-attention.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/bahdanau-attention.html" class="no-external">Bahdanau Attention</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/bahdanau-attention.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Paper Reading'); return false;">
+Paper Reading
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Attention Mechanism'); return false;">
+Attention Mechanism
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/bahdanau-attention.html" class="no-external">Basic encoder-decoder architecture encodes the input sequence into a fixed-length context vector, which is a performance bottleneck according to Bahdanau et al. <span class="citation" data-cites="bahdanau2016neural">[1]</span>. They…</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/bahdanau-attention.html" class="no-external">
+<div class="listing-date">
+Jun 6, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="22" data-categories="Information Theory" data-listing-date-sort="1660708800000" data-listing-file-modified-sort="1718837214229" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="120">
+<div class="thumbnail">
+<p><a href="./notebooks/information_measures.html" class="no-external"></a></p><a href="./notebooks/information_measures.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./notebooks/information_measures.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/information_measures.html" class="no-external">Information measures</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/information_measures.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Information Theory'); return false;">
+Information Theory
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/information_measures.html" class="no-external">A list of information measure formulas <span class="citation" data-cites="DBLP:journals/corr/abs-1802-05968">[1]</span>.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/information_measures.html" class="no-external">
+<div class="listing-date">
+Aug 17, 2022
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="23" data-categories="TensorFlow" data-listing-date-sort="1660622400000" data-listing-file-modified-sort="1718837214241" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="34">
+<div class="thumbnail">
+<p><a href="./notebooks/keras_learningrate_scheduler.html" class="no-external"></a></p><a href="./notebooks/keras_learningrate_scheduler.html" class="no-external">
+<p class="card-img-top"><img data-src="notebooks/keras_learningrate_scheduler_files/figure-html/cell-4-output-1.png"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./notebooks/keras_learningrate_scheduler.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/keras_learningrate_scheduler.html" class="no-external">Tune learning rate</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/keras_learningrate_scheduler.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('TensorFlow'); return false;">
+TensorFlow
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/keras_learningrate_scheduler.html" class="no-external">The model converges much faster than before.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/keras_learningrate_scheduler.html" class="no-external">
+<div class="listing-date">
+Aug 16, 2022
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="24" data-categories="Visualization,TensorFlow" data-listing-date-sort="1660276800000" data-listing-file-modified-sort="1718837214153" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="13">
+<div class="thumbnail">
+<p><a href="./notebooks/decision_boundary.html" class="no-external"></a></p><a href="./notebooks/decision_boundary.html" class="no-external">
+<p class="card-img-top"><img data-src="notebooks/decision_boundary_files/figure-html/cell-3-output-1.png"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./notebooks/decision_boundary.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/decision_boundary.html" class="no-external">Plot decision boundary</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/decision_boundary.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Visualization'); return false;">
+Visualization
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TensorFlow'); return false;">
+TensorFlow
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/decision_boundary.html" class="no-external">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><span class="im">import</span> tensorflow <span class="im">as</span> tf</span>
+<span id="cb1-3"><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-4"><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_moons</span></code></pre></div>
+</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/decision_boundary.html" class="no-external">
+<div class="listing-date">
+Aug 12, 2022
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="25" data-categories="Visualization,TensorFlow" data-listing-date-sort="1653278400000" data-listing-file-modified-sort="1718837214149" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="1">
+<div class="thumbnail">
+<p><a href="./notebooks/conv_layer_viz.html" class="no-external"></a></p><a href="./notebooks/conv_layer_viz.html" class="no-external">
+<p class="card-img-top"><img data-src="notebooks/conv_layer_viz_files/figure-html/cell-6-output-1.png"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./notebooks/conv_layer_viz.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/conv_layer_viz.html" class="no-external">Visualization of Conv2D layers</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/conv_layer_viz.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Visualization'); return false;">
+Visualization
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TensorFlow'); return false;">
+TensorFlow
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/conv_layer_viz.html" class="no-external">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im">from</span> tensorflow.keras <span class="im">import</span> (datasets, models, layers)</span>
+<span id="cb1-2"><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span></code></pre></div>
+</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/conv_layer_viz.html" class="no-external">
+<div class="listing-date">
+May 23, 2022
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="26" data-categories="TensorFlow" data-listing-date-sort="1648180800000" data-listing-file-modified-sort="1718837214141" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="11">
+<div class="thumbnail">
+<p><a href="./notebooks/callbacks.html" class="no-external"></a></p><a href="./notebooks/callbacks.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./notebooks/callbacks.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/callbacks.html" class="no-external">Keras callbacks</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/callbacks.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('TensorFlow'); return false;">
+TensorFlow
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/callbacks.html" class="no-external">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im">from</span> tensorflow.keras <span class="im">import</span> (datasets, callbacks, models, layers, optimizers, losses)</span></code></pre></div>
+</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/callbacks.html" class="no-external">
+<div class="listing-date">
+Mar 25, 2022
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="27" data-categories="Linear Algebra,Visualization" data-listing-date-sort="1637125200000" data-listing-file-modified-sort="1718837214365" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="69">
+<div class="thumbnail">
+<p><a href="./notebooks/vector_projection_on_line.html" class="no-external"></a></p><a href="./notebooks/vector_projection_on_line.html" class="no-external">
+<p class="card-img-top"><img data-src="notebooks/vector_projection_on_line_files/figure-html/cell-7-output-1.png"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./notebooks/vector_projection_on_line.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/vector_projection_on_line.html" class="no-external">Vector projection on a line</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/vector_projection_on_line.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Linear Algebra'); return false;">
+Linear Algebra
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Visualization'); return false;">
+Visualization
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/vector_projection_on_line.html" class="no-external"><span class="math display">\[
+L = \{x \in \mathbb{R}^2: \left&lt;x, w\right&gt; + b = 0 \}, where\ w\in\mathbb{R}^2, b\in\mathbb{R}
+\]</span></a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/vector_projection_on_line.html" class="no-external">
+<div class="listing-date">
+Nov 17, 2021
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="28" data-categories="Linear Algebra" data-listing-date-sort="1633838400000" data-listing-file-modified-sort="1718837214285" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="41">
+<div class="thumbnail">
+<p><a href="./notebooks/matrix_rank_factorization.html" class="no-external"></a></p><a href="./notebooks/matrix_rank_factorization.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./notebooks/matrix_rank_factorization.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./notebooks/matrix_rank_factorization.html" class="no-external">Matrix rank factorization</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./notebooks/matrix_rank_factorization.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Linear Algebra'); return false;">
+Linear Algebra
+</div>
+</div>
+<div class="listing-description">
+<a href="./notebooks/matrix_rank_factorization.html" class="no-external">A matrix can be factorized as <span class="math inline">\(A = C*R\)</span>, where <span class="math inline">\(C\)</span> is a basis of the column space, and <span class="math inline">\(R\)</span> is row-reduced echelon form of <span class="math inline">\(A\)</span> without zero rows <span class="citation" data-cites="strang2019linear">[1]</span>. All three…</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./notebooks/matrix_rank_factorization.html" class="no-external">
+<div class="listing-date">
+Oct 10, 2021
+</div>
+</a>
+</div>
+</div>
+</div>
+<div class="listing-no-matching d-none">
+No matching items
+</div>
+<nav id="listing-pagination" class="listing-pagination" aria-label="Page Navigation">
+  <ul class="pagination"></ul>
+</nav>
+</div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/liminma\.github\.io\/machine-learning-lab");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

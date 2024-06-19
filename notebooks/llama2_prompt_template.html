@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.41">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2023-07-24">
+
+<title>Limin's Machine Learning Lab – How to construct prompts for Llama 2 and chat with it?</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Limin’s Machine Learning Lab</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/liminma/machine-learning-lab"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/liminma2021"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../archive.html"> 
+<span class="menu-text">Archive</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">How to construct prompts for Llama 2 and chat with it?</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Llama 2</div>
+                <div class="quarto-category">Prompt Engineering</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">July 24, 2023</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#llama-2s-prompt-template" id="toc-llama-2s-prompt-template" class="nav-link active" data-scroll-target="#llama-2s-prompt-template">Llama 2’s prompt template</a></li>
+  <li><a href="#a-function-for-creating-prompts" id="toc-a-function-for-creating-prompts" class="nav-link" data-scroll-target="#a-function-for-creating-prompts">A function for creating prompts</a></li>
+  <li><a href="#chat-with-llama-2" id="toc-chat-with-llama-2" class="nav-link" data-scroll-target="#chat-with-llama-2">Chat with Llama 2</a>
+  <ul class="collapse">
+  <li><a href="#load-the-model" id="toc-load-the-model" class="nav-link" data-scroll-target="#load-the-model">load the model</a></li>
+  <li><a href="#chat-with-the-model" id="toc-chat-with-the-model" class="nav-link" data-scroll-target="#chat-with-the-model">chat with the model</a></li>
+  </ul></li>
+  <li><a href="#what-if-we-dont-follow-the-models-prompt-template" id="toc-what-if-we-dont-follow-the-models-prompt-template" class="nav-link" data-scroll-target="#what-if-we-dont-follow-the-models-prompt-template">What if we don’t follow the model’s prompt template?</a>
+  <ul class="collapse">
+  <li><a href="#not-following-the-template" id="toc-not-following-the-template" class="nav-link" data-scroll-target="#not-following-the-template">Not following the template</a></li>
+  <li><a href="#following-the-template" id="toc-following-the-template" class="nav-link" data-scroll-target="#following-the-template">Following the template</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<img src="llama2_prompt_template_files/figure-html/b693ec84-00f6-4855-b2e7-e0bcd4bbc185-1-9aa851a5-2570-42b1-a25a-b4e75f2c2a32.jpg" class="img-fluid">
+<div style="text-align: right; font-size: 10px; color: grey; margin-bottom: 2em;">
+Source: Photo by <a style="color: grey;" href="https://unsplash.com/@chris23?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Chris</a> on <a style="color: grey;" href="https://unsplash.com/photos/ZhF-9SKetvs?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a>
+</div>
+<p>In order to get the best results from Large Language Models (LLMs), prompts should be optimized to tell LLMs what to do and how to do it. One important consideration is that they should follow the prompt template that was used during the training of a model. So we need to figure out what is Llama 2’s prompt template before we can use it effectively.</p>
+<section id="llama-2s-prompt-template" class="level2">
+<h2 class="anchored" data-anchor-id="llama-2s-prompt-template">Llama 2’s prompt template</h2>
+<p>How Llama 2 constructs its prompts can be found in its <a href="https://github.com/facebookresearch/llama/blob/main/llama/generation.py#L213" target="_blank"><code>chat_completion</code></a> function in the source code. Depending on whether it’s a single turn or multi-turn chat, a prompt will have the following format.</p>
+<p>A single turn prompt will look like this,</p>
+<pre><code>&lt;s&gt;[INST] &lt;&lt;SYS&gt;&gt;
+{system_prompt}
+&lt;&lt;/SYS&gt;&gt;
+
+{user_message} [/INST]</code></pre>
+<p>and a multi-turn prompt will look like this,</p>
+<pre><code>&lt;s&gt;[INST] &lt;&lt;SYS&gt;&gt;
+{system_prompt}
+&lt;&lt;/SYS&gt;&gt;
+
+{user_message_1} [/INST] {model_output_1} &lt;/s&gt;\
+&lt;s&gt;[INST] {user_message_2} [/INST] {model_output_2} &lt;/s&gt;\
+&lt;s&gt;[INST] {user_message_3} [/INST]</code></pre>
+<p>Here are special tokens and their meaning:</p>
+<ul>
+<li><code>&lt;s&gt;</code>, <code>&lt;/s&gt;</code>: the <code>bos</code> and <code>eos</code> tokens.</li>
+<li><code>[INST]</code>, <code>[/INST]</code>: the beginning and end of the instructions for the model.</li>
+<li><code>&lt;&lt;SYS&gt;&gt;</code>, <code>&lt;&lt;/SYS&gt;&gt;</code>: the beginning and end of the system prompt.<br>
+</li>
+<li><code>{system_prompt}</code>, <code>{user_message}</code>, <code>{model_output}</code>: placeholders for system prompt, user inputs and model outputs, respectively.</li>
+</ul>
+<p>According to the <a href="https://github.com/facebookresearch/llama/blob/main/llama/generation.py#L46" target="_blank">source code</a>, the default system prompt is:</p>
+<blockquote class="blockquote">
+<p>You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.</p>
+<p>If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don’t know the answer to a question, please don’t share false information.</p>
+</blockquote>
+</section>
+<section id="a-function-for-creating-prompts" class="level2">
+<h2 class="anchored" data-anchor-id="a-function-for-creating-prompts">A function for creating prompts</h2>
+<p>By going through the <a href="https://github.com/facebookresearch/llama/blob/main/llama/generation.py#L213" target="_blank"><code>chat_completion</code></a> function, we can define a prompt construction function for Llama 2,</p>
+<div id="c7d4b4f3-6958-491d-a7ef-d86e758e214c" class="cell" data-tags="[]" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>B_INST, E_INST <span class="op">=</span> <span class="st">"[INST]"</span>, <span class="st">"[/INST]"</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>B_SYS, E_SYS <span class="op">=</span> <span class="st">"&lt;&lt;SYS&gt;&gt;</span><span class="ch">\n</span><span class="st">"</span>, <span class="st">"</span><span class="ch">\n</span><span class="st">&lt;&lt;/SYS&gt;&gt;</span><span class="ch">\n\n</span><span class="st">"</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>BOS, EOS <span class="op">=</span> <span class="st">"&lt;s&gt;"</span>, <span class="st">"&lt;/s&gt;"</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>DEFAULT_SYSTEM_PROMPT <span class="op">=</span> <span class="st">"""</span><span class="ch">\</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="st">You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="st">If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information."""</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> construct_llama2_prompt(dialog: <span class="bu">list</span>[<span class="bu">dict</span>]) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> dialog[<span class="dv">0</span>][<span class="st">'role'</span>] <span class="op">!=</span> <span class="st">'system'</span>:</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        <span class="co"># insert the default system prompt as the first message</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        dialog <span class="op">=</span> [{<span class="st">'role'</span>: <span class="st">'system'</span>, <span class="st">'content'</span>: DEFAULT_SYSTEM_PROMPT}] <span class="op">+</span> dialog</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># merge the first 2 messages</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    dialog <span class="op">=</span> [{<span class="st">'role'</span>: dialog[<span class="dv">1</span>][<span class="st">'role'</span>],</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>               <span class="st">'content'</span>: B_SYS <span class="op">+</span> dialog[<span class="dv">0</span>][<span class="st">'content'</span>] <span class="op">+</span> E_SYS <span class="op">+</span> dialog[<span class="dv">1</span>][<span class="st">'content'</span>]}</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>             ] <span class="op">+</span> dialog[<span class="dv">2</span>:]</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># construct prompt using chat history</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    prompt_buffer <span class="op">=</span> [</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f'</span><span class="sc">{</span>BOS<span class="sc">}{</span>B_INST<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>(prompt[<span class="st">"content"</span>])<span class="sc">.</span>strip()<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>E_INST<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>(answer[<span class="st">"content"</span>])<span class="sc">.</span>strip()<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>EOS<span class="sc">}</span><span class="ss">'</span> </span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>         <span class="cf">for</span> prompt, answer <span class="kw">in</span> <span class="bu">zip</span>(dialog[::<span class="dv">2</span>], dialog[<span class="dv">1</span>::<span class="dv">2</span>])</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(dialog) <span class="op">%</span> <span class="dv">2</span> <span class="op">!=</span> <span class="dv">0</span>:</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>        <span class="co"># add the last message (the current user input)</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>        prompt_buffer <span class="op">+=</span> [<span class="ss">f'</span><span class="sc">{</span>BOS<span class="sc">}{</span>B_INST<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>(dialog[<span class="op">-</span><span class="dv">1</span>][<span class="st">"content"</span>])<span class="sc">.</span>strip()<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>E_INST<span class="sc">}</span><span class="ss">'</span>]</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">''</span>.join(prompt_buffer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We also create a utility function to retrieve answer from model’s outputs,</p>
+<div id="af656263-a7ab-44aa-8517-5a63025cf9ef" class="cell" data-tags="[]" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> extract_answer(model_outputs):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> model_outputs[<span class="dv">0</span>][<span class="st">'generated_text'</span>].split(<span class="st">'[/INST]'</span>)[<span class="op">-</span><span class="dv">1</span>].strip()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now let’s try to chat with the <a href="https://huggingface.co/meta-llama/Llama-2-7b-chat-hf">Llama-2-7b-chat</a> model</p>
+</section>
+<section id="chat-with-llama-2" class="level2">
+<h2 class="anchored" data-anchor-id="chat-with-llama-2">Chat with Llama 2</h2>
+<section id="load-the-model" class="level3">
+<h3 class="anchored" data-anchor-id="load-the-model">load the model</h3>
+<p>We’ll use <code>transformers</code> pipeline to load the model,</p>
+<div id="24430611-c02f-4057-b030-3d640f6c718a" class="cell" data-tags="[]">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> pipeline</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> GenerationConfig</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>checkpoint <span class="op">=</span> <span class="st">'meta-llama/Llama-2-7b-chat-hf'</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>gen_config <span class="op">=</span> GenerationConfig.from_pretrained(checkpoint)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>gen_config.max_new_tokens <span class="op">=</span> <span class="dv">4096</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>pipe <span class="op">=</span> pipeline(task<span class="op">=</span><span class="st">"text-generation"</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>                model<span class="op">=</span>checkpoint,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>                torch_dtype<span class="op">=</span>torch.float16,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>                generation_config<span class="op">=</span>gen_config,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>                device_map<span class="op">=</span><span class="st">'auto'</span>,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="chat-with-the-model" class="level3">
+<h3 class="anchored" data-anchor-id="chat-with-the-model">chat with the model</h3>
+<p>Here is how the prompt of a single turn dialog looks like,</p>
+<div id="92c79d81-ee3d-49fa-ac71-a240e1fb9af0" class="cell" data-tags="[]" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dialog <span class="op">=</span> [{<span class="st">'role'</span>: <span class="st">'user'</span>, <span class="st">'content'</span>: <span class="st">"Hello, how are you?"</span>}]</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>prompt <span class="op">=</span> construct_llama2_prompt(dialog)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(prompt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;s&gt;[INST] &lt;&lt;SYS&gt;&gt;
+You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.
+
+If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.
+&lt;&lt;/SYS&gt;&gt;
+
+Hello, how are you? [/INST]</code></pre>
+</div>
+</div>
+<p>Send the prompt to the model,</p>
+<div id="18ad3035-61a1-4a11-b4e5-db20696ca44f" class="cell" data-tags="[]" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>outputs <span class="op">=</span> pipe(prompt)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>answer <span class="op">=</span> extract_answer(outputs)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(answer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Hello! I'm just an AI, I don't have personal feelings or emotions, but I'm here to help you with any questions or concerns you may have. How can I assist you today? Please keep in mind that I'm here to provide helpful and respectful responses, and I will always do my best to ensure that my answers are safe, socially unbiased, and positive in nature. If a question doesn't make sense or is not factually coherent, I will explain why instead of answering something not correct. If I don't know the answer to a question, I will not share false information. Is there anything else I can help you with?</code></pre>
+</div>
+</div>
+<p>Keep chatting and the following are prompts of multi-turn dialog,</p>
+<div id="e4874b45-a023-4c69-b071-e2a396764643" class="cell" data-tags="[]" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>dialog <span class="op">+=</span> [</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'role'</span>: <span class="st">'assistant'</span>, <span class="st">'content'</span>: answer},</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'role'</span>: <span class="st">'user'</span>, <span class="st">'content'</span>: <span class="st">"Can you tell me a science joke?"</span>}</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>prompt <span class="op">=</span> construct_llama2_prompt(dialog)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(prompt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;s&gt;[INST] &lt;&lt;SYS&gt;&gt;
+You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.
+
+If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.
+&lt;&lt;/SYS&gt;&gt;
+
+Hello, how are you? [/INST] Hello! I'm just an AI, I don't have personal feelings or emotions, but I'm here to help you with any questions or concerns you may have. How can I assist you today? Please keep in mind that I'm here to provide helpful and respectful responses, and I will always do my best to ensure that my answers are safe, socially unbiased, and positive in nature. If a question doesn't make sense or is not factually coherent, I will explain why instead of answering something not correct. If I don't know the answer to a question, I will not share false information. Is there anything else I can help you with? &lt;/s&gt;&lt;s&gt;[INST] Can you tell me a science joke? [/INST]</code></pre>
+</div>
+</div>
+<div id="deda2580-6889-4120-b434-f73ec44d1f8a" class="cell" data-tags="[]" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>outputs <span class="op">=</span> pipe(prompt)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>answer <span class="op">=</span> extract_answer(outputs)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(answer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Of course! Here's a science joke for you:
+Why did the physicist break up with his girlfriend?
+She was always gravitating towards him, but he needed some space!
+I hope you found that joke amusing! Do you have any other questions or topics you'd like to discuss?</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="what-if-we-dont-follow-the-models-prompt-template" class="level2">
+<h2 class="anchored" data-anchor-id="what-if-we-dont-follow-the-models-prompt-template">What if we don’t follow the model’s prompt template?</h2>
+<p>We can do a quick test.</p>
+<div id="76446be4-ee18-4164-bd98-dbc108d0cfc3" class="cell" data-tags="[]" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>question <span class="op">=</span> <span class="st">'How to make pizza?'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="not-following-the-template" class="level3">
+<h3 class="anchored" data-anchor-id="not-following-the-template">Not following the template</h3>
+<div id="16fde050-11c3-464f-a749-9180e68d5009" class="cell" data-tags="[]" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>output1 <span class="op">=</span> pipe(question)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(output1[<span class="dv">0</span>][<span class="st">'generated_text'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>How to make pizza?
+
+To make pizza, you will need the following ingredients:
+
+* Pizza dough (homemade or store-bought)
+* Pizza sauce
+* Mozzarella cheese (shredded or sliced)
+* Toppings of your choice (e.g. pepperoni, sausage, mushrooms, onions, bell peppers)
+
+Here is a basic recipe for making pizza at home:
+
+1. Preheat your oven to 450-500°F (230-260°C).
+2. If using homemade pizza dough, let it rise for 1-2 hours until it is puffy and doubled in size. If using store-bought dough, follow the package instructions for thawing and rising.
+3. Roll out the pizza dough on a floured surface to your desired thickness. Transfer the dough to a pizza pan or baking sheet.
+4. Spread the pizza sauce over the dough, leaving a small border around the edges.
+5. Sprinkle the shredded mozzarella cheese over the sauce.
+6. Add your desired toppings, such as pepperoni, sausage, mushrooms, onions, and bell peppers.
+7. Bake the pizza in the preheated oven for 10-15 minutes, or until the crust is golden brown and the cheese is melted and bubbly.
+8. Remove the pizza from the oven and let it cool for a few minutes before slicing and serving.
+
+Enjoy your homemade pizza!</code></pre>
+</div>
+</div>
+<p>The answer is not bad. But let’s see how the model will respond if we follow its prompt template.</p>
+</section>
+<section id="following-the-template" class="level3">
+<h3 class="anchored" data-anchor-id="following-the-template">Following the template</h3>
+<div id="0103b670-f084-42e3-8600-37d3e8511bfc" class="cell" data-tags="[]" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>dialog <span class="op">=</span> [{<span class="st">'role'</span>: <span class="st">'user'</span>, <span class="st">'content'</span>: <span class="st">'How to make pizza?'</span>}]</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>output2 <span class="op">=</span> pipe(construct_llama2_prompt(dialog))</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(extract_answer(output2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Great question! Making pizza can be a fun and delicious activity. Here's a basic recipe for making pizza at home:
+Ingredients:
+* 1 1/2 cups warm water
+* 2 tablespoons active dry yeast
+* 3 1/2 cups all-purpose flour
+* 1 teaspoon salt
+* 2 tablespoons olive oil
+* 1 cup pizza sauce (homemade or store-bought)
+* Toppings of your choice (such as cheese, vegetables, meats, etc.)
+Instructions:
+1. In a large mixing bowl, combine the warm water and yeast. Let it sit for 5-10 minutes until the yeast becomes frothy.
+2. Add the flour, salt, and olive oil to the bowl. Mix until a dough forms.
+3. Knead the dough on a floured surface for 5-10 minutes until it becomes smooth and elastic.
+4. Place the dough in a lightly oiled bowl, cover it with plastic wrap, and let it rise in a warm, draft-free place for 1-2 hours until it has doubled in size.
+5. Preheat your oven to 450-500°F (230-260°C).
+6. Punch down the dough and divide it into as many portions as you want to make individual pizzas.
+7. Roll out each portion of dough into a thin circle, about 1/4 inch thick.
+8. Place the dough on a pizza stone or baking sheet.
+9. Spread the pizza sauce over the dough, leaving a small border around the edges.
+10. Add your desired toppings.
+11. Bake the pizza in the preheated oven for 10-15 minutes until the crust is golden brown and the cheese is melted and bubbly.
+12. Remove the pizza from the oven and let it cool for a few minutes before slicing and serving.
+Enjoy your homemade pizza!
+
+Please note that this is a basic recipe and you can always adjust it to your liking by adding different toppings or using different types of cheese. Also, if you want to make a gluten-free pizza, you can use a gluten-free flour blend instead of all-purpose flour.</code></pre>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/liminma\.github\.io\/machine-learning-lab");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
