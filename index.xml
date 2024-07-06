@@ -10,7 +10,2177 @@
 <atom:link href="https://liminma.github.io/machine-learning-lab/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.5.41</generator>
-<lastBuildDate>Thu, 06 Jun 2024 04:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sat, 06 Jul 2024 04:00:00 GMT</lastBuildDate>
+<item>
+  <title>Self-refine with Gemini 1.5</title>
+  <link>https://liminma.github.io/machine-learning-lab/notebooks/self-refine-with-gemini-1.5.html</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p style="text-align:center;">
+<img class="preview-image" src="https://liminma.github.io/machine-learning-lab/notebooks/self-refine-with-gemini-1.5_files/figure-html/feaafcdf-7ee8-449c-b975-43e7d0bf18bd-1-025f9a30-4afd-4412-9268-6052e78c6ac8.png" width="800px"><br> Source: Madaan et al. <span class="citation" data-cites="madaan2023selfrefine">[1]</span>
+</p>
+<p>Self-refine <span class="citation" data-cites="madaan2023selfrefine">[1]</span> is an approach that iteratively improves a model’s output based on its own feedback. It is suitable for stronger models. Given an initial output, it consists of 2 main steps: feedback and refine. The feedback contains concrete actions that can improve the output and identifies specific phrases in the output to be improved. Good feedback is cruicial for the approach to work.</p>
+<p>Self-refine uses three prompts: initial generation, feedback and refinement. The authors used few-shot prompting as in-context learning to guide the model:</p>
+<ul>
+<li>Initial generation prompt: few-shot prompt plus input</li>
+<li>feedback prompt: few-shot prompt plus input and current output (initial output or the latest refined output)</li>
+<li>refine prompt: few-shot prompt plus input and the history of refinement.
+<ul>
+<li>examples in the few-shot prompt also include refinement history</li>
+</ul></li>
+</ul>
+<p>This notebook experiments with self-refine for constrained generation using Gemini 1.5 models.</p>
+<div id="b87c4db1-fa24-4550-8f3a-d65c32bc5e44" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Import necessary libraries</summary>
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> json</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> nltk</span>
+<span id="cb1-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> os</span>
+<span id="cb1-4"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> re</span>
+<span id="cb1-5"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> spacy</span>
+<span id="cb1-6"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> sys</span>
+<span id="cb1-7"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> time</span>
+<span id="cb1-8"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> google.generativeai <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> genai</span>
+<span id="cb1-9"></span>
+<span id="cb1-10"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> google.ai.generativelanguage <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> Part, Content</span>
+<span id="cb1-11"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> urllib.request <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> urlopen</span>
+<span id="cb1-12"></span>
+<span id="cb1-13">sys.path.append(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'../src'</span>)</span>
+<span id="cb1-14"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> utils</span>
+<span id="cb1-15"></span>
+<span id="cb1-16"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> dotenv <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> load_dotenv</span>
+<span id="cb1-17">load_dotenv()<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span></code></pre></div>
+</details>
+</div>
+<section id="prepare-3-prompt-templates" class="level1">
+<h1>Prepare 3 prompt templates</h1>
+<p>All three prompt templates are constructed using data from authors’ repo at <a href="https://github.com/madaan/self-refine">madaan/self-refine</a>.</p>
+<section id="init-prompt-template" class="level2">
+<h2 class="anchored" data-anchor-id="init-prompt-template">1. init prompt template</h2>
+<div id="5d7b65e9-f3b1-4f31-85dd-4823e477f10f" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Show the help functions</summary>
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> download_examples(file_url):</span>
+<span id="cb2-2">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">with</span> urlopen(file_url) <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> f:</span>
+<span id="cb2-3">        lines <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> f.readlines()</span>
+<span id="cb2-4">    examples <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">map</span>(<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">lambda</span> x: json.loads(x), lines))</span>
+<span id="cb2-5">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> examples</span></code></pre></div>
+</details>
+</div>
+<div id="6532a277-3ceb-4836-8e29-8f35ad9667b8" class="cell" data-execution_count="89">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> construct_init_prompt_template():</span>
+<span id="cb3-2">    examples_url<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'https://raw.githubusercontent.com/madaan/self-refine/main/data/prompt/commongen/init.jsonl'</span></span>
+<span id="cb3-3">    examples <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> download_examples(examples_url)</span>
+<span id="cb3-4">    </span>
+<span id="cb3-5">    prompt_head <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb3-6"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">I want you to create a sentence that contains all the specified concepts.</span></span>
+<span id="cb3-7"></span>
+<span id="cb3-8"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Here are some examples:</span></span>
+<span id="cb3-9"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    """</span>.strip()</span>
+<span id="cb3-10">    prompt_end <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb3-11"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Now create a sentence using the following concepts:</span></span>
+<span id="cb3-12"></span>
+<span id="cb3-13"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Concepts: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{concepts}</span></span>
+<span id="cb3-14"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">The sentence is:</span></span>
+<span id="cb3-15"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    """</span>.strip()</span>
+<span id="cb3-16"></span>
+<span id="cb3-17">    example_template <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb3-18"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Concepts: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{concepts}</span></span>
+<span id="cb3-19"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">The sentence is: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{sentence}</span></span>
+<span id="cb3-20"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    """</span>.strip()</span>
+<span id="cb3-21">    </span>
+<span id="cb3-22">    examples_prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">''</span></span>
+<span id="cb3-23">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> example <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> examples:</span>
+<span id="cb3-24">        examples_prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> example_template.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">format</span>(</span>
+<span id="cb3-25">            concepts<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>example[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'concepts'</span>],</span>
+<span id="cb3-26">            sentence<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>example[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'target'</span>]</span>
+<span id="cb3-27">        )</span>
+<span id="cb3-28">    prompt_template <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> prompt_head <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> examples_prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> prompt_end</span>
+<span id="cb3-29">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> prompt_template</span></code></pre></div>
+</div>
+<div id="1e3fb1cd-ed60-46d9-a61a-8c7f4b543f4c" class="cell" data-execution_count="90">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">init_prompt_template <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> construct_init_prompt_template()</span>
+<span id="cb4-2">utils.display_html(init_prompt_template, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Show init prompt template'</span>)</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<details><summary>Show init prompt template</summary><pre>I want you to create a sentence that contains all the specified concepts.
+
+Here are some examples:
+
+Concepts: ['footage', 'motion', 'ruin', 'tilt', 'window']
+The sentence is: time lapse footage with tilt up motion of the sun streaking through window of ruin
+
+Concepts: ['cause', 'hate', 'hut', 'local', 'love']
+The sentence is: new beach huts on the island have caused some controversy some locals love them others hate them
+
+Concepts: ['call', 'contain', 'dress', 'gown', 'wallpaper']
+The sentence is: the wallpaper probably containing a gown and a dinner dress called
+
+Concepts: ['knock', 'leave', 'pew', 'rush', 'seat']
+The sentence is: She leaves the confessional and rushes past a pew, knocking a Bible from the seat.
+
+Concepts: ['help', 'moment', 'spend', 'uplift', 'world']
+The sentence is: every moment that we spend in higher consciousness helps uplift the consciousness of the whole world
+
+Concepts: ['label', 'pende', 'stamp', 'text', 'write']
+The sentence is: abstract stamp or label with the text pending written inside
+
+Concepts: ['create', 'ferry', 'silhouette', 'stream', 'terminal']
+The sentence is: light streams through windows at the railroad and ferry terminal creating a beautiful silhouette
+
+Concepts: ['chair', 'couch', 'hang', 'room', 'wall']
+The sentence is: A room with a couch, chairs and art hanging on the wall.
+
+Concepts: ['boat', 'building', 'harbour', 'moor', 'quay']
+The sentence is: the harbour and port with fishing boats moored and old buildings on the quay
+
+Concepts: ['admirer', 'arrive', 'commander', 'crowd', 'greet']
+The sentence is: military commander is greeted by a crowd of admirers as he arrives
+
+Now create a sentence using the following concepts:
+
+Concepts: {concepts}
+The sentence is:</pre></details>
+</div>
+</div>
+</section>
+<section id="feedback-prompt-template" class="level2">
+<h2 class="anchored" data-anchor-id="feedback-prompt-template">2. feedback prompt template</h2>
+<div id="fe541c2c-39cc-46a8-8936-a25b449969db" class="cell" data-scrolled="true" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> construct_feedback_prompt_template():</span>
+<span id="cb5-2">    examples_url<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'https://raw.githubusercontent.com/madaan/self-refine/main/data/prompt/commongen/feedback.jsonl'</span></span>
+<span id="cb5-3">    examples <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> download_examples(examples_url)</span>
+<span id="cb5-4">    </span>
+<span id="cb5-5">    prompt_head <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb5-6"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">I want you to provide feedbacks on a sentence that is constructed using given concepts. </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb5-7"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Follow the following instructions:</span></span>
+<span id="cb5-8"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">- First, find out what concepts from the concept list are missing from the constructed sentence</span></span>
+<span id="cb5-9"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">- Second, if the sentence doesn't makes sense, provide short explanation; otherwise, provide "None" as your answer.</span></span>
+<span id="cb5-10"></span>
+<span id="cb5-11"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Here are some examples:</span></span>
+<span id="cb5-12"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    """</span>.strip()</span>
+<span id="cb5-13"></span>
+<span id="cb5-14">    prompt_end <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb5-15"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Now provide your feedbacks on the following concepts and the constructed sentence.</span></span>
+<span id="cb5-16"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">- First, find out what concepts from the concept list are missing from the constructed sentence</span></span>
+<span id="cb5-17"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">- Second, if the sentence doesn't makes sense, provide short explanation; otherwise, provide "None" as your answer.</span></span>
+<span id="cb5-18"></span>
+<span id="cb5-19"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Concepts: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{concepts}</span></span>
+<span id="cb5-20"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Constructed sentence: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{sentence}</span></span>
+<span id="cb5-21"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    """</span>.strip()</span>
+<span id="cb5-22"></span>
+<span id="cb5-23">    example_template <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb5-24"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Concepts: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{concepts}</span></span>
+<span id="cb5-25"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Constructed sentence: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{sentence}</span></span>
+<span id="cb5-26"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Missing concepts: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{missing_concepts}</span></span>
+<span id="cb5-27"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Commonsense Feedback: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{commonsense_feedback}</span></span>
+<span id="cb5-28"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    """</span>.strip()</span>
+<span id="cb5-29">    </span>
+<span id="cb5-30">    examples_prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">''</span></span>
+<span id="cb5-31">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> example <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> examples:</span>
+<span id="cb5-32">        examples_prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> example_template.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">format</span>(</span>
+<span id="cb5-33">            concepts<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>example[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'concepts'</span>],</span>
+<span id="cb5-34">            sentence<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>example[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'sentence'</span>],</span>
+<span id="cb5-35">            missing_concepts<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">', '</span>.join(example[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'concept_feedback'</span>]).replace(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'NONE'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'None'</span>),</span>
+<span id="cb5-36">            commonsense_feedback<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>example[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'commonsense_feedback'</span>].replace(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'NONE'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'None'</span>)</span>
+<span id="cb5-37">        )</span>
+<span id="cb5-38"></span>
+<span id="cb5-39">    prompt_template <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> prompt_head <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> examples_prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> prompt_end</span>
+<span id="cb5-40">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> prompt_template</span></code></pre></div>
+</div>
+<div id="4a648cf0-1a0b-4bed-af27-465246dade8f" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">feedback_prompt_template <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> construct_feedback_prompt_template()</span>
+<span id="cb6-2">utils.display_html(feedback_prompt_template, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Show feedback prompt template'</span>)</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<details><summary>Show feedback prompt template</summary><pre>I want you to provide feedbacks on a sentence that is constructed using given concepts. Follow the following instructions:
+- First, find out what concepts from the concept list are missing from the constructed sentence
+- Second, if the sentence doesn't makes sense, provide short explanation; otherwise, provide "None" as your answer.
+
+Here are some examples:
+
+Concepts: ['beat', 'drum', 'pen', 'sit', 'use']
+Constructed sentence: A man uses a drum to beat a pen.
+Missing concepts: sit
+Commonsense Feedback: None
+
+Concepts: ['chair', 'clipper', 'cut', 'hair', 'sit']
+Constructed sentence: A girl sitting on the couch with her hair up.
+Missing concepts: clipper, cut, chair
+Commonsense Feedback: None
+
+Concepts: ['grass', 'hose', 'spray', 'stand', 'water']
+Constructed sentence: A man standing next to a water dripping out of the grass.
+Missing concepts: hose, spray
+Commonsense Feedback: None
+
+Concepts: ['front', 'gong', 'hit', 'mallet', 'stand']
+Constructed sentence: The musician hit the gong with a mallet while standing in front of the audince.
+Missing concepts: None
+Commonsense Feedback: None
+
+Concepts: ['ball', 'dunk', 'hoop', 'jump', 'run']
+Constructed sentence: A young boy runs up to the hoop and jumps off of the ball.
+Missing concepts: dunk
+Commonsense Feedback: None
+
+Concepts: ['card', 'chip', 'deal', 'dealer', 'table']
+Constructed sentence: a dealer offers a card to a group of people at a table
+Missing concepts: chip, deal
+Commonsense Feedback: None
+
+Concepts: ['clean', 'climb', 'gutter', 'house', 'ladder']
+Constructed sentence: A man is climbing a ladder to clean a gutter in a house.
+Missing concepts: None
+Commonsense Feedback: None
+
+Concepts: ['animal', 'catch', 'horse', 'lasso', 'ride']
+Constructed sentence: A horse is being caught by a cowboy with a lasso.
+Missing concepts: animal, ride
+Commonsense Feedback: None
+
+Concepts: ['beat', 'drum', 'pen', 'sit', 'use']
+Constructed sentence: The drum sits on the pen and uses the beat.
+Missing concepts: None
+Commonsense Feedback: The sentence does not make sense because a drum cannot sit on a pen and use a beat.
+
+Concepts: ['chair', 'clipper', 'cut', 'hair', 'sit']
+Constructed sentence: The clipper sits on the chair.
+Missing concepts: cut, hair
+Commonsense Feedback: The sentence does not make sense because a clipper cannot sit on a chair.
+
+Concepts: ['grass', 'hose', 'spray', 'stand', 'water']
+Constructed sentence: The water stands in the grass.
+Missing concepts: hose, spray
+Commonsense Feedback: The sentence does not make sense because water cannot stand in grass.
+
+Concepts: ['front', 'gong', 'hit', 'mallet', 'stand']
+Constructed sentence: On a sunny day, a mallet stands in the front of a gong and it hit the gong with a loud sound.
+Missing concepts: None
+Commonsense Feedback: The sentence does not make sense because a mallet cannot stand in the front of a gong and cannot hit it.
+
+Concepts: ['ball', 'dunk', 'hoop', 'jump', 'run']
+Constructed sentence: The ball runs to the hoop and dunks.
+Missing concepts: jump
+Commonsense Feedback: The sentence does not make sense because a ball cannot run and dunk.
+
+Concepts: ['card', 'chip', 'deal', 'dealer', 'table']
+Constructed sentence: The chip deals a card to the dealer at the table.
+Missing concepts: None
+Commonsense Feedback: The sentence does not make sense because a chip cannot deal a card to a dealer.
+
+Concepts: ['clean', 'climb', 'gutter', 'house', 'ladder']
+Constructed sentence: The ladder climbs to the house and cleans the gutter.
+Missing concepts: None
+Commonsense Feedback: The sentence does not make sense because a ladder cannot climb to a house and cannot clean a gutter.
+
+Concepts: ['animal', 'catch', 'horse', 'lasso', 'ride']
+Constructed sentence: The horse catches the lasso and rides on it.
+Missing concepts: animal
+Commonsense Feedback: The sentence does not make sense because a horse cannot catch a lasso and ride on it.
+
+Now provide your feedbacks on the following concepts and the constructed sentence.
+- First, find out what concepts from the concept list are missing from the constructed sentence
+- Second, if the sentence doesn't makes sense, provide short explanation; otherwise, provide "None" as your answer.
+
+Concepts: {concepts}
+Constructed sentence: {sentence}</pre></details>
+</div>
+</div>
+</section>
+<section id="refine-prompt-template" class="level2">
+<h2 class="anchored" data-anchor-id="refine-prompt-template">3. refine prompt template</h2>
+<div id="3aba2b9d-11c5-486f-9f49-153f0e92837f" class="cell" data-scrolled="true" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> construct_refine_prompt_templates():</span>
+<span id="cb7-2">    examples_url<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'https://raw.githubusercontent.com/madaan/self-refine/main/data/prompt/commongen/iterate.jsonl'</span></span>
+<span id="cb7-3">    examples <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> download_examples(examples_url)</span>
+<span id="cb7-4"></span>
+<span id="cb7-5">    prompt_head <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"""</span></span>
+<span id="cb7-6"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">We are having multi-turn conversation in order to create a sentence that contains all given concepts. </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb7-7"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">I will provide you with my feedbacks on the sentence regarding missing concepts and whether the sentence makes sense. </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb7-8"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Your task is to improve the provided sentence based on my feedbacks.</span></span>
+<span id="cb7-9"></span>
+<span id="cb7-10"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Here are </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(examples)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> examples of our past conversations:</span></span>
+<span id="cb7-11"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    """</span>.strip()</span>
+<span id="cb7-12"></span>
+<span id="cb7-13">    generation_prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Impove the sentence using the above feedbacks.'</span></span>
+<span id="cb7-14"></span>
+<span id="cb7-15">    example_prompt_head <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb7-16"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Example </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{i}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">:</span></span>
+<span id="cb7-17"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">User:</span></span>
+<span id="cb7-18"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Concepts: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{concepts}</span></span>
+<span id="cb7-19"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Sentence: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{sentence}</span></span>
+<span id="cb7-20"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Missing concepts: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{missing_concepts}</span></span>
+<span id="cb7-21"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Commonsense Feedback: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{commonsense_feedback}</span></span>
+<span id="cb7-22"></span>
+<span id="cb7-23"><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{generation_prompt}</span></span>
+<span id="cb7-24"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    """</span>.strip()</span>
+<span id="cb7-25"></span>
+<span id="cb7-26">    example_prompt_assistant <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb7-27"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Assistant:</span></span>
+<span id="cb7-28"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Sentence: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{sentence}</span></span>
+<span id="cb7-29"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    """</span>.strip()</span>
+<span id="cb7-30"></span>
+<span id="cb7-31">    example_prompt_user <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb7-32"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">User:</span></span>
+<span id="cb7-33"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Missing concepts: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{missing_concepts}</span></span>
+<span id="cb7-34"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Commonsense Feedback: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{commonsense_feedback}</span></span>
+<span id="cb7-35"></span>
+<span id="cb7-36"><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{generation_prompt}</span></span>
+<span id="cb7-37"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    """</span>.strip()</span>
+<span id="cb7-38"></span>
+<span id="cb7-39">    prompt_end_0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb7-40"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Now let's start a new conversation so that you can improve a constructed sentence based on my feedbacks.</span></span>
+<span id="cb7-41"></span>
+<span id="cb7-42"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Concepts: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{concepts}</span></span>
+<span id="cb7-43"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Sentence: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{sentence}</span></span>
+<span id="cb7-44"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Missing concepts: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{missing_concepts}</span></span>
+<span id="cb7-45"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Commonsense Feedback: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{commonsense_feedback}</span></span>
+<span id="cb7-46"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    """</span>.strip()</span>
+<span id="cb7-47"></span>
+<span id="cb7-48">    prompt_end_1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb7-49"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Missing concepts: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{missing_concepts}</span></span>
+<span id="cb7-50"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Commonsense Feedback: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{commonsense_feedback}</span></span>
+<span id="cb7-51"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    """</span>.strip()</span>
+<span id="cb7-52">    </span>
+<span id="cb7-53">    examples_prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">''</span></span>
+<span id="cb7-54">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> i, example <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">enumerate</span>(examples):</span>
+<span id="cb7-55">        sentence_to_feedback <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> example[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'sentence_to_feedback'</span>]</span>
+<span id="cb7-56">        examples_prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> example_prompt_head.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">format</span>(</span>
+<span id="cb7-57">            i<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>i<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,</span>
+<span id="cb7-58">            concepts<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>example[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'concepts'</span>],</span>
+<span id="cb7-59">            sentence<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>sentence_to_feedback[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'sentence'</span>],</span>
+<span id="cb7-60">            missing_concepts<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>sentence_to_feedback[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'concept_feedback'</span>],</span>
+<span id="cb7-61">            commonsense_feedback<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>sentence_to_feedback[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'commonsense_feedback'</span>],</span>
+<span id="cb7-62">            generation_prompt<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>generation_prompt</span>
+<span id="cb7-63">        )</span>
+<span id="cb7-64">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> x <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> sentence_to_feedback[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>:]:</span>
+<span id="cb7-65">            examples_prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> example_prompt_assistant.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">format</span>(sentence<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>x[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'sentence'</span>])</span>
+<span id="cb7-66">            examples_prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> example_prompt_user.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">format</span>(</span>
+<span id="cb7-67">                missing_concepts<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>x[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'concept_feedback'</span>],</span>
+<span id="cb7-68">                commonsense_feedback<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>x[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'commonsense_feedback'</span>],</span>
+<span id="cb7-69">                generation_prompt<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>generation_prompt</span>
+<span id="cb7-70">            )</span>
+<span id="cb7-71">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># remove the last generation_prompt</span></span>
+<span id="cb7-72">        idx <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> examples_prompt.rfind(generation_prompt)</span>
+<span id="cb7-73">        examples_prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> examples_prompt[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>:idx].strip()</span>
+<span id="cb7-74">        </span>
+<span id="cb7-75">    prompt_template_0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> prompt_head<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> examples_prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> prompt_end_0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> generation_prompt</span>
+<span id="cb7-76">    prompt_template_1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> prompt_end_1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> generation_prompt</span>
+<span id="cb7-77">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> prompt_template_0, prompt_template_1</span></code></pre></div>
+</div>
+<div id="a46a9fcd-2f2d-437a-9f0f-39dcd8a65410" class="cell" data-scrolled="true" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">refine_prompt_template_0, refine_prompt_template_1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> construct_refine_prompt_templates()</span>
+<span id="cb8-2">utils.display_html(refine_prompt_template_0, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Show refine prompt template for the first refinement'</span>)</span>
+<span id="cb8-3">utils.display_html(refine_prompt_template_1, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Show refine prompt template for the rest refinement'</span>)</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<details><summary>Show refine prompt template for the first refinement</summary><pre>We are having multi-turn conversation in order to create a sentence that contains all given concepts. I will provide you with my feedbacks on the sentence regarding missing concepts and whether the sentence makes sense. Your task is to improve the provided sentence based on my feedbacks.
+
+Here are 8 examples of our past conversations:
+
+Example 1:
+User:
+Concepts: ['beat', 'drum', 'pen', 'sit', 'use']
+Sentence: The drum sits on the pen and uses it to beat.
+Missing concepts: None
+Commonsense Feedback: The sentence does not make sense because a drum cannot sit on a pen and use it to beat.
+
+Impove the sentence using the above feedbacks.
+Assistant:
+Sentence: The drummer uses the drum to beat.
+User:
+Missing concepts: sit, pen
+Commonsense Feedback: None
+
+Impove the sentence using the above feedbacks.
+Assistant:
+Sentence: The drummer sits behind the drum and uses it to beat the pen.
+User:
+Missing concepts: None
+Commonsense Feedback: None
+
+Example 2:
+User:
+Concepts: ['chair', 'clipper', 'cut', 'hair', 'sit']
+Sentence: A couch shaped girl sitting on the chair with her hair clipper.
+Missing concepts: cut
+Commonsense Feedback: The sentence does not make sense because a couch is not a shape and a hair clipper is not an item of clothing.
+
+Impove the sentence using the above feedbacks.
+Assistant:
+Sentence: A girl on the chair with her hair clipper and cutting her hair.
+User:
+Missing concepts: sit
+Commonsense Feedback: None
+
+Impove the sentence using the above feedbacks.
+Assistant:
+Sentence: A girl sitting on the chair with a hair clipper, cutting her hair up.
+User:
+Missing concepts: None
+Commonsense Feedback: None
+
+Example 3:
+User:
+Concepts: ['grass', 'hose', 'spray', 'stand', 'water']
+Sentence: The grass is standing tall and a hose is spraying it with spray.
+Missing concepts: water
+Commonsense Feedback: The sentence does not make sense because it is not clear what 'spray' is referring to, and grass does not have the ability to stand upright like a human or animal.
+
+Impove the sentence using the above feedbacks.
+Assistant:
+Sentence: The hose is spraying water onto the grass that is standing like a person.
+User:
+Missing concepts: None
+Commonsense Feedback: The sentence does not make sense because grass cannot stand upright like a human or animal.
+
+Impove the sentence using the above feedbacks.
+Assistant:
+Sentence: A person is standing on the grass, holding a hose that is spraying water onto the grass.
+User:
+Missing concepts: None
+Commonsense Feedback: None
+
+Example 4:
+User:
+Concepts: ['front', 'gong', 'hit', 'mallet', 'stand']
+Sentence: A mallet is standing in front of a gong.
+Missing concepts: hit
+Commonsense Feedback: The sentence does not make sense because a mallet cannot stand in the front of a gong.
+
+Impove the sentence using the above feedbacks.
+Assistant:
+Sentence: A musician stands in front of a gong with a mallet.
+User:
+Missing concepts: None
+Commonsense Feedback: None
+
+Impove the sentence using the above feedbacks.
+Assistant:
+Sentence: The musician stands in front of the gong and hits it with a mallet.
+User:
+Missing concepts: None
+Commonsense Feedback: None
+
+Example 5:
+User:
+Concepts: ['ball', 'dunk', 'hoop', 'jump', 'run']
+Sentence: The ball runs to the hoop and dunks it.
+Missing concepts: jump
+Commonsense Feedback: The sentence does not make sense because a ball cannot run and dunk.
+
+Impove the sentence using the above feedbacks.
+Assistant:
+Sentence: The ball jumps to the hoop and dunks it.
+User:
+Missing concepts: run
+Commonsense Feedback: The sentence does not make sense because a ball cannot jump.
+
+Impove the sentence using the above feedbacks.
+Assistant:
+Sentence: A basketball player runs up to the hoop and jumps off of the ball to dunk it.
+User:
+Missing concepts: None
+Commonsense Feedback: None
+
+Example 6:
+User:
+Concepts: ['card', 'chip', 'deal', 'dealer', 'table']
+Sentence: A dealer offers a card to a group of people at a table.
+Missing concepts: chip, deal
+Commonsense Feedback: The sentence does not make sense because a chip cannot deal a card to a dealer.
+
+Impove the sentence using the above feedbacks.
+Assistant:
+Sentence: The dealer deals a card to a group of people.
+User:
+Missing concepts: chip
+Commonsense Feedback: None
+
+Impove the sentence using the above feedbacks.
+Assistant:
+Sentence: The dealer deals a card to a group of people around the table with a chip at the table.
+User:
+Missing concepts: None
+Commonsense Feedback: None
+
+Example 7:
+User:
+Concepts: ['clean', 'climb', 'gutter', 'house', 'ladder']
+Sentence: The house is clean and a ladder is trying to climb.
+Missing concepts: climb
+Commonsense Feedback: The sentence does not make sense because ladders cannot climb by themselves.
+
+Impove the sentence using the above feedbacks.
+Assistant:
+Sentence: A person is cleaning the gutter of the house by climbing onto the roof with a ladder made of glass.
+User:
+Missing concepts: None
+Commonsense Feedback: The sentence does not make sense because ladders are not made of glass, and using a glass ladder would be dangerous and impractical.
+
+Impove the sentence using the above feedbacks.
+Assistant:
+Sentence: A person is cleaning the gutter of the house by using a ladder to climb onto the roof and brushing away the dirt.
+User:
+Missing concepts: None
+Commonsense Feedback: None
+
+Example 8:
+User:
+Concepts: ['animal', 'catch', 'horse', 'lasso', 'ride']
+Sentence: The horse catches the lasso and rides on it.
+Missing concepts: animal
+Commonsense Feedback: The sentence does not make sense because a horse cannot catch a lasso and ride on it.
+
+Impove the sentence using the above feedbacks.
+Assistant:
+Sentence: The cowboy catches a horse with a lasso and rides on it.
+User:
+Missing concepts: animal
+Commonsense Feedback: None
+
+Impove the sentence using the above feedbacks.
+Assistant:
+Sentence: The cowboy catches the horse with a lasso and rides it.
+User:
+Missing concepts: None
+Commonsense Feedback: None
+
+Now let's start a new conversation so that you can improve a constructed sentence based on my feedbacks.
+
+Concepts: {concepts}
+Sentence: {sentence}
+Missing concepts: {missing_concepts}
+Commonsense Feedback: {commonsense_feedback}
+
+Impove the sentence using the above feedbacks.</pre></details>
+</div>
+<div class="cell-output cell-output-display">
+<details><summary>Show refine prompt template for the rest refinement</summary><pre>Missing concepts: {missing_concepts}
+Commonsense Feedback: {commonsense_feedback}
+
+Impove the sentence using the above feedbacks.</pre></details>
+</div>
+</div>
+</section>
+</section>
+<section id="experiments" class="level1">
+<h1>Experiments</h1>
+<div id="9dcc8e14-ec21-43f2-8c16-4ccc07e15599" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> ask_llm(prompt, model):</span>
+<span id="cb9-2">    response <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> model.generate_content(prompt)</span>
+<span id="cb9-3">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> response.text.strip()</span>
+<span id="cb9-4">    </span>
+<span id="cb9-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># a help function to remove prefix from model's outputs</span></span>
+<span id="cb9-6"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> remove_prefix_if_exist(prefix, text):</span>
+<span id="cb9-7">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> prefix <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> text.lower():</span>
+<span id="cb9-8">        start_idx <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> text.lower().index(prefix) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(prefix)</span>
+<span id="cb9-9">        text <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> text[start_idx:].strip()</span>
+<span id="cb9-10">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> text</span></code></pre></div>
+</div>
+<div id="811068ba-fb39-499e-b1b7-fbaf999a5cdd" class="cell" data-execution_count="67">
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">nlp <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> spacy.load(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"en_core_web_sm"</span>)</span>
+<span id="cb10-2"></span>
+<span id="cb10-3"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> concepts_from_sentence(sentence, concepts):</span>
+<span id="cb10-4">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">"""extract concepts from a sentence using NLTK and spacy."""</span></span>
+<span id="cb10-5">    words <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nltk.word_tokenize(sentence)</span>
+<span id="cb10-6">    lemmas <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [t.lemma_ <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> t <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> nlp(sentence)]</span>
+<span id="cb10-7">    tokens <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">set</span>(words <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> lemmas)</span>
+<span id="cb10-8">    </span>
+<span id="cb10-9">    found_concepts <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">set</span>(concepts).intersection(tokens)</span>
+<span id="cb10-10">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> found_concepts</span>
+<span id="cb10-11"></span>
+<span id="cb10-12"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> fix_missing_concepts(concept_feedback, found_concepts):</span>
+<span id="cb10-13">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">"""fix model's concept feedback if there are any mistakes."""</span></span>
+<span id="cb10-14">    words <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> concept_feedback.split(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">','</span>)</span>
+<span id="cb10-15">    words <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">map</span>(<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">lambda</span> x: x.strip(), words)</span>
+<span id="cb10-16">    words <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">set</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">filter</span>(<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">lambda</span> x: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(x)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, words))    </span>
+<span id="cb10-17">    missing_concepts <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> words.difference(found_concepts)</span>
+<span id="cb10-18">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> missing_concepts:</span>
+<span id="cb10-19">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">', '</span>.join(missing_concepts)</span>
+<span id="cb10-20">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">else</span>:</span>
+<span id="cb10-21">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'None'</span></span>
+<span id="cb10-22"></span>
+<span id="cb10-23"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> process_feedback_outputs(outputs):</span>
+<span id="cb10-24">    concept_feedback, commonsense_feedback <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> outputs.split(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>,maxsplit<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb10-25">    concept_feedback <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> remove_prefix_if_exist(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'missing concepts:'</span>, concept_feedback)</span>
+<span id="cb10-26">    commonsense_feedback <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> remove_prefix_if_exist(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'commonsense feedback:'</span>, commonsense_feedback)</span>
+<span id="cb10-27">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> concept_feedback, commonsense_feedback</span></code></pre></div>
+</div>
+<div id="588fcfb2-9d78-4246-8602-de3c0622d193" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> get_feedback(sentence, concepts, model):</span>
+<span id="cb11-2">    found_concepts <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> concepts_from_sentence(sentence, concepts)</span>
+<span id="cb11-3">    </span>
+<span id="cb11-4">    feedback_prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> feedback_prompt_template.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">format</span>(concepts<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>concepts, sentence<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>sentence)</span>
+<span id="cb11-5">    feedback_outputs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ask_llm(feedback_prompt, model)</span>
+<span id="cb11-6">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"="</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> DEBUG </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"="</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb11-7">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'Sentence: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>sentence<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb11-8">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(feedback_outputs)</span>
+<span id="cb11-9">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"-"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">-------</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"-"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb11-10">    </span>
+<span id="cb11-11">    concept_feedback, commonsense_feedback <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> process_feedback_outputs(feedback_outputs)</span>
+<span id="cb11-12">    fixed_missing_concepts <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> fix_missing_concepts(concept_feedback, found_concepts)</span>
+<span id="cb11-13">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> fixed_missing_concepts, commonsense_feedback</span></code></pre></div>
+</div>
+<div id="13be2720-26cd-452e-b9ed-cd3b3d5c3c2c" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> run_refine_loop(sentence, concepts, model, max_tries<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>, throttle<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>, throttle_value<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>):</span>
+<span id="cb12-2">    refine_gen_prefix <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'sentence:'</span></span>
+<span id="cb12-3">    refine_prompt_template <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> refine_prompt_template_0</span>
+<span id="cb12-4">    chat <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> model.start_chat()</span>
+<span id="cb12-5">        </span>
+<span id="cb12-6">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(max_tries):</span>
+<span id="cb12-7">        start_time <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> time.perf_counter()</span>
+<span id="cb12-8">        missing_concepts, commonsense_feedback <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> get_feedback(sentence, concepts, model)</span>
+<span id="cb12-9">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'none'</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> missing_concepts.lower() <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">and</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'none'</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> commonsense_feedback.lower():</span>
+<span id="cb12-10">            <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> i <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>:</span>
+<span id="cb12-11">                chat.history.append(Content(</span>
+<span id="cb12-12">                    role<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'user'</span>,</span>
+<span id="cb12-13">                    parts<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[Part(text<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Missing concepts: None</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Commonsense Feedback: None'</span>)])</span>
+<span id="cb12-14">                )</span>
+<span id="cb12-15">            <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> sentence, chat.history</span>
+<span id="cb12-16"></span>
+<span id="cb12-17">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> throttle:</span>
+<span id="cb12-18">            utils.throttle(start_time, throttle_value)</span>
+<span id="cb12-19"></span>
+<span id="cb12-20">        start_time <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> time.perf_counter()</span>
+<span id="cb12-21">        refine_prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> refine_prompt_template.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">format</span>(</span>
+<span id="cb12-22">            concepts<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>concepts,</span>
+<span id="cb12-23">            sentence<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>sentence,</span>
+<span id="cb12-24">            missing_concepts<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>missing_concepts,</span>
+<span id="cb12-25">            commonsense_feedback<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>commonsense_feedback</span>
+<span id="cb12-26">        )</span>
+<span id="cb12-27">        refine_outputs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> chat.send_message(refine_prompt).text.strip()</span>
+<span id="cb12-28">        </span>
+<span id="cb12-29">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> refine_gen_prefix <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> refine_outputs.lower():</span>
+<span id="cb12-30">            start_idx <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> refine_outputs.lower().index(refine_gen_prefix) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(refine_gen_prefix)</span>
+<span id="cb12-31">            sentence <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> refine_outputs[start_idx:].strip()</span>
+<span id="cb12-32">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">else</span>:</span>
+<span id="cb12-33">            sentence <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> refine_outputs</span>
+<span id="cb12-34"></span>
+<span id="cb12-35">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> i <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>:</span>
+<span id="cb12-36">            refine_prompt_template <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> refine_prompt_template_1</span>
+<span id="cb12-37"></span>
+<span id="cb12-38">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> throttle:</span>
+<span id="cb12-39">            utils.throttle(start_time, throttle_value)</span>
+<span id="cb12-40"></span>
+<span id="cb12-41">    missing_concepts, commonsense_feedback <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> get_feedback(sentence, concepts, model)</span>
+<span id="cb12-42">    parts_text <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'Missing concepts: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>missing_concepts<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Commonsense Feedback: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>commonsense_feedback<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span></span>
+<span id="cb12-43">    chat.history.append(Content(</span>
+<span id="cb12-44">        role<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'user'</span>, </span>
+<span id="cb12-45">        parts<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[Part(text<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>parts_text)])</span>
+<span id="cb12-46">    )</span>
+<span id="cb12-47"></span>
+<span id="cb12-48">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> sentence, chat.history</span></code></pre></div>
+</div>
+<section id="configure-both-gemini-1.5-flash-and-gemini-1.5-pro-models." class="level2">
+<h2 class="anchored" data-anchor-id="configure-both-gemini-1.5-flash-and-gemini-1.5-pro-models.">Configure both <code>gemini-1.5-flash</code> and <code>gemini-1.5-pro</code> models.</h2>
+<div id="a2b46690-e2e7-4380-adcc-b87bf1df348b" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1">genai.configure(api_key<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>os.environ[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'GOOGLE_API_KEY'</span>])</span>
+<span id="cb13-2">safe <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [</span>
+<span id="cb13-3">    {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"category"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"HARM_CATEGORY_HARASSMENT"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"threshold"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"BLOCK_NONE"</span>},</span>
+<span id="cb13-4">    {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"category"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"HARM_CATEGORY_HATE_SPEECH"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"threshold"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"BLOCK_NONE"</span>},</span>
+<span id="cb13-5">    {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"category"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"HARM_CATEGORY_SEXUALLY_EXPLICIT"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"threshold"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"BLOCK_NONE"</span>},</span>
+<span id="cb13-6">    {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"category"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"HARM_CATEGORY_DANGEROUS_CONTENT"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"threshold"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"BLOCK_NONE"</span>}</span>
+<span id="cb13-7">]</span>
+<span id="cb13-8"></span>
+<span id="cb13-9">model_flash <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> genai.GenerativeModel(</span>
+<span id="cb13-10">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'gemini-1.5-flash-001'</span>,</span>
+<span id="cb13-11">    safety_settings<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>safe,</span>
+<span id="cb13-12">    system_instruction<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'You are a helpful assistant. Avoid markdown in your response. Plain text only.'</span>,</span>
+<span id="cb13-13">    generation_config<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>{<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'temperature'</span>: <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.7</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'max_output_tokens'</span>: <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">256</span>}</span>
+<span id="cb13-14">)</span>
+<span id="cb13-15">model_pro <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> genai.GenerativeModel(</span>
+<span id="cb13-16">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'gemini-1.5-pro-001'</span>,</span>
+<span id="cb13-17">    safety_settings<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>safe,</span>
+<span id="cb13-18">    system_instruction<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'You are a helpful assistant. Avoid markdown in your response. Plain text only.'</span>,</span>
+<span id="cb13-19">    generation_config<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>{<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'temperature'</span>: <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.7</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'max_output_tokens'</span>: <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">256</span>}</span>
+<span id="cb13-20">)</span></code></pre></div>
+</div>
+</section>
+<section id="exp-01-using-gemini-1.5-flash" class="level2">
+<h2 class="anchored" data-anchor-id="exp-01-using-gemini-1.5-flash">Exp 01: using <code>gemini-1.5-flash</code></h2>
+<section id="generate-the-initital-sentence" class="level3">
+<h3 class="anchored" data-anchor-id="generate-the-initital-sentence">1. generate the initital sentence</h3>
+<div id="8e40dc01-a440-42e0-be17-61f7a1754992" class="cell" data-scrolled="true" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># an example from authors' [commongen_hard.jsonl](https://github.com/madaan/self-refine/blob/main/data/prompt/commongen/commongen_hard.jsonl)</span></span>
+<span id="cb14-2">concepts <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"use"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"goat"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"wine"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"frisbee"</span>,</span>
+<span id="cb14-3">            <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"leap"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"pole"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"tell"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"pencil"</span>,</span>
+<span id="cb14-4">            <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"spin"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"birdie"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"catcher"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"fence"</span>,</span>
+<span id="cb14-5">            <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"world"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"step"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"chop"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"sword"</span>,</span>
+<span id="cb14-6">            <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"march"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"stage"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"axe"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"bat"</span>,</span>
+<span id="cb14-7">            <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"place"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"roller"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"tomato"</span>]</span>
+<span id="cb14-8">init_prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> init_prompt_template.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">format</span>(concepts<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>concepts)</span>
+<span id="cb14-9"></span>
+<span id="cb14-10">utils.display_html(init_prompt, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Show init prompt'</span>)</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<details><summary>Show init prompt</summary><pre>I want you to create a sentence that contains all the specified concepts.
+
+Here are some examples:
+
+Concepts: ['footage', 'motion', 'ruin', 'tilt', 'window']
+The sentence is: time lapse footage with tilt up motion of the sun streaking through window of ruin
+
+Concepts: ['cause', 'hate', 'hut', 'local', 'love']
+The sentence is: new beach huts on the island have caused some controversy some locals love them others hate them
+
+Concepts: ['call', 'contain', 'dress', 'gown', 'wallpaper']
+The sentence is: the wallpaper probably containing a gown and a dinner dress called
+
+Concepts: ['knock', 'leave', 'pew', 'rush', 'seat']
+The sentence is: She leaves the confessional and rushes past a pew, knocking a Bible from the seat.
+
+Concepts: ['help', 'moment', 'spend', 'uplift', 'world']
+The sentence is: every moment that we spend in higher consciousness helps uplift the consciousness of the whole world
+
+Concepts: ['label', 'pende', 'stamp', 'text', 'write']
+The sentence is: abstract stamp or label with the text pending written inside
+
+Concepts: ['create', 'ferry', 'silhouette', 'stream', 'terminal']
+The sentence is: light streams through windows at the railroad and ferry terminal creating a beautiful silhouette
+
+Concepts: ['chair', 'couch', 'hang', 'room', 'wall']
+The sentence is: A room with a couch, chairs and art hanging on the wall.
+
+Concepts: ['boat', 'building', 'harbour', 'moor', 'quay']
+The sentence is: the harbour and port with fishing boats moored and old buildings on the quay
+
+Concepts: ['admirer', 'arrive', 'commander', 'crowd', 'greet']
+The sentence is: military commander is greeted by a crowd of admirers as he arrives
+
+Now create a sentence using the following concepts:
+
+Concepts: ['use', 'goat', 'wine', 'frisbee', 'leap', 'pole', 'tell', 'pencil', 'spin', 'birdie', 'catcher', 'fence', 'world', 'step', 'chop', 'sword', 'march', 'stage', 'axe', 'bat', 'place', 'roller', 'tomato']
+The sentence is:</pre></details>
+</div>
+</div>
+<div id="6181b187-a8cf-40ac-94be-ce8eb7dabb32" class="cell" data-execution_count="83">
+<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1">init_outputs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ask_llm(init_prompt, model_flash)</span>
+<span id="cb15-2">sentence <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> remove_prefix_if_exist(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'the sentence is:'</span>, init_outputs)</span>
+<span id="cb15-3">sentence</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="83">
+<pre><code>'The goat leaps over the fence, using the frisbee as a springboard, while the world spins around him; a catcher tells the story of a place where they chop tomatoes with a sword, march on stage with an axe, and bat a roller with a pencil.'</code></pre>
+</div>
+</div>
+</section>
+<section id="run-the-refine-loop" class="level3">
+<h3 class="anchored" data-anchor-id="run-the-refine-loop">2. run the refine loop</h3>
+<div id="43a87785-7ced-4ab6-b313-b473ff534bb0" class="cell" data-execution_count="84">
+<div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1">sentence, history <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> run_refine_loop(sentence, concepts, model_flash)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>========== DEBUG ==========
+Sentence: The goat leaps over the fence, using the frisbee as a springboard, while the world spins around him; a catcher tells the story of a place where they chop tomatoes with a sword, march on stage with an axe, and bat a roller with a pencil.
+Missing concepts: use, wine, pole, birdie, step, axe, bat
+Commonsense Feedback: The sentence does not make sense because a goat cannot use a frisbee as a springboard and a catcher cannot chop tomatoes with a sword, march on stage with an axe, and bat a roller with a pencil.
+---------------------------
+========== DEBUG ==========
+Sentence: The goat leaps over the fence, using a pole to step over it, while the world spins around him; a catcher tells the story of a place where they chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil, while a birdie uses a wine glass to spin a frisbee.
+Missing concepts: None
+Commonsense Feedback: The sentence does not make sense because it is a nonsensical combination of actions and objects. A goat cannot use a pole to step over a fence, the world does not spin around a goat, and the described actions are not logically connected.
+---------------------------
+========== DEBUG ==========
+Sentence: A catcher tells the story of a place where they chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil.  A goat uses a pole to leap over the fence and a birdie spins a frisbee with a wine glass.
+Missing concepts: None
+Commonsense Feedback: The sentence does not make sense because it describes actions that are not logically possible or typical. For example, chopping tomatoes with an axe, marching on stage with a sword, batting a roller with a pencil, using a pole to leap over a fence, and spinning a frisbee with a wine glass are all nonsensical actions.
+---------------------------
+========== DEBUG ==========
+Sentence: A goat leaps over a fence using a pole. A catcher tells a story of a place where they chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil.  A birdie spins a frisbee, taking a sip of wine as it does so.
+Missing concepts: None
+Commonsense Feedback: The sentence does not make sense because it is a nonsensical story. Goats cannot leap over fences using poles. Catchers do not tell stories about chopping tomatoes with axes, marching on stage with swords, and batting rollers with pencils.  Birds cannot spin frisbees and take sips of wine.
+---------------------------
+========== DEBUG ==========
+Sentence: A goat leaps over a fence, its hooves hitting the ground with a soft thud. A catcher tells a story of a place where people chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil. A birdie spins a frisbee in the air, watching it soar through the sky.
+Missing concepts: use, wine, pole, world, step
+Commonsense Feedback: None
+---------------------------
+========== DEBUG ==========
+Sentence: A goat leaps over a fence, using a pole to step over it, as the world spins around him. A catcher tells a story of a place where people chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil. A birdie spins a frisbee in the air, taking a sip of wine as it does so.
+Missing concepts: None
+Commonsense Feedback: The sentence does not make sense because a goat cannot use a pole to step over a fence, a catcher cannot tell a story of a place where people chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil, and a birdie cannot spin a frisbee in the air while taking a sip of wine.
+---------------------------</code></pre>
+</div>
+</div>
+<div id="77b1f14b-b07e-4957-bd37-3f3f114cca0f" class="cell" data-execution_count="85">
+<div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1">sentence</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="85">
+<pre><code>'A goat leaps over a fence, using a pole to step over it, as the world spins around him. A catcher tells a story of a place where people chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil. A birdie spins a frisbee in the air, taking a sip of wine as it does so.'</code></pre>
+</div>
+</div>
+<div id="9de41b40-1d5b-455c-8f4b-980371c48447" class="cell" data-execution_count="87">
+<div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1">last_feedback <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> history[<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>].parts[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>].text</span>
+<span id="cb21-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(last_feedback)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Missing concepts: None
+Commonsense Feedback: The sentence does not make sense because a goat cannot use a pole to step over a fence, a catcher cannot tell a story of a place where people chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil, and a birdie cannot spin a frisbee in the air while taking a sip of wine.</code></pre>
+</div>
+</div>
+<div id="9fa9025a-a3b1-4b7c-b89f-7b485abdbe87" class="cell" data-scrolled="true" data-execution_count="86">
+<div class="sourceCode cell-code" id="cb23" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1">utils.display_html(history, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Show refine history'</span>)</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<details><summary>Show refine history</summary><pre>[parts {
+  text: "We are having multi-turn conversation in order to create a sentence that contains all given concepts. I will provide you with my feedbacks on the sentence regarding missing concepts and whether the sentence makes sense. Your task is to improve the provided sentence based on my feedbacks.\n\nHere are 8 examples of our past conversations:\n\nExample 1:\nUser:\nConcepts: [\'beat\', \'drum\', \'pen\', \'sit\', \'use\']\nSentence: The drum sits on the pen and uses it to beat.\nMissing concepts: None\nCommonsense Feedback: The sentence does not make sense because a drum cannot sit on a pen and use it to beat.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The drummer uses the drum to beat.\nUser:\nMissing concepts: sit, pen\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The drummer sits behind the drum and uses it to beat the pen.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 2:\nUser:\nConcepts: [\'chair\', \'clipper\', \'cut\', \'hair\', \'sit\']\nSentence: A couch shaped girl sitting on the chair with her hair clipper.\nMissing concepts: cut\nCommonsense Feedback: The sentence does not make sense because a couch is not a shape and a hair clipper is not an item of clothing.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A girl on the chair with her hair clipper and cutting her hair.\nUser:\nMissing concepts: sit\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A girl sitting on the chair with a hair clipper, cutting her hair up.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 3:\nUser:\nConcepts: [\'grass\', \'hose\', \'spray\', \'stand\', \'water\']\nSentence: The grass is standing tall and a hose is spraying it with spray.\nMissing concepts: water\nCommonsense Feedback: The sentence does not make sense because it is not clear what \'spray\' is referring to, and grass does not have the ability to stand upright like a human or animal.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The hose is spraying water onto the grass that is standing like a person.\nUser:\nMissing concepts: None\nCommonsense Feedback: The sentence does not make sense because grass cannot stand upright like a human or animal.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A person is standing on the grass, holding a hose that is spraying water onto the grass.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 4:\nUser:\nConcepts: [\'front\', \'gong\', \'hit\', \'mallet\', \'stand\']\nSentence: A mallet is standing in front of a gong.\nMissing concepts: hit\nCommonsense Feedback: The sentence does not make sense because a mallet cannot stand in the front of a gong.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A musician stands in front of a gong with a mallet.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The musician stands in front of the gong and hits it with a mallet.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 5:\nUser:\nConcepts: [\'ball\', \'dunk\', \'hoop\', \'jump\', \'run\']\nSentence: The ball runs to the hoop and dunks it.\nMissing concepts: jump\nCommonsense Feedback: The sentence does not make sense because a ball cannot run and dunk.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The ball jumps to the hoop and dunks it.\nUser:\nMissing concepts: run\nCommonsense Feedback: The sentence does not make sense because a ball cannot jump.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A basketball player runs up to the hoop and jumps off of the ball to dunk it.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 6:\nUser:\nConcepts: [\'card\', \'chip\', \'deal\', \'dealer\', \'table\']\nSentence: A dealer offers a card to a group of people at a table.\nMissing concepts: chip, deal\nCommonsense Feedback: The sentence does not make sense because a chip cannot deal a card to a dealer.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The dealer deals a card to a group of people.\nUser:\nMissing concepts: chip\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The dealer deals a card to a group of people around the table with a chip at the table.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 7:\nUser:\nConcepts: [\'clean\', \'climb\', \'gutter\', \'house\', \'ladder\']\nSentence: The house is clean and a ladder is trying to climb.\nMissing concepts: climb\nCommonsense Feedback: The sentence does not make sense because ladders cannot climb by themselves.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A person is cleaning the gutter of the house by climbing onto the roof with a ladder made of glass.\nUser:\nMissing concepts: None\nCommonsense Feedback: The sentence does not make sense because ladders are not made of glass, and using a glass ladder would be dangerous and impractical.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A person is cleaning the gutter of the house by using a ladder to climb onto the roof and brushing away the dirt.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 8:\nUser:\nConcepts: [\'animal\', \'catch\', \'horse\', \'lasso\', \'ride\']\nSentence: The horse catches the lasso and rides on it.\nMissing concepts: animal\nCommonsense Feedback: The sentence does not make sense because a horse cannot catch a lasso and ride on it.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The cowboy catches a horse with a lasso and rides on it.\nUser:\nMissing concepts: animal\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The cowboy catches the horse with a lasso and rides it.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nNow let\'s start a new conversation so that you can improve a constructed sentence based on my feedbacks.\n\nConcepts: [\'use\', \'goat\', \'wine\', \'frisbee\', \'leap\', \'pole\', \'tell\', \'pencil\', \'spin\', \'birdie\', \'catcher\', \'fence\', \'world\', \'step\', \'chop\', \'sword\', \'march\', \'stage\', \'axe\', \'bat\', \'place\', \'roller\', \'tomato\']\nSentence: The goat leaps over the fence, using the frisbee as a springboard, while the world spins around him; a catcher tells the story of a place where they chop tomatoes with a sword, march on stage with an axe, and bat a roller with a pencil.\nMissing concepts: pole, step, birdie, wine\nCommonsense Feedback: The sentence does not make sense because a goat cannot use a frisbee as a springboard and a catcher cannot chop tomatoes with a sword, march on stage with an axe, and bat a roller with a pencil.\n\nImpove the sentence using the above feedbacks."
+}
+role: "user"
+, parts {
+  text: "The goat leaps over the fence, using a pole to step over it, while the world spins around him; a catcher tells the story of a place where they chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil, while a birdie uses a wine glass to spin a frisbee. \n"
+}
+role: "model"
+, parts {
+  text: "Missing concepts: None\nCommonsense Feedback: The sentence does not make sense because it is a nonsensical combination of actions and objects. A goat cannot use a pole to step over a fence, the world does not spin around a goat, and the described actions are not logically connected.\n\nImpove the sentence using the above feedbacks."
+}
+role: "user"
+, parts {
+  text: "A catcher tells the story of a place where they chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil.  A goat uses a pole to leap over the fence and a birdie spins a frisbee with a wine glass. \n"
+}
+role: "model"
+, parts {
+  text: "Missing concepts: None\nCommonsense Feedback: The sentence does not make sense because it describes actions that are not logically possible or typical. For example, chopping tomatoes with an axe, marching on stage with a sword, batting a roller with a pencil, using a pole to leap over a fence, and spinning a frisbee with a wine glass are all nonsensical actions.\n\nImpove the sentence using the above feedbacks."
+}
+role: "user"
+, parts {
+  text: "A goat leaps over a fence using a pole. A catcher tells a story of a place where they chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil.  A birdie spins a frisbee, taking a sip of wine as it does so. \n"
+}
+role: "model"
+, parts {
+  text: "Missing concepts: None\nCommonsense Feedback: The sentence does not make sense because it is a nonsensical story. Goats cannot leap over fences using poles. Catchers do not tell stories about chopping tomatoes with axes, marching on stage with swords, and batting rollers with pencils.  Birds cannot spin frisbees and take sips of wine.\n\nImpove the sentence using the above feedbacks."
+}
+role: "user"
+, parts {
+  text: "A goat leaps over a fence, its hooves hitting the ground with a soft thud. A catcher tells a story of a place where people chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil. A birdie spins a frisbee in the air, watching it soar through the sky. \n"
+}
+role: "model"
+, parts {
+  text: "Missing concepts: pole, use, wine, world, step\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks."
+}
+role: "user"
+, parts {
+  text: "A goat leaps over a fence, using a pole to step over it, as the world spins around him. A catcher tells a story of a place where people chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil. A birdie spins a frisbee in the air, taking a sip of wine as it does so. \n"
+}
+role: "model"
+, parts {
+  text: "Missing concepts: None\nCommonsense Feedback: The sentence does not make sense because a goat cannot use a pole to step over a fence, a catcher cannot tell a story of a place where people chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil, and a birdie cannot spin a frisbee in the air while taking a sip of wine."
+}
+role: "user"
+]</pre></details>
+</div>
+</div>
+</section>
+</section>
+<section id="exp-02-using-gemini-1.5-pro" class="level2">
+<h2 class="anchored" data-anchor-id="exp-02-using-gemini-1.5-pro">Exp 02: using <code>gemini-1.5-pro</code></h2>
+<section id="generate-the-initital-sentence-1" class="level3">
+<h3 class="anchored" data-anchor-id="generate-the-initital-sentence-1">1. generate the initital sentence</h3>
+<div id="48d9e277-ff4e-4b0e-89bd-0165dcc948d6" class="cell" data-execution_count="69">
+<div class="sourceCode cell-code" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1">init_prompt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> init_prompt_template.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">format</span>(concepts<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>concepts)</span>
+<span id="cb24-2">utils.display_html(init_prompt, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Show init prompt'</span>)</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<details><summary>Show init prompt</summary><pre>I want you to create a sentence that contains all the specified concepts.
+
+Here are some examples:
+
+Concepts: ['footage', 'motion', 'ruin', 'tilt', 'window']
+The sentence is: time lapse footage with tilt up motion of the sun streaking through window of ruin
+
+Concepts: ['cause', 'hate', 'hut', 'local', 'love']
+The sentence is: new beach huts on the island have caused some controversy some locals love them others hate them
+
+Concepts: ['call', 'contain', 'dress', 'gown', 'wallpaper']
+The sentence is: the wallpaper probably containing a gown and a dinner dress called
+
+Concepts: ['knock', 'leave', 'pew', 'rush', 'seat']
+The sentence is: She leaves the confessional and rushes past a pew, knocking a Bible from the seat.
+
+Concepts: ['help', 'moment', 'spend', 'uplift', 'world']
+The sentence is: every moment that we spend in higher consciousness helps uplift the consciousness of the whole world
+
+Concepts: ['label', 'pende', 'stamp', 'text', 'write']
+The sentence is: abstract stamp or label with the text pending written inside
+
+Concepts: ['create', 'ferry', 'silhouette', 'stream', 'terminal']
+The sentence is: light streams through windows at the railroad and ferry terminal creating a beautiful silhouette
+
+Concepts: ['chair', 'couch', 'hang', 'room', 'wall']
+The sentence is: A room with a couch, chairs and art hanging on the wall.
+
+Concepts: ['boat', 'building', 'harbour', 'moor', 'quay']
+The sentence is: the harbour and port with fishing boats moored and old buildings on the quay
+
+Concepts: ['admirer', 'arrive', 'commander', 'crowd', 'greet']
+The sentence is: military commander is greeted by a crowd of admirers as he arrives
+
+Now create a sentence using the following concepts:
+
+Concepts: ['use', 'goat', 'wine', 'frisbee', 'leap', 'pole', 'tell', 'pencil', 'spin', 'birdie', 'catcher', 'fence', 'world', 'step', 'chop', 'sword', 'march', 'stage', 'axe', 'bat', 'place', 'roller', 'tomato']
+The sentence is:</pre></details>
+</div>
+</div>
+<div id="3dbbe091-6b6d-4838-8d72-b4a2bc238f6a" class="cell" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb25" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1">init_outputs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ask_llm(init_prompt, model_pro)</span>
+<span id="cb25-2"></span>
+<span id="cb25-3">sentence <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> remove_prefix_if_exist(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'the sentence is:'</span>, init_outputs)</span>
+<span id="cb25-4">sentence</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="26">
+<pre><code>'The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board.'</code></pre>
+</div>
+</div>
+</section>
+<section id="run-the-refine-loop-1" class="level3">
+<h3 class="anchored" data-anchor-id="run-the-refine-loop-1">2. run the refine loop</h3>
+<div id="c5f77404-6c10-4f98-a4db-f2ab923ad7d1" class="cell" data-execution_count="73">
+<div class="sourceCode cell-code" id="cb27" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1">sentence, history <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> run_refine_loop(sentence, concepts, model_pro)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>========== DEBUG ==========
+Sentence: The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board.
+Missing concepts: use, wine, pole, tell, pencil, catcher, step, chop, sword, march, stage, axe, bat, place, roller 
+Commonsense Feedback: None
+---------------------------
+========== DEBUG ==========
+Sentence: The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board, as a marching band stepped onto the stage, the drummer using pencils as drumsticks.
+Missing concepts: wine, tell, catcher, chop, sword, axe, bat, place, roller 
+Commonsense Feedback: None
+---------------------------
+========== DEBUG ==========
+Sentence: The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board as a chef chops it with an axe, a baseball player swinging a bat, missing the ball which is caught by the catcher, and a marching band stepping onto the stage, the drummer using pencils as drumsticks.
+Missing concepts: wine, pole, tell, sword, place, roller 
+Commonsense Feedback: None
+---------------------------
+========== DEBUG ==========
+Sentence: The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board as a chef chops it with an axe, a baseball player swinging a bat, missing the ball which is caught by the catcher, and a marching band stepping onto the stage, the drummer using pencils as drumsticks. A street performer, balancing a sword on his nose, tells jokes as he juggles wine bottles. A nearby painter, using a roller to paint the scenery, accidentally knocks over a pole.
+Missing concepts: 
+Commonsense Feedback: None
+---------------------------</code></pre>
+</div>
+</div>
+<div id="f3eea55d-a2a8-42b4-9636-52bee4c9c1a1" class="cell" data-execution_count="74">
+<div class="sourceCode cell-code" id="cb29" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1">sentence</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="74">
+<pre><code>'The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board as a chef chops it with an axe, a baseball player swinging a bat, missing the ball which is caught by the catcher, and a marching band stepping onto the stage, the drummer using pencils as drumsticks. A street performer, balancing a sword on his nose, tells jokes as he juggles wine bottles. A nearby painter, using a roller to paint the scenery, accidentally knocks over a pole.'</code></pre>
+</div>
+</div>
+<div id="b90addbb-e34e-45c7-9f5b-9a868993ec5f" class="cell" data-execution_count="80">
+<div class="sourceCode cell-code" id="cb31" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1">last_feedback <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> history[<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>].parts[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>].text</span>
+<span id="cb31-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(last_feedback)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Missing concepts: None
+Commonsense Feedback: None</code></pre>
+</div>
+</div>
+<div id="70ef0703-73a8-4351-8063-440038a43d3f" class="cell" data-scrolled="true" data-execution_count="75">
+<div class="sourceCode cell-code" id="cb33" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1">utils.display_html(history, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Show refine history'</span>)</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<details><summary>Show refine history</summary><pre>[parts {
+  text: "We are having multi-turn conversation in order to create a sentence that contains all given concepts. I will provide you with my feedbacks on the sentence regarding missing concepts and whether the sentence makes sense. Your task is to improve the provided sentence based on my feedbacks.\n\nHere are 8 examples of our past conversations:\n\nExample 1:\nUser:\nConcepts: [\'beat\', \'drum\', \'pen\', \'sit\', \'use\']\nSentence: The drum sits on the pen and uses it to beat.\nMissing concepts: None\nCommonsense Feedback: The sentence does not make sense because a drum cannot sit on a pen and use it to beat.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The drummer uses the drum to beat.\nUser:\nMissing concepts: sit, pen\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The drummer sits behind the drum and uses it to beat the pen.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 2:\nUser:\nConcepts: [\'chair\', \'clipper\', \'cut\', \'hair\', \'sit\']\nSentence: A couch shaped girl sitting on the chair with her hair clipper.\nMissing concepts: cut\nCommonsense Feedback: The sentence does not make sense because a couch is not a shape and a hair clipper is not an item of clothing.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A girl on the chair with her hair clipper and cutting her hair.\nUser:\nMissing concepts: sit\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A girl sitting on the chair with a hair clipper, cutting her hair up.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 3:\nUser:\nConcepts: [\'grass\', \'hose\', \'spray\', \'stand\', \'water\']\nSentence: The grass is standing tall and a hose is spraying it with spray.\nMissing concepts: water\nCommonsense Feedback: The sentence does not make sense because it is not clear what \'spray\' is referring to, and grass does not have the ability to stand upright like a human or animal.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The hose is spraying water onto the grass that is standing like a person.\nUser:\nMissing concepts: None\nCommonsense Feedback: The sentence does not make sense because grass cannot stand upright like a human or animal.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A person is standing on the grass, holding a hose that is spraying water onto the grass.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 4:\nUser:\nConcepts: [\'front\', \'gong\', \'hit\', \'mallet\', \'stand\']\nSentence: A mallet is standing in front of a gong.\nMissing concepts: hit\nCommonsense Feedback: The sentence does not make sense because a mallet cannot stand in the front of a gong.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A musician stands in front of a gong with a mallet.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The musician stands in front of the gong and hits it with a mallet.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 5:\nUser:\nConcepts: [\'ball\', \'dunk\', \'hoop\', \'jump\', \'run\']\nSentence: The ball runs to the hoop and dunks it.\nMissing concepts: jump\nCommonsense Feedback: The sentence does not make sense because a ball cannot run and dunk.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The ball jumps to the hoop and dunks it.\nUser:\nMissing concepts: run\nCommonsense Feedback: The sentence does not make sense because a ball cannot jump.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A basketball player runs up to the hoop and jumps off of the ball to dunk it.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 6:\nUser:\nConcepts: [\'card\', \'chip\', \'deal\', \'dealer\', \'table\']\nSentence: A dealer offers a card to a group of people at a table.\nMissing concepts: chip, deal\nCommonsense Feedback: The sentence does not make sense because a chip cannot deal a card to a dealer.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The dealer deals a card to a group of people.\nUser:\nMissing concepts: chip\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The dealer deals a card to a group of people around the table with a chip at the table.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 7:\nUser:\nConcepts: [\'clean\', \'climb\', \'gutter\', \'house\', \'ladder\']\nSentence: The house is clean and a ladder is trying to climb.\nMissing concepts: climb\nCommonsense Feedback: The sentence does not make sense because ladders cannot climb by themselves.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A person is cleaning the gutter of the house by climbing onto the roof with a ladder made of glass.\nUser:\nMissing concepts: None\nCommonsense Feedback: The sentence does not make sense because ladders are not made of glass, and using a glass ladder would be dangerous and impractical.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A person is cleaning the gutter of the house by using a ladder to climb onto the roof and brushing away the dirt.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 8:\nUser:\nConcepts: [\'animal\', \'catch\', \'horse\', \'lasso\', \'ride\']\nSentence: The horse catches the lasso and rides on it.\nMissing concepts: animal\nCommonsense Feedback: The sentence does not make sense because a horse cannot catch a lasso and ride on it.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The cowboy catches a horse with a lasso and rides on it.\nUser:\nMissing concepts: animal\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The cowboy catches the horse with a lasso and rides it.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nNow let\'s start a new conversation so that you can improve a constructed sentence based on my feedbacks.\n\nConcepts: [\'use\', \'goat\', \'wine\', \'frisbee\', \'leap\', \'pole\', \'tell\', \'pencil\', \'spin\', \'birdie\', \'catcher\', \'fence\', \'world\', \'step\', \'chop\', \'sword\', \'march\', \'stage\', \'axe\', \'bat\', \'place\', \'roller\', \'tomato\']\nSentence: The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board.\nMissing concepts: sword, roller, pencil, stage, chop, place, pole, catcher, use, wine, march, step, axe, bat, tell\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks."
+}
+role: "user"
+, parts {
+  text: "The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board, as a marching band stepped onto the stage, the drummer using pencils as drumsticks. \n"
+}
+role: "model"
+, parts {
+  text: "Missing concepts: sword, roller, chop, place, wine, catcher, axe, bat, tell\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks."
+}
+role: "user"
+, parts {
+  text: "The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board as a chef chops it with an axe, a baseball player swinging a bat, missing the ball which is caught by the catcher, and a marching band stepping onto the stage, the drummer using pencils as drumsticks.  \n"
+}
+role: "model"
+, parts {
+  text: "Missing concepts: sword, roller, place, pole, wine, tell\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks."
+}
+role: "user"
+, parts {
+  text: "The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board as a chef chops it with an axe, a baseball player swinging a bat, missing the ball which is caught by the catcher, and a marching band stepping onto the stage, the drummer using pencils as drumsticks. A street performer, balancing a sword on his nose, tells jokes as he juggles wine bottles. A nearby painter, using a roller to paint the scenery, accidentally knocks over a pole. \n"
+}
+role: "model"
+, parts {
+  text: "Missing concepts: None\nCommonsense Feedback: None"
+}
+role: "user"
+]</pre></details>
+</div>
+</div>
+
+
+
+</section>
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body" data-entry-spacing="0">
+<div id="ref-madaan2023selfrefine" class="csl-entry">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline">A. Madaan <em>et al.</em>, <span>“Self-refine: Iterative refinement with self-feedback.”</span> 2023. Available: <a href="https://arxiv.org/abs/2303.17651">https://arxiv.org/abs/2303.17651</a></div>
+</div>
+</div></section></div> ]]></description>
+  <category>Agentic Patterns</category>
+  <category>Reflection</category>
+  <category>Prompt Engineering</category>
+  <guid>https://liminma.github.io/machine-learning-lab/notebooks/self-refine-with-gemini-1.5.html</guid>
+  <pubDate>Sat, 06 Jul 2024 04:00:00 GMT</pubDate>
+</item>
 <item>
   <title>A function calling agent for document QA</title>
   <link>https://liminma.github.io/machine-learning-lab/notebooks/function-calling-agent-doc-qa.html</link>
@@ -1117,9 +3287,11 @@ font-style: inherit;">print</span>(response)</span></code></pre></div>
 </section>
 
  ]]></description>
-  <category>Mistral</category>
+  <category>Agentic Patterns</category>
   <category>Function calling</category>
+  <category>Tool Use</category>
   <category>LlamaIndex</category>
+  <category>Mistral</category>
   <guid>https://liminma.github.io/machine-learning-lab/notebooks/function-calling-agent-doc-qa.html</guid>
   <pubDate>Thu, 06 Jun 2024 04:00:00 GMT</pubDate>
 </item>
@@ -1898,9 +4070,11 @@ font-style: inherit;">print</span>(prompt)</span>
 </section>
 
  ]]></description>
-  <category>Mistral</category>
+  <category>Agentic Patterns</category>
   <category>Function calling</category>
+  <category>Tool Use</category>
   <category>Tabular data</category>
+  <category>Mistral</category>
   <guid>https://liminma.github.io/machine-learning-lab/notebooks/Mixtral-8x22B-function-calling-examples.html</guid>
   <pubDate>Wed, 29 May 2024 04:00:00 GMT</pubDate>
 </item>
@@ -17709,165 +19883,6 @@ Elapsed time: 26.65933546423912</code></pre>
  ]]></description>
   <category>openai</category>
   <guid>https://liminma.github.io/machine-learning-lab/notebooks/localai_openai_api.html</guid>
-  <pubDate>Sat, 17 Jun 2023 04:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>LangChain with LocalAI</title>
-  <link>https://liminma.github.io/machine-learning-lab/notebooks/langchain_localai_demo.html</link>
-  <description><![CDATA[ 
-
-
-
-
-
-<p><a href="https://localai.io/">LocalAI</a> is able to run LLMs locally, and offers REST API compatible with OpenAI API.</p>
-<section id="create-a-chat-model" class="level2">
-<h2 class="anchored" data-anchor-id="create-a-chat-model">Create a chat model</h2>
-<p>For a locally hosted model, we don’t need to specify openai’s api key, but do need to specify the endpoint of the model.</p>
-<div id="b2ac6bd0-880b-4af3-841b-616240842734" class="cell" data-tags="[]" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">from</span> langchain.chat_models <span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> ChatOpenAI</span>
-<span id="cb1-2"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">from</span> langchain.prompts <span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> ChatPromptTemplate</span>
-<span id="cb1-3"></span>
-<span id="cb1-4">model <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'nous-hermes-13b.ggmlv3.q4_0.bin'</span></span>
-<span id="cb1-5">openai_api_key <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'dummy api key'</span></span>
-<span id="cb1-6">openai_api_base <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'http://localhost:8080/v1'</span></span>
-<span id="cb1-7"></span>
-<span id="cb1-8">chat <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> ChatOpenAI(</span>
-<span id="cb1-9">    model <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> model,</span>
-<span id="cb1-10">    openai_api_key <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> openai_api_key,</span>
-<span id="cb1-11">    openai_api_base <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> openai_api_base,</span>
-<span id="cb1-12">    temperature<span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.0</span>)</span></code></pre></div>
-</div>
-</section>
-<section id="use-prompt-template-to-create-messages" class="level2">
-<h2 class="anchored" data-anchor-id="use-prompt-template-to-create-messages">Use prompt template to create messages</h2>
-<div id="6fdd8c1a-2177-4c5f-bc7a-53b143329225" class="cell" data-tags="[]" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">template_string <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"""</span></span>
-<span id="cb2-2"><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">Translate the text that is delimited by triple backticks into French.</span></span>
-<span id="cb2-3"></span>
-<span id="cb2-4"><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">text:</span></span>
-<span id="cb2-5"><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">```</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">{text}</span><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">```</span></span>
-<span id="cb2-6"><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"""</span></span>
-<span id="cb2-7">prompt_template <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> ChatPromptTemplate.from_template(template_string)</span></code></pre></div>
-</div>
-<div id="baeed5fa-22fe-4cd5-b802-93ba3d6dddf4" class="cell" data-tags="[]" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">user_prompt <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"""</span></span>
-<span id="cb3-2"><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">Hello, how are you?</span></span>
-<span id="cb3-3"><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"""</span></span>
-<span id="cb3-4">messages <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> prompt_template.format_messages(text<span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span>user_prompt)</span>
-<span id="cb3-5"><span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">print</span>(messages)</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[HumanMessage(content='\nTranslate the text that is delimited by triple backticks into French.\n\ntext:\n```\nHello, how are you?\n```\n', additional_kwargs={}, example=False)]</code></pre>
-</div>
-</div>
-<div id="f448f913-baa3-4093-be50-16a4c5514a2e" class="cell" data-tags="[]" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> time</span>
-<span id="cb5-2"></span>
-<span id="cb5-3">start_time <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> time.perf_counter()</span>
-<span id="cb5-4">response <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> chat(messages)</span>
-<span id="cb5-5">elapsed <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> time.perf_counter() <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-</span> start_time</span>
-<span id="cb5-6"></span>
-<span id="cb5-7"><span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
-background-color: null;
-font-style: inherit;">f'Time elapsed: </span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">{</span>elapsed<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">}</span><span class="ss" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'</span>)</span>
-<span id="cb5-8"><span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">print</span>(response.content)</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Time elapsed: 20.956661384552717
-translation:
-Bonjour, comment vas-tu ?</code></pre>
-</div>
-</div>
-
-
-</section>
-
- ]]></description>
-  <category>LangChain</category>
-  <guid>https://liminma.github.io/machine-learning-lab/notebooks/langchain_localai_demo.html</guid>
   <pubDate>Sat, 17 Jun 2023 04:00:00 GMT</pubDate>
 </item>
 </channel>

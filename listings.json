@@ -1,7 +1,8 @@
 [
   {
-    "listing": "/index.html",
+    "listing": "/archive.html",
     "items": [
+      "/notebooks/self-refine-with-gemini-1.5.html",
       "/notebooks/function-calling-agent-doc-qa.html",
       "/notebooks/Mixtral-8x22B-function-calling-examples.html",
       "/notebooks/Mistral-7B-Instruct-v0.3-function-calling.html",
@@ -34,8 +35,9 @@
     ]
   },
   {
-    "listing": "/archive.html",
+    "listing": "/index.html",
     "items": [
+      "/notebooks/self-refine-with-gemini-1.5.html",
       "/notebooks/function-calling-agent-doc-qa.html",
       "/notebooks/Mixtral-8x22B-function-calling-examples.html",
       "/notebooks/Mistral-7B-Instruct-v0.3-function-calling.html",
