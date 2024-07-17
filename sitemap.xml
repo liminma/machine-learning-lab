@@ -26,7 +26,7 @@
   </url>
   <url>
     <loc>https://liminma.github.io/machine-learning-lab/notebooks/self-refine-with-gemini-1.5.html</loc>
-    <lastmod>2024-07-06T20:35:19.471Z</lastmod>
+    <lastmod>2024-07-17T03:16:01.319Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/machine-learning-lab/notebooks/vector_projection_on_line.html</loc>
@@ -57,24 +57,28 @@
     <lastmod>2024-06-21T23:14:45.666Z</lastmod>
   </url>
   <url>
-    <loc>https://liminma.github.io/machine-learning-lab/notebooks/programming_with_chatgpt_api.html</loc>
-    <lastmod>2024-06-21T23:14:45.666Z</lastmod>
-  </url>
-  <url>
-    <loc>https://liminma.github.io/machine-learning-lab/archive.html</loc>
-    <lastmod>2024-06-21T23:14:45.606Z</lastmod>
-  </url>
-  <url>
-    <loc>https://liminma.github.io/machine-learning-lab/index.html</loc>
-    <lastmod>2024-06-21T23:14:45.606Z</lastmod>
+    <loc>https://liminma.github.io/machine-learning-lab/notebooks/matrix_rank_factorization.html</loc>
+    <lastmod>2024-06-21T23:14:45.662Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/machine-learning-lab/notebooks/localai_openai_api.html</loc>
     <lastmod>2024-06-21T23:14:45.662Z</lastmod>
   </url>
   <url>
-    <loc>https://liminma.github.io/machine-learning-lab/notebooks/matrix_rank_factorization.html</loc>
-    <lastmod>2024-06-21T23:14:45.662Z</lastmod>
+    <loc>https://liminma.github.io/machine-learning-lab/index.html</loc>
+    <lastmod>2024-06-21T23:14:45.606Z</lastmod>
+  </url>
+  <url>
+    <loc>https://liminma.github.io/machine-learning-lab/archive.html</loc>
+    <lastmod>2024-06-21T23:14:45.606Z</lastmod>
+  </url>
+  <url>
+    <loc>https://liminma.github.io/machine-learning-lab/notebooks/programming_with_chatgpt_api.html</loc>
+    <lastmod>2024-06-21T23:14:45.666Z</lastmod>
+  </url>
+  <url>
+    <loc>https://liminma.github.io/machine-learning-lab/notebooks/reflexion-with-gemini-1.5.html</loc>
+    <lastmod>2024-07-17T03:15:59.123Z</lastmod>
   </url>
   <url>
     <loc>https://liminma.github.io/machine-learning-lab/notebooks/preprocessing_dataset_pytorch.html</loc>

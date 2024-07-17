@@ -176,6 +176,7 @@ div.csl-indent {
                 <div class="quarto-category">Agentic Patterns</div>
                 <div class="quarto-category">Reflection</div>
                 <div class="quarto-category">Prompt Engineering</div>
+                <div class="quarto-category">Paper Reading</div>
               </div>
                   </div>
   </div>
@@ -214,12 +215,12 @@ div.csl-indent {
   <li><a href="#configure-both-gemini-1.5-flash-and-gemini-1.5-pro-models." id="toc-configure-both-gemini-1.5-flash-and-gemini-1.5-pro-models." class="nav-link" data-scroll-target="#configure-both-gemini-1.5-flash-and-gemini-1.5-pro-models.">Configure both <code>gemini-1.5-flash</code> and <code>gemini-1.5-pro</code> models.</a></li>
   <li><a href="#exp-01-using-gemini-1.5-flash" id="toc-exp-01-using-gemini-1.5-flash" class="nav-link" data-scroll-target="#exp-01-using-gemini-1.5-flash">Exp 01: using <code>gemini-1.5-flash</code></a>
   <ul class="collapse">
-  <li><a href="#generate-the-initital-sentence" id="toc-generate-the-initital-sentence" class="nav-link" data-scroll-target="#generate-the-initital-sentence">1. generate the initital sentence</a></li>
+  <li><a href="#generate-the-initial-sentence" id="toc-generate-the-initial-sentence" class="nav-link" data-scroll-target="#generate-the-initial-sentence">1. generate the initial sentence</a></li>
   <li><a href="#run-the-refine-loop" id="toc-run-the-refine-loop" class="nav-link" data-scroll-target="#run-the-refine-loop">2. run the refine loop</a></li>
   </ul></li>
   <li><a href="#exp-02-using-gemini-1.5-pro" id="toc-exp-02-using-gemini-1.5-pro" class="nav-link" data-scroll-target="#exp-02-using-gemini-1.5-pro">Exp 02: using <code>gemini-1.5-pro</code></a>
   <ul class="collapse">
-  <li><a href="#generate-the-initital-sentence-1" id="toc-generate-the-initital-sentence-1" class="nav-link" data-scroll-target="#generate-the-initital-sentence-1">1. generate the initital sentence</a></li>
+  <li><a href="#generate-the-initial-sentence-1" id="toc-generate-the-initial-sentence-1" class="nav-link" data-scroll-target="#generate-the-initial-sentence-1">1. generate the initial sentence</a></li>
   <li><a href="#run-the-refine-loop-1" id="toc-run-the-refine-loop-1" class="nav-link" data-scroll-target="#run-the-refine-loop-1">2. run the refine loop</a></li>
   </ul></li>
   </ul></li>
@@ -233,10 +234,10 @@ div.csl-indent {
 
 
 
+<p>Self-refine <span class="citation" data-cites="madaan2023selfrefine">[<a href="#ref-madaan2023selfrefine" role="doc-biblioref">1</a>]</span> is an approach that iteratively improves a model’s output based on its own feedback. It is suitable for stronger models. Given an initial output, it consists of 2 main steps: feedback and refine. The feedback contains concrete actions that can improve the output and identifies specific phrases in the output to be improved. Good feedback is crucial for the approach to work.</p>
 <p style="text-align:center;">
 <img class="preview-image" src="self-refine-with-gemini-1.5_files/figure-html/feaafcdf-7ee8-449c-b975-43e7d0bf18bd-1-025f9a30-4afd-4412-9268-6052e78c6ac8.png" width="800px"><br> Source: Madaan et al. <span class="citation" data-cites="madaan2023selfrefine">[<a href="#ref-madaan2023selfrefine" role="doc-biblioref">1</a>]</span>
 </p>
-<p>Self-refine <span class="citation" data-cites="madaan2023selfrefine">[<a href="#ref-madaan2023selfrefine" role="doc-biblioref">1</a>]</span> is an approach that iteratively improves a model’s output based on its own feedback. It is suitable for stronger models. Given an initial output, it consists of 2 main steps: feedback and refine. The feedback contains concrete actions that can improve the output and identifies specific phrases in the output to be improved. Good feedback is cruicial for the approach to work.</p>
 <p>Self-refine uses three prompts: initial generation, feedback and refinement. The authors used few-shot prompting as in-context learning to guide the model:</p>
 <ul>
 <li>Initial generation prompt: few-shot prompt plus input</li>
@@ -284,7 +285,7 @@ div.csl-indent {
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> examples</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="6532a277-3ceb-4836-8e29-8f35ad9667b8" class="cell" data-execution_count="89">
+<div id="6532a277-3ceb-4836-8e29-8f35ad9667b8" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> construct_init_prompt_template():</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    examples_url<span class="op">=</span><span class="st">'https://raw.githubusercontent.com/madaan/self-refine/main/data/prompt/commongen/init.jsonl'</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    examples <span class="op">=</span> download_examples(examples_url)</span>
@@ -315,7 +316,7 @@ div.csl-indent {
 <span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    prompt_template <span class="op">=</span> prompt_head <span class="op">+</span> examples_prompt <span class="op">+</span> <span class="st">'</span><span class="ch">\n\n</span><span class="st">'</span> <span class="op">+</span> prompt_end</span>
 <span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> prompt_template</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="1e3fb1cd-ed60-46d9-a61a-8c7f4b543f4c" class="cell" data-execution_count="90">
+<div id="1e3fb1cd-ed60-46d9-a61a-8c7f4b543f4c" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>init_prompt_template <span class="op">=</span> construct_init_prompt_template()</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>utils.display_html(init_prompt_template, <span class="st">'Show init prompt template'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
@@ -368,18 +369,18 @@ The sentence is:</pre></details>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    examples <span class="op">=</span> download_examples(examples_url)</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    prompt_head <span class="op">=</span> <span class="st">"""</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="st">I want you to provide feedbacks on a sentence that is constructed using given concepts. </span><span class="ch">\</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="st">I want you to provide feedback on a sentence that is constructed using given concepts. </span><span class="ch">\</span></span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="st">Follow the following instructions:</span></span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="st">- First, find out what concepts from the concept list are missing from the constructed sentence</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="st">- Second, if the sentence doesn't makes sense, provide short explanation; otherwise, provide "None" as your answer.</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="st">- Second, if the sentence doesn't make sense, provide a short explanation; otherwise, provide "None" as your answer.</span></span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="st">Here are some examples:</span></span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="st">    """</span>.strip()</span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    prompt_end <span class="op">=</span><span class="st">"""</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="st">Now provide your feedbacks on the following concepts and the constructed sentence.</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="st">Now provide your feedback on the following concepts and the constructed sentence.</span></span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="st">- First, find out what concepts from the concept list are missing from the constructed sentence</span></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="st">- Second, if the sentence doesn't makes sense, provide short explanation; otherwise, provide "None" as your answer.</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="st">- Second, if the sentence doesn't make sense, provide a short explanation; otherwise, provide "None" as your answer.</span></span>
 <span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="st">Concepts: </span><span class="sc">{concepts}</span></span>
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="st">Constructed sentence: </span><span class="sc">{sentence}</span></span>
@@ -408,9 +409,9 @@ The sentence is:</pre></details>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>feedback_prompt_template <span class="op">=</span> construct_feedback_prompt_template()</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>utils.display_html(feedback_prompt_template, <span class="st">'Show feedback prompt template'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<details><summary>Show feedback prompt template</summary><pre>I want you to provide feedbacks on a sentence that is constructed using given concepts. Follow the following instructions:
+<details><summary>Show feedback prompt template</summary><pre>I want you to provide feedback on a sentence that is constructed using given concepts. Follow the following instructions:
 - First, find out what concepts from the concept list are missing from the constructed sentence
-- Second, if the sentence doesn't makes sense, provide short explanation; otherwise, provide "None" as your answer.
+- Second, if the sentence doesn't make sense, provide a short explanation; otherwise, provide "None" as your answer.
 
 Here are some examples:
 
@@ -494,9 +495,9 @@ Constructed sentence: The horse catches the lasso and rides on it.
 Missing concepts: animal
 Commonsense Feedback: The sentence does not make sense because a horse cannot catch a lasso and ride on it.
 
-Now provide your feedbacks on the following concepts and the constructed sentence.
+Now provide your feedback on the following concepts and the constructed sentence.
 - First, find out what concepts from the concept list are missing from the constructed sentence
-- Second, if the sentence doesn't makes sense, provide short explanation; otherwise, provide "None" as your answer.
+- Second, if the sentence doesn't make sense, provide a short explanation; otherwise, provide "None" as your answer.
 
 Concepts: {concepts}
 Constructed sentence: {sentence}</pre></details>
@@ -511,14 +512,14 @@ Constructed sentence: {sentence}</pre></details>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    examples <span class="op">=</span> download_examples(examples_url)</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    prompt_head <span class="op">=</span> <span class="ss">f"""</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="ss">We are having multi-turn conversation in order to create a sentence that contains all given concepts. </span><span class="ch">\</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="ss">I will provide you with my feedbacks on the sentence regarding missing concepts and whether the sentence makes sense. </span><span class="ch">\</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="ss">Your task is to improve the provided sentence based on my feedbacks.</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="ss">We are having a multi-turn conversation in order to create a sentence that contains all given concepts. </span><span class="ch">\</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="ss">I will provide you with my feedback on the sentence regarding missing concepts and whether the sentence makes sense. </span><span class="ch">\</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="ss">Your task is to improve the provided sentence based on my feedback.</span></span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="ss">Here are </span><span class="sc">{</span><span class="bu">len</span>(examples)<span class="sc">}</span><span class="ss"> examples of our past conversations:</span></span>
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="ss">    """</span>.strip()</span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    generation_prompt <span class="op">=</span> <span class="st">'Impove the sentence using the above feedbacks.'</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    generation_prompt <span class="op">=</span> <span class="st">'Improve the sentence using the above feedback.'</span></span>
 <span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    example_prompt_head <span class="op">=</span> <span class="st">"""</span></span>
 <span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="st">Example </span><span class="sc">{i}</span><span class="st">:</span></span>
@@ -545,7 +546,7 @@ Constructed sentence: {sentence}</pre></details>
 <span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a><span class="st">    """</span>.strip()</span>
 <span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>    prompt_end_0 <span class="op">=</span> <span class="st">"""</span></span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a><span class="st">Now let's start a new conversation so that you can improve a constructed sentence based on my feedbacks.</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a><span class="st">Now let's start a new conversation so that you can improve a constructed sentence based on my feedback.</span></span>
 <span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a><span class="st">Concepts: </span><span class="sc">{concepts}</span></span>
 <span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a><span class="st">Sentence: </span><span class="sc">{sentence}</span></span>
@@ -589,7 +590,7 @@ Constructed sentence: {sentence}</pre></details>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>utils.display_html(refine_prompt_template_0, <span class="st">'Show refine prompt template for the first refinement'</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>utils.display_html(refine_prompt_template_1, <span class="st">'Show refine prompt template for the rest refinement'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<details><summary>Show refine prompt template for the first refinement</summary><pre>We are having multi-turn conversation in order to create a sentence that contains all given concepts. I will provide you with my feedbacks on the sentence regarding missing concepts and whether the sentence makes sense. Your task is to improve the provided sentence based on my feedbacks.
+<details><summary>Show refine prompt template for the first refinement</summary><pre>We are having a multi-turn conversation in order to create a sentence that contains all given concepts. I will provide you with my feedback on the sentence regarding missing concepts and whether the sentence makes sense. Your task is to improve the provided sentence based on my feedback.
 
 Here are 8 examples of our past conversations:
 
@@ -600,14 +601,14 @@ Sentence: The drum sits on the pen and uses it to beat.
 Missing concepts: None
 Commonsense Feedback: The sentence does not make sense because a drum cannot sit on a pen and use it to beat.
 
-Impove the sentence using the above feedbacks.
+Improve the sentence using the above feedback.
 Assistant:
 Sentence: The drummer uses the drum to beat.
 User:
 Missing concepts: sit, pen
 Commonsense Feedback: None
 
-Impove the sentence using the above feedbacks.
+Improve the sentence using the above feedback.
 Assistant:
 Sentence: The drummer sits behind the drum and uses it to beat the pen.
 User:
@@ -621,14 +622,14 @@ Sentence: A couch shaped girl sitting on the chair with her hair clipper.
 Missing concepts: cut
 Commonsense Feedback: The sentence does not make sense because a couch is not a shape and a hair clipper is not an item of clothing.
 
-Impove the sentence using the above feedbacks.
+Improve the sentence using the above feedback.
 Assistant:
 Sentence: A girl on the chair with her hair clipper and cutting her hair.
 User:
 Missing concepts: sit
 Commonsense Feedback: None
 
-Impove the sentence using the above feedbacks.
+Improve the sentence using the above feedback.
 Assistant:
 Sentence: A girl sitting on the chair with a hair clipper, cutting her hair up.
 User:
@@ -642,14 +643,14 @@ Sentence: The grass is standing tall and a hose is spraying it with spray.
 Missing concepts: water
 Commonsense Feedback: The sentence does not make sense because it is not clear what 'spray' is referring to, and grass does not have the ability to stand upright like a human or animal.
 
-Impove the sentence using the above feedbacks.
+Improve the sentence using the above feedback.
 Assistant:
 Sentence: The hose is spraying water onto the grass that is standing like a person.
 User:
 Missing concepts: None
 Commonsense Feedback: The sentence does not make sense because grass cannot stand upright like a human or animal.
 
-Impove the sentence using the above feedbacks.
+Improve the sentence using the above feedback.
 Assistant:
 Sentence: A person is standing on the grass, holding a hose that is spraying water onto the grass.
 User:
@@ -663,14 +664,14 @@ Sentence: A mallet is standing in front of a gong.
 Missing concepts: hit
 Commonsense Feedback: The sentence does not make sense because a mallet cannot stand in the front of a gong.
 
-Impove the sentence using the above feedbacks.
+Improve the sentence using the above feedback.
 Assistant:
 Sentence: A musician stands in front of a gong with a mallet.
 User:
 Missing concepts: None
 Commonsense Feedback: None
 
-Impove the sentence using the above feedbacks.
+Improve the sentence using the above feedback.
 Assistant:
 Sentence: The musician stands in front of the gong and hits it with a mallet.
 User:
@@ -684,14 +685,14 @@ Sentence: The ball runs to the hoop and dunks it.
 Missing concepts: jump
 Commonsense Feedback: The sentence does not make sense because a ball cannot run and dunk.
 
-Impove the sentence using the above feedbacks.
+Improve the sentence using the above feedback.
 Assistant:
 Sentence: The ball jumps to the hoop and dunks it.
 User:
 Missing concepts: run
 Commonsense Feedback: The sentence does not make sense because a ball cannot jump.
 
-Impove the sentence using the above feedbacks.
+Improve the sentence using the above feedback.
 Assistant:
 Sentence: A basketball player runs up to the hoop and jumps off of the ball to dunk it.
 User:
@@ -705,14 +706,14 @@ Sentence: A dealer offers a card to a group of people at a table.
 Missing concepts: chip, deal
 Commonsense Feedback: The sentence does not make sense because a chip cannot deal a card to a dealer.
 
-Impove the sentence using the above feedbacks.
+Improve the sentence using the above feedback.
 Assistant:
 Sentence: The dealer deals a card to a group of people.
 User:
 Missing concepts: chip
 Commonsense Feedback: None
 
-Impove the sentence using the above feedbacks.
+Improve the sentence using the above feedback.
 Assistant:
 Sentence: The dealer deals a card to a group of people around the table with a chip at the table.
 User:
@@ -726,14 +727,14 @@ Sentence: The house is clean and a ladder is trying to climb.
 Missing concepts: climb
 Commonsense Feedback: The sentence does not make sense because ladders cannot climb by themselves.
 
-Impove the sentence using the above feedbacks.
+Improve the sentence using the above feedback.
 Assistant:
 Sentence: A person is cleaning the gutter of the house by climbing onto the roof with a ladder made of glass.
 User:
 Missing concepts: None
 Commonsense Feedback: The sentence does not make sense because ladders are not made of glass, and using a glass ladder would be dangerous and impractical.
 
-Impove the sentence using the above feedbacks.
+Improve the sentence using the above feedback.
 Assistant:
 Sentence: A person is cleaning the gutter of the house by using a ladder to climb onto the roof and brushing away the dirt.
 User:
@@ -747,34 +748,34 @@ Sentence: The horse catches the lasso and rides on it.
 Missing concepts: animal
 Commonsense Feedback: The sentence does not make sense because a horse cannot catch a lasso and ride on it.
 
-Impove the sentence using the above feedbacks.
+Improve the sentence using the above feedback.
 Assistant:
 Sentence: The cowboy catches a horse with a lasso and rides on it.
 User:
 Missing concepts: animal
 Commonsense Feedback: None
 
-Impove the sentence using the above feedbacks.
+Improve the sentence using the above feedback.
 Assistant:
 Sentence: The cowboy catches the horse with a lasso and rides it.
 User:
 Missing concepts: None
 Commonsense Feedback: None
 
-Now let's start a new conversation so that you can improve a constructed sentence based on my feedbacks.
+Now let's start a new conversation so that you can improve a constructed sentence based on my feedback.
 
 Concepts: {concepts}
 Sentence: {sentence}
 Missing concepts: {missing_concepts}
 Commonsense Feedback: {commonsense_feedback}
 
-Impove the sentence using the above feedbacks.</pre></details>
+Improve the sentence using the above feedback.</pre></details>
 </div>
 <div class="cell-output cell-output-display">
 <details><summary>Show refine prompt template for the rest refinement</summary><pre>Missing concepts: {missing_concepts}
 Commonsense Feedback: {commonsense_feedback}
 
-Impove the sentence using the above feedbacks.</pre></details>
+Improve the sentence using the above feedback.</pre></details>
 </div>
 </div>
 </section>
@@ -793,7 +794,7 @@ Impove the sentence using the above feedbacks.</pre></details>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        text <span class="op">=</span> text[start_idx:].strip()</span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> text</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="811068ba-fb39-499e-b1b7-fbaf999a5cdd" class="cell" data-execution_count="67">
+<div id="811068ba-fb39-499e-b1b7-fbaf999a5cdd" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>nlp <span class="op">=</span> spacy.load(<span class="st">"en_core_web_sm"</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> concepts_from_sentence(sentence, concepts):</span>
@@ -837,7 +838,7 @@ Impove the sentence using the above feedbacks.</pre></details>
 <span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    fixed_missing_concepts <span class="op">=</span> fix_missing_concepts(concept_feedback, found_concepts)</span>
 <span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> fixed_missing_concepts, commonsense_feedback</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="13be2720-26cd-452e-b9ed-cd3b3d5c3c2c" class="cell" data-execution_count="19">
+<div id="13be2720-26cd-452e-b9ed-cd3b3d5c3c2c" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> run_refine_loop(sentence, concepts, model, max_tries<span class="op">=</span><span class="dv">5</span>, throttle<span class="op">=</span><span class="va">False</span>, throttle_value<span class="op">=</span><span class="dv">5</span>):</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    refine_gen_prefix <span class="op">=</span> <span class="st">'sentence:'</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    refine_prompt_template <span class="op">=</span> refine_prompt_template_0</span>
@@ -914,8 +915,8 @@ Impove the sentence using the above feedbacks.</pre></details>
 </section>
 <section id="exp-01-using-gemini-1.5-flash" class="level2">
 <h2 class="anchored" data-anchor-id="exp-01-using-gemini-1.5-flash">Exp 01: using <code>gemini-1.5-flash</code></h2>
-<section id="generate-the-initital-sentence" class="level3">
-<h3 class="anchored" data-anchor-id="generate-the-initital-sentence">1. generate the initital sentence</h3>
+<section id="generate-the-initial-sentence" class="level3">
+<h3 class="anchored" data-anchor-id="generate-the-initial-sentence">1. generate the initial sentence</h3>
 <div id="8e40dc01-a440-42e0-be17-61f7a1754992" class="cell" data-scrolled="true" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># an example from authors' [commongen_hard.jsonl](https://github.com/madaan/self-refine/blob/main/data/prompt/commongen/commongen_hard.jsonl)</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>concepts <span class="op">=</span> [<span class="st">"use"</span>, <span class="st">"goat"</span>, <span class="st">"wine"</span>, <span class="st">"frisbee"</span>,</span>
@@ -968,111 +969,112 @@ Concepts: ['use', 'goat', 'wine', 'frisbee', 'leap', 'pole', 'tell', 'pencil', '
 The sentence is:</pre></details>
 </div>
 </div>
-<div id="6181b187-a8cf-40ac-94be-ce8eb7dabb32" class="cell" data-execution_count="83">
+<div id="6181b187-a8cf-40ac-94be-ce8eb7dabb32" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>init_outputs <span class="op">=</span> ask_llm(init_prompt, model_flash)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>sentence <span class="op">=</span> remove_prefix_if_exist(<span class="st">'the sentence is:'</span>, init_outputs)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>sentence</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="83">
-<pre><code>'The goat leaps over the fence, using the frisbee as a springboard, while the world spins around him; a catcher tells the story of a place where they chop tomatoes with a sword, march on stage with an axe, and bat a roller with a pencil.'</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="15">
+<pre><code>'The goat leaps over the fence, using the pole as a springboard, while the catcher spins a frisbee, aiming for the birdie, and the world marches on stage, a place where tomatoes are chopped with an axe and wine is drunk from a roller, told with a pencil and a sword.'</code></pre>
 </div>
 </div>
 </section>
 <section id="run-the-refine-loop" class="level3">
 <h3 class="anchored" data-anchor-id="run-the-refine-loop">2. run the refine loop</h3>
-<div id="43a87785-7ced-4ab6-b313-b473ff534bb0" class="cell" data-execution_count="84">
+<div id="43a87785-7ced-4ab6-b313-b473ff534bb0" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>sentence, history <span class="op">=</span> run_refine_loop(sentence, concepts, model_flash)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>========== DEBUG ==========
-Sentence: The goat leaps over the fence, using the frisbee as a springboard, while the world spins around him; a catcher tells the story of a place where they chop tomatoes with a sword, march on stage with an axe, and bat a roller with a pencil.
-Missing concepts: use, wine, pole, birdie, step, axe, bat
-Commonsense Feedback: The sentence does not make sense because a goat cannot use a frisbee as a springboard and a catcher cannot chop tomatoes with a sword, march on stage with an axe, and bat a roller with a pencil.
----------------------------
-========== DEBUG ==========
-Sentence: The goat leaps over the fence, using a pole to step over it, while the world spins around him; a catcher tells the story of a place where they chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil, while a birdie uses a wine glass to spin a frisbee.
+Sentence: The goat leaps over the fence, using the pole as a springboard, while the catcher spins a frisbee, aiming for the birdie, and the world marches on stage, a place where tomatoes are chopped with an axe and wine is drunk from a roller, told with a pencil and a sword.
 Missing concepts: None
-Commonsense Feedback: The sentence does not make sense because it is a nonsensical combination of actions and objects. A goat cannot use a pole to step over a fence, the world does not spin around a goat, and the described actions are not logically connected.
+Commonsense Feedback: The sentence does not make sense because it is a nonsensical combination of unrelated ideas.
 ---------------------------
 ========== DEBUG ==========
-Sentence: A catcher tells the story of a place where they chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil.  A goat uses a pole to leap over the fence and a birdie spins a frisbee with a wine glass.
+Sentence: The goat leaps over the fence using a pole, while the catcher spins a frisbee aiming for the birdie.
+Missing concepts: use, tell, world, step, chop, sword, march, stage, axe, bat, place, roller, tomato
+Commonsense Feedback: The sentence does not make sense because a goat cannot leap over a fence using a pole.
+---------------------------
+========== DEBUG ==========
+Sentence: The goat steps over the fence while the catcher spins a frisbee aiming for the birdie, and the world marches on stage, a place where tomatoes are chopped with an axe and wine is drunk from a roller, told with a pencil and a sword.
+Missing concepts: use, leap, pole, tell, bat, place
+Commonsense Feedback: The sentence does not make sense because a goat cannot step over a fence while a catcher spins a frisbee, the world cannot march on stage, and tomatoes cannot be chopped with an axe.
+---------------------------
+========== DEBUG ==========
+Sentence: The goat leaps over the fence using a pole while the catcher spins a frisbee aiming for the birdie. The world marches on stage, a place where tomatoes are chopped with a bat and wine is drunk from a roller, told with a pencil and a sword.
+Missing concepts:  axe, step, use, chop 
+Commonsense Feedback: The sentence does not make sense because a goat cannot leap over a fence using a pole, and a world cannot march on stage. Tomatoes cannot be chopped with a bat, and wine cannot be drunk from a roller.
+---------------------------
+========== DEBUG ==========
+Sentence: The goat steps over the fence while the catcher spins a frisbee aiming for the birdie. The world marches on stage, a place where tomatoes are chopped with an axe and wine is drunk from a roller, told with a pencil and a sword.
+Missing concepts: use, leap, bat, pole, tell
+
+Commonsense Feedback: The sentence does not make sense because the world cannot march on stage, tomatoes are not chopped with an axe, and wine is not drunk from a roller.
+---------------------------
+========== DEBUG ==========
+Sentence: The goat leaps over the fence using a pole while the catcher spins a frisbee aiming for the birdie. The world marches on stage, a place where tomatoes are chopped with a bat and wine is drunk from a roller, told with a pencil and a sword.
 Missing concepts: None
-Commonsense Feedback: The sentence does not make sense because it describes actions that are not logically possible or typical. For example, chopping tomatoes with an axe, marching on stage with a sword, batting a roller with a pencil, using a pole to leap over a fence, and spinning a frisbee with a wine glass are all nonsensical actions.
----------------------------
-========== DEBUG ==========
-Sentence: A goat leaps over a fence using a pole. A catcher tells a story of a place where they chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil.  A birdie spins a frisbee, taking a sip of wine as it does so.
-Missing concepts: None
-Commonsense Feedback: The sentence does not make sense because it is a nonsensical story. Goats cannot leap over fences using poles. Catchers do not tell stories about chopping tomatoes with axes, marching on stage with swords, and batting rollers with pencils.  Birds cannot spin frisbees and take sips of wine.
----------------------------
-========== DEBUG ==========
-Sentence: A goat leaps over a fence, its hooves hitting the ground with a soft thud. A catcher tells a story of a place where people chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil. A birdie spins a frisbee in the air, watching it soar through the sky.
-Missing concepts: use, wine, pole, world, step
-Commonsense Feedback: None
----------------------------
-========== DEBUG ==========
-Sentence: A goat leaps over a fence, using a pole to step over it, as the world spins around him. A catcher tells a story of a place where people chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil. A birdie spins a frisbee in the air, taking a sip of wine as it does so.
-Missing concepts: None
-Commonsense Feedback: The sentence does not make sense because a goat cannot use a pole to step over a fence, a catcher cannot tell a story of a place where people chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil, and a birdie cannot spin a frisbee in the air while taking a sip of wine.
+Commonsense Feedback: The sentence does not make sense because it is nonsensical and uses a random combination of the concepts.
 ---------------------------</code></pre>
 </div>
 </div>
-<div id="77b1f14b-b07e-4957-bd37-3f3f114cca0f" class="cell" data-execution_count="85">
+<div id="77b1f14b-b07e-4957-bd37-3f3f114cca0f" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>sentence</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="85">
-<pre><code>'A goat leaps over a fence, using a pole to step over it, as the world spins around him. A catcher tells a story of a place where people chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil. A birdie spins a frisbee in the air, taking a sip of wine as it does so.'</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<pre><code>'The goat leaps over the fence using a pole while the catcher spins a frisbee aiming for the birdie. The world marches on stage, a place where tomatoes are chopped with a bat and wine is drunk from a roller, told with a pencil and a sword.'</code></pre>
 </div>
 </div>
-<div id="9de41b40-1d5b-455c-8f4b-980371c48447" class="cell" data-execution_count="87">
+<div id="9de41b40-1d5b-455c-8f4b-980371c48447" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>last_feedback <span class="op">=</span> history[<span class="op">-</span><span class="dv">1</span>].parts[<span class="dv">0</span>].text</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(last_feedback)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Missing concepts: None
-Commonsense Feedback: The sentence does not make sense because a goat cannot use a pole to step over a fence, a catcher cannot tell a story of a place where people chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil, and a birdie cannot spin a frisbee in the air while taking a sip of wine.</code></pre>
+Commonsense Feedback: The sentence does not make sense because it is nonsensical and uses a random combination of the concepts.</code></pre>
 </div>
 </div>
-<div id="9fa9025a-a3b1-4b7c-b89f-7b485abdbe87" class="cell" data-scrolled="true" data-execution_count="86">
+<div id="9fa9025a-a3b1-4b7c-b89f-7b485abdbe87" class="cell" data-scrolled="true" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>utils.display_html(history, <span class="st">'Show refine history'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <details><summary>Show refine history</summary><pre>[parts {
-  text: "We are having multi-turn conversation in order to create a sentence that contains all given concepts. I will provide you with my feedbacks on the sentence regarding missing concepts and whether the sentence makes sense. Your task is to improve the provided sentence based on my feedbacks.\n\nHere are 8 examples of our past conversations:\n\nExample 1:\nUser:\nConcepts: [\'beat\', \'drum\', \'pen\', \'sit\', \'use\']\nSentence: The drum sits on the pen and uses it to beat.\nMissing concepts: None\nCommonsense Feedback: The sentence does not make sense because a drum cannot sit on a pen and use it to beat.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The drummer uses the drum to beat.\nUser:\nMissing concepts: sit, pen\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The drummer sits behind the drum and uses it to beat the pen.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 2:\nUser:\nConcepts: [\'chair\', \'clipper\', \'cut\', \'hair\', \'sit\']\nSentence: A couch shaped girl sitting on the chair with her hair clipper.\nMissing concepts: cut\nCommonsense Feedback: The sentence does not make sense because a couch is not a shape and a hair clipper is not an item of clothing.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A girl on the chair with her hair clipper and cutting her hair.\nUser:\nMissing concepts: sit\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A girl sitting on the chair with a hair clipper, cutting her hair up.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 3:\nUser:\nConcepts: [\'grass\', \'hose\', \'spray\', \'stand\', \'water\']\nSentence: The grass is standing tall and a hose is spraying it with spray.\nMissing concepts: water\nCommonsense Feedback: The sentence does not make sense because it is not clear what \'spray\' is referring to, and grass does not have the ability to stand upright like a human or animal.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The hose is spraying water onto the grass that is standing like a person.\nUser:\nMissing concepts: None\nCommonsense Feedback: The sentence does not make sense because grass cannot stand upright like a human or animal.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A person is standing on the grass, holding a hose that is spraying water onto the grass.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 4:\nUser:\nConcepts: [\'front\', \'gong\', \'hit\', \'mallet\', \'stand\']\nSentence: A mallet is standing in front of a gong.\nMissing concepts: hit\nCommonsense Feedback: The sentence does not make sense because a mallet cannot stand in the front of a gong.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A musician stands in front of a gong with a mallet.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The musician stands in front of the gong and hits it with a mallet.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 5:\nUser:\nConcepts: [\'ball\', \'dunk\', \'hoop\', \'jump\', \'run\']\nSentence: The ball runs to the hoop and dunks it.\nMissing concepts: jump\nCommonsense Feedback: The sentence does not make sense because a ball cannot run and dunk.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The ball jumps to the hoop and dunks it.\nUser:\nMissing concepts: run\nCommonsense Feedback: The sentence does not make sense because a ball cannot jump.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A basketball player runs up to the hoop and jumps off of the ball to dunk it.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 6:\nUser:\nConcepts: [\'card\', \'chip\', \'deal\', \'dealer\', \'table\']\nSentence: A dealer offers a card to a group of people at a table.\nMissing concepts: chip, deal\nCommonsense Feedback: The sentence does not make sense because a chip cannot deal a card to a dealer.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The dealer deals a card to a group of people.\nUser:\nMissing concepts: chip\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The dealer deals a card to a group of people around the table with a chip at the table.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 7:\nUser:\nConcepts: [\'clean\', \'climb\', \'gutter\', \'house\', \'ladder\']\nSentence: The house is clean and a ladder is trying to climb.\nMissing concepts: climb\nCommonsense Feedback: The sentence does not make sense because ladders cannot climb by themselves.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A person is cleaning the gutter of the house by climbing onto the roof with a ladder made of glass.\nUser:\nMissing concepts: None\nCommonsense Feedback: The sentence does not make sense because ladders are not made of glass, and using a glass ladder would be dangerous and impractical.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A person is cleaning the gutter of the house by using a ladder to climb onto the roof and brushing away the dirt.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 8:\nUser:\nConcepts: [\'animal\', \'catch\', \'horse\', \'lasso\', \'ride\']\nSentence: The horse catches the lasso and rides on it.\nMissing concepts: animal\nCommonsense Feedback: The sentence does not make sense because a horse cannot catch a lasso and ride on it.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The cowboy catches a horse with a lasso and rides on it.\nUser:\nMissing concepts: animal\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The cowboy catches the horse with a lasso and rides it.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nNow let\'s start a new conversation so that you can improve a constructed sentence based on my feedbacks.\n\nConcepts: [\'use\', \'goat\', \'wine\', \'frisbee\', \'leap\', \'pole\', \'tell\', \'pencil\', \'spin\', \'birdie\', \'catcher\', \'fence\', \'world\', \'step\', \'chop\', \'sword\', \'march\', \'stage\', \'axe\', \'bat\', \'place\', \'roller\', \'tomato\']\nSentence: The goat leaps over the fence, using the frisbee as a springboard, while the world spins around him; a catcher tells the story of a place where they chop tomatoes with a sword, march on stage with an axe, and bat a roller with a pencil.\nMissing concepts: pole, step, birdie, wine\nCommonsense Feedback: The sentence does not make sense because a goat cannot use a frisbee as a springboard and a catcher cannot chop tomatoes with a sword, march on stage with an axe, and bat a roller with a pencil.\n\nImpove the sentence using the above feedbacks."
+  text: "We are having a multi-turn conversation in order to create a sentence that contains all given concepts. I will provide you with my feedback on the sentence regarding missing concepts and whether the sentence makes sense. Your task is to improve the provided sentence based on my feedback.\n\nHere are 8 examples of our past conversations:\n\nExample 1:\nUser:\nConcepts: [\'beat\', \'drum\', \'pen\', \'sit\', \'use\']\nSentence: The drum sits on the pen and uses it to beat.\nMissing concepts: None\nCommonsense Feedback: The sentence does not make sense because a drum cannot sit on a pen and use it to beat.\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: The drummer uses the drum to beat.\nUser:\nMissing concepts: sit, pen\nCommonsense Feedback: None\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: The drummer sits behind the drum and uses it to beat the pen.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 2:\nUser:\nConcepts: [\'chair\', \'clipper\', \'cut\', \'hair\', \'sit\']\nSentence: A couch shaped girl sitting on the chair with her hair clipper.\nMissing concepts: cut\nCommonsense Feedback: The sentence does not make sense because a couch is not a shape and a hair clipper is not an item of clothing.\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: A girl on the chair with her hair clipper and cutting her hair.\nUser:\nMissing concepts: sit\nCommonsense Feedback: None\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: A girl sitting on the chair with a hair clipper, cutting her hair up.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 3:\nUser:\nConcepts: [\'grass\', \'hose\', \'spray\', \'stand\', \'water\']\nSentence: The grass is standing tall and a hose is spraying it with spray.\nMissing concepts: water\nCommonsense Feedback: The sentence does not make sense because it is not clear what \'spray\' is referring to, and grass does not have the ability to stand upright like a human or animal.\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: The hose is spraying water onto the grass that is standing like a person.\nUser:\nMissing concepts: None\nCommonsense Feedback: The sentence does not make sense because grass cannot stand upright like a human or animal.\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: A person is standing on the grass, holding a hose that is spraying water onto the grass.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 4:\nUser:\nConcepts: [\'front\', \'gong\', \'hit\', \'mallet\', \'stand\']\nSentence: A mallet is standing in front of a gong.\nMissing concepts: hit\nCommonsense Feedback: The sentence does not make sense because a mallet cannot stand in the front of a gong.\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: A musician stands in front of a gong with a mallet.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: The musician stands in front of the gong and hits it with a mallet.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 5:\nUser:\nConcepts: [\'ball\', \'dunk\', \'hoop\', \'jump\', \'run\']\nSentence: The ball runs to the hoop and dunks it.\nMissing concepts: jump\nCommonsense Feedback: The sentence does not make sense because a ball cannot run and dunk.\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: The ball jumps to the hoop and dunks it.\nUser:\nMissing concepts: run\nCommonsense Feedback: The sentence does not make sense because a ball cannot jump.\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: A basketball player runs up to the hoop and jumps off of the ball to dunk it.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 6:\nUser:\nConcepts: [\'card\', \'chip\', \'deal\', \'dealer\', \'table\']\nSentence: A dealer offers a card to a group of people at a table.\nMissing concepts: chip, deal\nCommonsense Feedback: The sentence does not make sense because a chip cannot deal a card to a dealer.\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: The dealer deals a card to a group of people.\nUser:\nMissing concepts: chip\nCommonsense Feedback: None\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: The dealer deals a card to a group of people around the table with a chip at the table.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 7:\nUser:\nConcepts: [\'clean\', \'climb\', \'gutter\', \'house\', \'ladder\']\nSentence: The house is clean and a ladder is trying to climb.\nMissing concepts: climb\nCommonsense Feedback: The sentence does not make sense because ladders cannot climb by themselves.\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: A person is cleaning the gutter of the house by climbing onto the roof with a ladder made of glass.\nUser:\nMissing concepts: None\nCommonsense Feedback: The sentence does not make sense because ladders are not made of glass, and using a glass ladder would be dangerous and impractical.\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: A person is cleaning the gutter of the house by using a ladder to climb onto the roof and brushing away the dirt.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 8:\nUser:\nConcepts: [\'animal\', \'catch\', \'horse\', \'lasso\', \'ride\']\nSentence: The horse catches the lasso and rides on it.\nMissing concepts: animal\nCommonsense Feedback: The sentence does not make sense because a horse cannot catch a lasso and ride on it.\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: The cowboy catches a horse with a lasso and rides on it.\nUser:\nMissing concepts: animal\nCommonsense Feedback: None\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: The cowboy catches the horse with a lasso and rides it.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nNow let\'s start a new conversation so that you can improve a constructed sentence based on my feedback.\n\nConcepts: [\'use\', \'goat\', \'wine\', \'frisbee\', \'leap\', \'pole\', \'tell\', \'pencil\', \'spin\', \'birdie\', \'catcher\', \'fence\', \'world\', \'step\', \'chop\', \'sword\', \'march\', \'stage\', \'axe\', \'bat\', \'place\', \'roller\', \'tomato\']\nSentence: The goat leaps over the fence, using the pole as a springboard, while the catcher spins a frisbee, aiming for the birdie, and the world marches on stage, a place where tomatoes are chopped with an axe and wine is drunk from a roller, told with a pencil and a sword.\nMissing concepts: None\nCommonsense Feedback: The sentence does not make sense because it is a nonsensical combination of unrelated ideas.\n\nImprove the sentence using the above feedback."
 }
 role: "user"
 , parts {
-  text: "The goat leaps over the fence, using a pole to step over it, while the world spins around him; a catcher tells the story of a place where they chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil, while a birdie uses a wine glass to spin a frisbee. \n"
+  text: "Sentence: The goat leaps over the fence using a pole, while the catcher spins a frisbee aiming for the birdie. \n"
 }
 role: "model"
 , parts {
-  text: "Missing concepts: None\nCommonsense Feedback: The sentence does not make sense because it is a nonsensical combination of actions and objects. A goat cannot use a pole to step over a fence, the world does not spin around a goat, and the described actions are not logically connected.\n\nImpove the sentence using the above feedbacks."
+  text: "Missing concepts: step, march, world, stage, place, axe, roller, sword, chop, bat, tomato, tell\nCommonsense Feedback: The sentence does not make sense because a goat cannot leap over a fence using a pole.\n\nImprove the sentence using the above feedback."
 }
 role: "user"
 , parts {
-  text: "A catcher tells the story of a place where they chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil.  A goat uses a pole to leap over the fence and a birdie spins a frisbee with a wine glass. \n"
+  text: "Sentence: The goat steps over the fence while the catcher spins a frisbee aiming for the birdie, and the world marches on stage, a place where tomatoes are chopped with an axe and wine is drunk from a roller, told with a pencil and a sword. \n"
 }
 role: "model"
 , parts {
-  text: "Missing concepts: None\nCommonsense Feedback: The sentence does not make sense because it describes actions that are not logically possible or typical. For example, chopping tomatoes with an axe, marching on stage with a sword, batting a roller with a pencil, using a pole to leap over a fence, and spinning a frisbee with a wine glass are all nonsensical actions.\n\nImpove the sentence using the above feedbacks."
+  text: "Missing concepts: bat, leap, pole, use\nCommonsense Feedback: The sentence does not make sense because a goat cannot step over a fence while a catcher spins a frisbee, the world cannot march on stage, and tomatoes cannot be chopped with an axe.\n\nImprove the sentence using the above feedback."
 }
 role: "user"
 , parts {
-  text: "A goat leaps over a fence using a pole. A catcher tells a story of a place where they chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil.  A birdie spins a frisbee, taking a sip of wine as it does so. \n"
+  text: "Sentence: The goat leaps over the fence using a pole while the catcher spins a frisbee aiming for the birdie. The world marches on stage, a place where tomatoes are chopped with a bat and wine is drunk from a roller, told with a pencil and a sword. \n"
 }
 role: "model"
 , parts {
-  text: "Missing concepts: None\nCommonsense Feedback: The sentence does not make sense because it is a nonsensical story. Goats cannot leap over fences using poles. Catchers do not tell stories about chopping tomatoes with axes, marching on stage with swords, and batting rollers with pencils.  Birds cannot spin frisbees and take sips of wine.\n\nImpove the sentence using the above feedbacks."
+  text: "Missing concepts: step, axe\nCommonsense Feedback: The sentence does not make sense because a goat cannot leap over a fence using a pole, and a world cannot march on stage. Tomatoes cannot be chopped with a bat, and wine cannot be drunk from a roller.\n\nImprove the sentence using the above feedback."
 }
 role: "user"
 , parts {
-  text: "A goat leaps over a fence, its hooves hitting the ground with a soft thud. A catcher tells a story of a place where people chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil. A birdie spins a frisbee in the air, watching it soar through the sky. \n"
+  text: "Sentence: The goat steps over the fence while the catcher spins a frisbee aiming for the birdie. The world marches on stage, a place where tomatoes are chopped with an axe and wine is drunk from a roller, told with a pencil and a sword. \n"
 }
 role: "model"
 , parts {
-  text: "Missing concepts: pole, use, wine, world, step\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks."
+  text: "Missing concepts: bat, leap, pole, use\nCommonsense Feedback: The sentence does not make sense because the world cannot march on stage, tomatoes are not chopped with an axe, and wine is not drunk from a roller.\n\nImprove the sentence using the above feedback."
 }
 role: "user"
 , parts {
-  text: "A goat leaps over a fence, using a pole to step over it, as the world spins around him. A catcher tells a story of a place where people chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil. A birdie spins a frisbee in the air, taking a sip of wine as it does so. \n"
+  text: "Sentence: The goat leaps over the fence using a pole while the catcher spins a frisbee aiming for the birdie. The world marches on stage, a place where tomatoes are chopped with a bat and wine is drunk from a roller, told with a pencil and a sword. \n"
 }
 role: "model"
 , parts {
-  text: "Missing concepts: None\nCommonsense Feedback: The sentence does not make sense because a goat cannot use a pole to step over a fence, a catcher cannot tell a story of a place where people chop tomatoes with an axe, march on stage with a sword, and bat a roller with a pencil, and a birdie cannot spin a frisbee in the air while taking a sip of wine."
+  text: "Missing concepts: None\nCommonsense Feedback: The sentence does not make sense because it is nonsensical and uses a random combination of the concepts."
 }
 role: "user"
 ]</pre></details>
@@ -1082,9 +1084,9 @@ role: "user"
 </section>
 <section id="exp-02-using-gemini-1.5-pro" class="level2">
 <h2 class="anchored" data-anchor-id="exp-02-using-gemini-1.5-pro">Exp 02: using <code>gemini-1.5-pro</code></h2>
-<section id="generate-the-initital-sentence-1" class="level3">
-<h3 class="anchored" data-anchor-id="generate-the-initital-sentence-1">1. generate the initital sentence</h3>
-<div id="48d9e277-ff4e-4b0e-89bd-0165dcc948d6" class="cell" data-execution_count="69">
+<section id="generate-the-initial-sentence-1" class="level3">
+<h3 class="anchored" data-anchor-id="generate-the-initial-sentence-1">1. generate the initial sentence</h3>
+<div id="48d9e277-ff4e-4b0e-89bd-0165dcc948d6" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>init_prompt <span class="op">=</span> init_prompt_template.<span class="bu">format</span>(concepts<span class="op">=</span>concepts)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>utils.display_html(init_prompt, <span class="st">'Show init prompt'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
@@ -1128,50 +1130,56 @@ Concepts: ['use', 'goat', 'wine', 'frisbee', 'leap', 'pole', 'tell', 'pencil', '
 The sentence is:</pre></details>
 </div>
 </div>
-<div id="3dbbe091-6b6d-4838-8d72-b4a2bc238f6a" class="cell" data-execution_count="26">
+<div id="3dbbe091-6b6d-4838-8d72-b4a2bc238f6a" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>init_outputs <span class="op">=</span> ask_llm(init_prompt, model_pro)</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>sentence <span class="op">=</span> remove_prefix_if_exist(<span class="st">'the sentence is:'</span>, init_outputs)</span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>sentence</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="26">
+<div class="cell-output cell-output-display" data-execution_count="21">
 <pre><code>'The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board.'</code></pre>
 </div>
 </div>
 </section>
 <section id="run-the-refine-loop-1" class="level3">
 <h3 class="anchored" data-anchor-id="run-the-refine-loop-1">2. run the refine loop</h3>
-<div id="c5f77404-6c10-4f98-a4db-f2ab923ad7d1" class="cell" data-execution_count="73">
+<div id="c5f77404-6c10-4f98-a4db-f2ab923ad7d1" class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>sentence, history <span class="op">=</span> run_refine_loop(sentence, concepts, model_pro)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>========== DEBUG ==========
 Sentence: The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board.
-Missing concepts: use, wine, pole, tell, pencil, catcher, step, chop, sword, march, stage, axe, bat, place, roller 
+Missing concepts: use, wine, tell, pencil, catcher, step, chop, sword, march, stage, axe, bat, place, roller 
 Commonsense Feedback: None
 ---------------------------
 ========== DEBUG ==========
-Sentence: The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board, as a marching band stepped onto the stage, the drummer using pencils as drumsticks.
-Missing concepts: wine, tell, catcher, chop, sword, axe, bat, place, roller 
+Sentence: The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board, while on the nearby stage, a marching band played, their instruments glinting in the sun - a tuba here, a flute there, and a lone trombone player using a pencil to prop up his music.
+Missing concepts: wine, tell, catcher, step, chop, sword, axe, bat, place, roller 
 Commonsense Feedback: None
 ---------------------------
 ========== DEBUG ==========
-Sentence: The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board as a chef chops it with an axe, a baseball player swinging a bat, missing the ball which is caught by the catcher, and a marching band stepping onto the stage, the drummer using pencils as drumsticks.
-Missing concepts: wine, pole, tell, sword, place, roller 
+Sentence: The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board being chopped, while on the nearby stage, a marching band played, their instruments glinting in the sun - a tuba here, a flute there, and a lone trombone player using a pencil to prop up his music. A baseball player, bat in hand, stepped up to the plate, while a nearby vendor told stories, a bottle of wine in hand, about the legendary warrior who could slice a tomato in half with a single swing of his axe.
+Missing concepts: catcher, pole, sword 
 Commonsense Feedback: None
 ---------------------------
 ========== DEBUG ==========
-Sentence: The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board as a chef chops it with an axe, a baseball player swinging a bat, missing the ball which is caught by the catcher, and a marching band stepping onto the stage, the drummer using pencils as drumsticks. A street performer, balancing a sword on his nose, tells jokes as he juggles wine bottles. A nearby painter, using a roller to paint the scenery, accidentally knocks over a pole.
-Missing concepts: 
+Sentence: The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board being chopped, while on the nearby stage, a marching band played, their instruments glinting in the sun - a tuba here, a flute there, and a lone trombone player using a pencil to prop up his music. A baseball player, bat in hand, stepped up to the plate, the catcher crouched behind, watching intently, while a nearby vendor, leaning against a pole, told stories, a bottle of wine in hand, about the legendary warrior who could slice a tomato in half with a single swing of his sword.
+Missing concepts: axe, roller 
+Commonsense Feedback: None
+---------------------------
+========== DEBUG ==========
+Sentence: The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board being chopped by a roller, while on the nearby stage, a marching band played, their instruments glinting in the sun - a tuba here, a flute there, and a lone trombone player using a pencil to prop up his music. A baseball player, bat in hand, stepped up to the plate, the catcher crouched behind, watching intently, while a nearby vendor, leaning against a pole, told stories, a bottle of wine in hand, about the legendary warrior who could slice a tomato in half with a single swing of his sword or an axe.
+Missing concepts: chop, sword 
+
 Commonsense Feedback: None
 ---------------------------</code></pre>
 </div>
 </div>
-<div id="f3eea55d-a2a8-42b4-9636-52bee4c9c1a1" class="cell" data-execution_count="74">
+<div id="f3eea55d-a2a8-42b4-9636-52bee4c9c1a1" class="cell" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>sentence</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="74">
-<pre><code>'The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board as a chef chops it with an axe, a baseball player swinging a bat, missing the ball which is caught by the catcher, and a marching band stepping onto the stage, the drummer using pencils as drumsticks. A street performer, balancing a sword on his nose, tells jokes as he juggles wine bottles. A nearby painter, using a roller to paint the scenery, accidentally knocks over a pole.'</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="24">
+<pre><code>'The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board being chopped by a roller, while on the nearby stage, a marching band played, their instruments glinting in the sun - a tuba here, a flute there, and a lone trombone player using a pencil to prop up his music. A baseball player, bat in hand, stepped up to the plate, the catcher crouched behind, watching intently, while a nearby vendor, leaning against a pole, told stories, a bottle of wine in hand, about the legendary warrior who could slice a tomato in half with a single swing of his sword or an axe.'</code></pre>
 </div>
 </div>
-<div id="b90addbb-e34e-45c7-9f5b-9a868993ec5f" class="cell" data-execution_count="80">
+<div id="b90addbb-e34e-45c7-9f5b-9a868993ec5f" class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>last_feedback <span class="op">=</span> history[<span class="op">-</span><span class="dv">1</span>].parts[<span class="dv">0</span>].text</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(last_feedback)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1179,31 +1187,39 @@ Commonsense Feedback: None
 Commonsense Feedback: None</code></pre>
 </div>
 </div>
-<div id="70ef0703-73a8-4351-8063-440038a43d3f" class="cell" data-scrolled="true" data-execution_count="75">
+<div id="70ef0703-73a8-4351-8063-440038a43d3f" class="cell" data-scrolled="true" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>utils.display_html(history, <span class="st">'Show refine history'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <details><summary>Show refine history</summary><pre>[parts {
-  text: "We are having multi-turn conversation in order to create a sentence that contains all given concepts. I will provide you with my feedbacks on the sentence regarding missing concepts and whether the sentence makes sense. Your task is to improve the provided sentence based on my feedbacks.\n\nHere are 8 examples of our past conversations:\n\nExample 1:\nUser:\nConcepts: [\'beat\', \'drum\', \'pen\', \'sit\', \'use\']\nSentence: The drum sits on the pen and uses it to beat.\nMissing concepts: None\nCommonsense Feedback: The sentence does not make sense because a drum cannot sit on a pen and use it to beat.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The drummer uses the drum to beat.\nUser:\nMissing concepts: sit, pen\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The drummer sits behind the drum and uses it to beat the pen.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 2:\nUser:\nConcepts: [\'chair\', \'clipper\', \'cut\', \'hair\', \'sit\']\nSentence: A couch shaped girl sitting on the chair with her hair clipper.\nMissing concepts: cut\nCommonsense Feedback: The sentence does not make sense because a couch is not a shape and a hair clipper is not an item of clothing.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A girl on the chair with her hair clipper and cutting her hair.\nUser:\nMissing concepts: sit\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A girl sitting on the chair with a hair clipper, cutting her hair up.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 3:\nUser:\nConcepts: [\'grass\', \'hose\', \'spray\', \'stand\', \'water\']\nSentence: The grass is standing tall and a hose is spraying it with spray.\nMissing concepts: water\nCommonsense Feedback: The sentence does not make sense because it is not clear what \'spray\' is referring to, and grass does not have the ability to stand upright like a human or animal.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The hose is spraying water onto the grass that is standing like a person.\nUser:\nMissing concepts: None\nCommonsense Feedback: The sentence does not make sense because grass cannot stand upright like a human or animal.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A person is standing on the grass, holding a hose that is spraying water onto the grass.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 4:\nUser:\nConcepts: [\'front\', \'gong\', \'hit\', \'mallet\', \'stand\']\nSentence: A mallet is standing in front of a gong.\nMissing concepts: hit\nCommonsense Feedback: The sentence does not make sense because a mallet cannot stand in the front of a gong.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A musician stands in front of a gong with a mallet.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The musician stands in front of the gong and hits it with a mallet.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 5:\nUser:\nConcepts: [\'ball\', \'dunk\', \'hoop\', \'jump\', \'run\']\nSentence: The ball runs to the hoop and dunks it.\nMissing concepts: jump\nCommonsense Feedback: The sentence does not make sense because a ball cannot run and dunk.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The ball jumps to the hoop and dunks it.\nUser:\nMissing concepts: run\nCommonsense Feedback: The sentence does not make sense because a ball cannot jump.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A basketball player runs up to the hoop and jumps off of the ball to dunk it.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 6:\nUser:\nConcepts: [\'card\', \'chip\', \'deal\', \'dealer\', \'table\']\nSentence: A dealer offers a card to a group of people at a table.\nMissing concepts: chip, deal\nCommonsense Feedback: The sentence does not make sense because a chip cannot deal a card to a dealer.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The dealer deals a card to a group of people.\nUser:\nMissing concepts: chip\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The dealer deals a card to a group of people around the table with a chip at the table.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 7:\nUser:\nConcepts: [\'clean\', \'climb\', \'gutter\', \'house\', \'ladder\']\nSentence: The house is clean and a ladder is trying to climb.\nMissing concepts: climb\nCommonsense Feedback: The sentence does not make sense because ladders cannot climb by themselves.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A person is cleaning the gutter of the house by climbing onto the roof with a ladder made of glass.\nUser:\nMissing concepts: None\nCommonsense Feedback: The sentence does not make sense because ladders are not made of glass, and using a glass ladder would be dangerous and impractical.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: A person is cleaning the gutter of the house by using a ladder to climb onto the roof and brushing away the dirt.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 8:\nUser:\nConcepts: [\'animal\', \'catch\', \'horse\', \'lasso\', \'ride\']\nSentence: The horse catches the lasso and rides on it.\nMissing concepts: animal\nCommonsense Feedback: The sentence does not make sense because a horse cannot catch a lasso and ride on it.\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The cowboy catches a horse with a lasso and rides on it.\nUser:\nMissing concepts: animal\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks.\nAssistant:\nSentence: The cowboy catches the horse with a lasso and rides it.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nNow let\'s start a new conversation so that you can improve a constructed sentence based on my feedbacks.\n\nConcepts: [\'use\', \'goat\', \'wine\', \'frisbee\', \'leap\', \'pole\', \'tell\', \'pencil\', \'spin\', \'birdie\', \'catcher\', \'fence\', \'world\', \'step\', \'chop\', \'sword\', \'march\', \'stage\', \'axe\', \'bat\', \'place\', \'roller\', \'tomato\']\nSentence: The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board.\nMissing concepts: sword, roller, pencil, stage, chop, place, pole, catcher, use, wine, march, step, axe, bat, tell\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks."
+  text: "We are having a multi-turn conversation in order to create a sentence that contains all given concepts. I will provide you with my feedback on the sentence regarding missing concepts and whether the sentence makes sense. Your task is to improve the provided sentence based on my feedback.\n\nHere are 8 examples of our past conversations:\n\nExample 1:\nUser:\nConcepts: [\'beat\', \'drum\', \'pen\', \'sit\', \'use\']\nSentence: The drum sits on the pen and uses it to beat.\nMissing concepts: None\nCommonsense Feedback: The sentence does not make sense because a drum cannot sit on a pen and use it to beat.\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: The drummer uses the drum to beat.\nUser:\nMissing concepts: sit, pen\nCommonsense Feedback: None\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: The drummer sits behind the drum and uses it to beat the pen.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 2:\nUser:\nConcepts: [\'chair\', \'clipper\', \'cut\', \'hair\', \'sit\']\nSentence: A couch shaped girl sitting on the chair with her hair clipper.\nMissing concepts: cut\nCommonsense Feedback: The sentence does not make sense because a couch is not a shape and a hair clipper is not an item of clothing.\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: A girl on the chair with her hair clipper and cutting her hair.\nUser:\nMissing concepts: sit\nCommonsense Feedback: None\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: A girl sitting on the chair with a hair clipper, cutting her hair up.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 3:\nUser:\nConcepts: [\'grass\', \'hose\', \'spray\', \'stand\', \'water\']\nSentence: The grass is standing tall and a hose is spraying it with spray.\nMissing concepts: water\nCommonsense Feedback: The sentence does not make sense because it is not clear what \'spray\' is referring to, and grass does not have the ability to stand upright like a human or animal.\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: The hose is spraying water onto the grass that is standing like a person.\nUser:\nMissing concepts: None\nCommonsense Feedback: The sentence does not make sense because grass cannot stand upright like a human or animal.\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: A person is standing on the grass, holding a hose that is spraying water onto the grass.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 4:\nUser:\nConcepts: [\'front\', \'gong\', \'hit\', \'mallet\', \'stand\']\nSentence: A mallet is standing in front of a gong.\nMissing concepts: hit\nCommonsense Feedback: The sentence does not make sense because a mallet cannot stand in the front of a gong.\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: A musician stands in front of a gong with a mallet.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: The musician stands in front of the gong and hits it with a mallet.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 5:\nUser:\nConcepts: [\'ball\', \'dunk\', \'hoop\', \'jump\', \'run\']\nSentence: The ball runs to the hoop and dunks it.\nMissing concepts: jump\nCommonsense Feedback: The sentence does not make sense because a ball cannot run and dunk.\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: The ball jumps to the hoop and dunks it.\nUser:\nMissing concepts: run\nCommonsense Feedback: The sentence does not make sense because a ball cannot jump.\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: A basketball player runs up to the hoop and jumps off of the ball to dunk it.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 6:\nUser:\nConcepts: [\'card\', \'chip\', \'deal\', \'dealer\', \'table\']\nSentence: A dealer offers a card to a group of people at a table.\nMissing concepts: chip, deal\nCommonsense Feedback: The sentence does not make sense because a chip cannot deal a card to a dealer.\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: The dealer deals a card to a group of people.\nUser:\nMissing concepts: chip\nCommonsense Feedback: None\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: The dealer deals a card to a group of people around the table with a chip at the table.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 7:\nUser:\nConcepts: [\'clean\', \'climb\', \'gutter\', \'house\', \'ladder\']\nSentence: The house is clean and a ladder is trying to climb.\nMissing concepts: climb\nCommonsense Feedback: The sentence does not make sense because ladders cannot climb by themselves.\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: A person is cleaning the gutter of the house by climbing onto the roof with a ladder made of glass.\nUser:\nMissing concepts: None\nCommonsense Feedback: The sentence does not make sense because ladders are not made of glass, and using a glass ladder would be dangerous and impractical.\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: A person is cleaning the gutter of the house by using a ladder to climb onto the roof and brushing away the dirt.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nExample 8:\nUser:\nConcepts: [\'animal\', \'catch\', \'horse\', \'lasso\', \'ride\']\nSentence: The horse catches the lasso and rides on it.\nMissing concepts: animal\nCommonsense Feedback: The sentence does not make sense because a horse cannot catch a lasso and ride on it.\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: The cowboy catches a horse with a lasso and rides on it.\nUser:\nMissing concepts: animal\nCommonsense Feedback: None\n\nImprove the sentence using the above feedback.\nAssistant:\nSentence: The cowboy catches the horse with a lasso and rides it.\nUser:\nMissing concepts: None\nCommonsense Feedback: None\n\nNow let\'s start a new conversation so that you can improve a constructed sentence based on my feedback.\n\nConcepts: [\'use\', \'goat\', \'wine\', \'frisbee\', \'leap\', \'pole\', \'tell\', \'pencil\', \'spin\', \'birdie\', \'catcher\', \'fence\', \'world\', \'step\', \'chop\', \'sword\', \'march\', \'stage\', \'axe\', \'bat\', \'place\', \'roller\', \'tomato\']\nSentence: The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board.\nMissing concepts: step, march, stage, place, axe, roller, sword, use, catcher, pencil, chop, wine, bat, tell\nCommonsense Feedback: None\n\nImprove the sentence using the above feedback."
 }
 role: "user"
 , parts {
-  text: "The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board, as a marching band stepped onto the stage, the drummer using pencils as drumsticks. \n"
+  text: "The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board, while on the nearby stage, a marching band played, their instruments glinting in the sun - a tuba here, a flute there, and a lone trombone player using a pencil to prop up his music. \n"
 }
 role: "model"
 , parts {
-  text: "Missing concepts: sword, roller, chop, place, wine, catcher, axe, bat, tell\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks."
+  text: "Missing concepts: step, place, axe, roller, sword, catcher, chop, wine, bat, tell\nCommonsense Feedback: None\n\nImprove the sentence using the above feedback."
 }
 role: "user"
 , parts {
-  text: "The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board as a chef chops it with an axe, a baseball player swinging a bat, missing the ball which is caught by the catcher, and a marching band stepping onto the stage, the drummer using pencils as drumsticks.  \n"
+  text: "The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board being chopped, while on the nearby stage, a marching band played, their instruments glinting in the sun - a tuba here, a flute there, and a lone trombone player using a pencil to prop up his music. A baseball player, bat in hand, stepped up to the plate, while a nearby vendor told stories, a bottle of wine in hand, about the legendary warrior who could slice a tomato in half with a single swing of his axe. \n"
 }
 role: "model"
 , parts {
-  text: "Missing concepts: sword, roller, place, pole, wine, tell\nCommonsense Feedback: None\n\nImpove the sentence using the above feedbacks."
+  text: "Missing concepts: sword, pole, catcher\nCommonsense Feedback: None\n\nImprove the sentence using the above feedback."
 }
 role: "user"
 , parts {
-  text: "The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board as a chef chops it with an axe, a baseball player swinging a bat, missing the ball which is caught by the catcher, and a marching band stepping onto the stage, the drummer using pencils as drumsticks. A street performer, balancing a sword on his nose, tells jokes as he juggles wine bottles. A nearby painter, using a roller to paint the scenery, accidentally knocks over a pole. \n"
+  text: "The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board being chopped, while on the nearby stage, a marching band played, their instruments glinting in the sun - a tuba here, a flute there, and a lone trombone player using a pencil to prop up his music. A baseball player, bat in hand, stepped up to the plate, the catcher crouched behind, watching intently, while a nearby vendor, leaning against a pole, told stories, a bottle of wine in hand, about the legendary warrior who could slice a tomato in half with a single swing of his sword. \n"
+}
+role: "model"
+, parts {
+  text: "Missing concepts: axe, roller\nCommonsense Feedback: None\n\nImprove the sentence using the above feedback."
+}
+role: "user"
+, parts {
+  text: "The goat, perched atop the fence post, watched the world go by: a frisbee spinning through the air, a birdie leaping over a badminton net, a tomato rolling off a chopping board being chopped by a roller, while on the nearby stage, a marching band played, their instruments glinting in the sun - a tuba here, a flute there, and a lone trombone player using a pencil to prop up his music. A baseball player, bat in hand, stepped up to the plate, the catcher crouched behind, watching intently, while a nearby vendor, leaning against a pole, told stories, a bottle of wine in hand, about the legendary warrior who could slice a tomato in half with a single swing of his sword or an axe. \n"
 }
 role: "model"
 , parts {

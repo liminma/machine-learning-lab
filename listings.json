@@ -1,7 +1,8 @@
 [
   {
-    "listing": "/archive.html",
+    "listing": "/index.html",
     "items": [
+      "/notebooks/reflexion-with-gemini-1.5.html",
       "/notebooks/self-refine-with-gemini-1.5.html",
       "/notebooks/function-calling-agent-doc-qa.html",
       "/notebooks/Mixtral-8x22B-function-calling-examples.html",
@@ -35,8 +36,9 @@
     ]
   },
   {
-    "listing": "/index.html",
+    "listing": "/archive.html",
     "items": [
+      "/notebooks/reflexion-with-gemini-1.5.html",
       "/notebooks/self-refine-with-gemini-1.5.html",
       "/notebooks/function-calling-agent-doc-qa.html",
       "/notebooks/Mixtral-8x22B-function-calling-examples.html",
