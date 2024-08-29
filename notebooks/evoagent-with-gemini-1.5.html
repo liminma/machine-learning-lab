@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.41">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Limin's Machine Learning Lab – collaboration</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<link rel="stylesheet" media="screen" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" type="text/css">
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Limin’s Machine Learning Lab</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/liminma/machine-learning-lab"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/liminma2021"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../archive.html"> 
+<span class="menu-text">Archive</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">collaboration</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#meta-planner" id="toc-meta-planner" class="nav-link active" data-scroll-target="#meta-planner">meta planner</a></li>
+  <li><a href="#multi-planner" id="toc-multi-planner" class="nav-link" data-scroll-target="#multi-planner">multi planner</a></li>
+  <li><a href="#refine-planner" id="toc-refine-planner" class="nav-link" data-scroll-target="#refine-planner">refine planner</a></li>
+  <li><a href="#check-planner-list" id="toc-check-planner-list" class="nav-link" data-scroll-target="#check-planner-list">Check planner list</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<div id="93468884-8e58-4393-bac5-0abe2d15b69f" class="cell" data-execution_count="90">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> google.generativeai <span class="im">as</span> genai</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> google.generativeai <span class="im">import</span> GenerativeModel</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>sys.path.append(<span class="st">'../src'</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> utils</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dotenv <span class="im">import</span> load_dotenv</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>load_dotenv()<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="55c1eaeb-8219-451c-b593-0617c5f68566" class="cell" data-execution_count="77">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>expt_configure <span class="op">=</span> {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">'set_type'</span>: <span class="st">'validation'</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'model_name'</span>: <span class="st">'gemini-1.5-flash-001'</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'strategy'</span>: <span class="st">'collaboration'</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'ind'</span>: <span class="dv">3</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'group_num'</span>: <span class="dv">3</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'select_strategy'</span>: <span class="st">'all'</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="5fad632a-fd7f-4418-98c5-6b5f1ad33674" class="cell" data-jupyter="{&quot;source_hidden&quot;:true}" data-execution_count="69">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>query <span class="op">=</span> <span class="st">"Please create a travel plan for me where I'll be departing from Washington and heading to Myrtle Beach for a 3-day trip from March 13th to March 15th, 2022. Can you help me keep this journey within a budget of $1,400?"</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>reference_information <span class="op">=</span> [{<span class="st">'Description'</span>: <span class="st">'Attractions in Myrtle Beach'</span>, <span class="st">'Content'</span>: <span class="st">" Name Latitude Longitude Address Phone Website City</span><span class="ch">\n</span><span class="st"> SkyWheel Myrtle Beach 33.694026 -78.877372 1110 N Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 839-9200 http://skywheelmb.com/ Myrtle Beach</span><span class="ch">\n</span><span class="st"> WonderWorks Myrtle Beach 33.716820 -78.884306 1313 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 626-9962 http://www.wonderworksonline.com/myrtle-beach Myrtle Beach</span><span class="ch">\n</span><span class="st"> Family Kingdom Amusement Park 33.682392 -78.891932 300 S Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 626-3447 http://www.familykingdomfun.com/ Myrtle Beach</span><span class="ch">\n</span><span class="st"> Hollywood Wax Museum 33.717142 -78.891257 1808 21st Ave N unit a, Myrtle Beach, SC 29577, USA (843) 444-0091 https://www.hollywoodwaxentertainment.com/myrtle-beach-sc-attractions/ Myrtle Beach</span><span class="ch">\n</span><span class="st"> Ripley's Aquarium of Myrtle Beach 33.715737 -78.877941 1110 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 916-0888 https://www.ripleyaquariums.com/myrtlebeach/ Myrtle Beach</span><span class="ch">\n</span><span class="st"> Broadway at the Beach 33.715617 -78.881949 1325 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 444-3200 https://www.broadwayatthebeach.com/ Myrtle Beach</span><span class="ch">\n</span><span class="st"> Ripley's Believe It or Not! 33.692454 -78.879754 901 N Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 916-0888 http://www.ripleys.com/myrtlebeach Myrtle Beach</span><span class="ch">\n</span><span class="st"> Ripley's Haunted Adventure 33.693229 -78.878922 915 N Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 916-0888 https://www.ripleys.com/myrtlebeach/haunted-adventure/ Myrtle Beach</span><span class="ch">\n</span><span class="st"> Myrtle Beach Boardwalk and Promenade 33.693287 -78.877580 Myrtle Beach, Myrtle Beach Boardwalk and Promenade, Myrtle Beach, SC 29577, USA (843) 918-1000 http://www.myrtlebeachdowntown.com/ Myrtle Beach</span><span class="ch">\n</span><span class="st"> Soar + Explore 33.716660 -78.884005 1313 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 626-9962 http://www.wonderworksonline.com/myrtle-beach/the-experience/soar-explore/ Myrtle Beach</span><span class="ch">\n</span><span class="st"> Free Fall Thrill Park 33.694606 -78.877455 1201 N Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 444-8255 http://freefallpark.com/ Myrtle Beach</span><span class="ch">\n</span><span class="st"> Ripley's Mirror Maze 33.693229 -78.878922 913 N Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 916-0888 https://www.ripleys.com/myrtlebeach/ripleys-mirror-maze/ Myrtle Beach</span><span class="ch">\n</span><span class="st"> Myrtle Beach State Park 33.651198 -78.930625 4401 S Kings Hwy, Myrtle Beach, SC 29575, USA (843) 238-5325 https://southcarolinaparks.com/myrtle-beach Myrtle Beach</span><span class="ch">\n</span><span class="st"> Hannah's Maze of Mirrors 33.717275 -78.891301 1808 21st Ave N Unit C, Myrtle Beach, SC 29577, USA (843) 444-0091 https://www.hollywoodwaxentertainment.com/myrtle-beach-sc-attractions/ Myrtle Beach</span><span class="ch">\n</span><span class="st">Myrtle Beach Safari (by reservation only) 33.695161 -78.969232 851 Folly Ranch Ln, Myrtle Beach, SC 29588, USA (843) 361-4552 https://docantlesdaysafari.com/ Myrtle Beach</span><span class="ch">\n</span><span class="st"> Dinopark 33.715499 -78.877514 1112 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 808-9619 http://www.dinoparkmb.com/ Myrtle Beach</span><span class="ch">\n</span><span class="st"> Backstage Mirror Maze 33.717882 -78.882896 1314 Celebrity Cir #165, Myrtle Beach, SC 29577, USA (843) 712-1794 http://www.backstagemirrormaze.com/ Myrtle Beach</span><span class="ch">\n</span><span class="st"> The Pavilion Parks 33.715617 -78.881949 1325 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 839-0303 https://pavilionparks.com/ Myrtle Beach</span><span class="ch">\n</span><span class="st"> Gardens By The Sea 33.725774 -78.838028 5506 N Ocean Blvd #5504, Myrtle Beach, SC 29577, USA Unknown Unknown Myrtle Beach</span><span class="ch">\n</span><span class="st"> Pavilion Park 33.692441 -78.881687 205 9th Ave N, Myrtle Beach, SC 29577, USA (843) 839-0303 https://pavilionparks.com/ Myrtle Beach"</span>}, {<span class="st">'Description'</span>: <span class="st">'Restaurants in Myrtle Beach'</span>, <span class="st">'Content'</span>: <span class="st">" Name Average Cost Cuisines Aggregate Rating City</span><span class="ch">\n</span><span class="st"> Exotic India 81 Indian, BBQ, Fast Food 4.1 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Catfish Charlie's 14 Tea, Chinese, Desserts 3.3 Myrtle Beach</span><span class="ch">\n</span><span class="st"> d' Curry House 33 Tea, Chinese, Desserts, Fast Food 3.6 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Twigly 55 Tea, Bakery, Mediterranean, Seafood 4.6 Myrtle Beach</span><span class="ch">\n</span><span class="st"> First Eat 21 Tea, Mexican, Fast Food 4.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Nagai 19 Desserts, Pizza, Mexican, Fast Food, American, Seafood 4.3 Myrtle Beach</span><span class="ch">\n</span><span class="st"> La Pino'z Pizza 14 Cafe, Seafood, Fast Food 3.5 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Eat Street Express 100 Fast Food, Pizza, BBQ, Italian 4.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Punjabi Tadka 73 Bakery, BBQ, Fast Food, Chinese, Seafood 2.8 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Kedarnath Prem Chand Halwai 61 Desserts, Tea, Fast Food, American, Mediterranean, Seafood 3.7 Myrtle Beach</span><span class="ch">\n</span><span class="st"> The Night Owl 12 Desserts, Tea, American, Bakery, Indian, Seafood 0.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Negi Restaurant 46 Tea, Bakery, Pizza, Seafood 0.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Turning Point Fast Food 32 Pizza, Seafood 0.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Cafe Coffee Day - The Lounge 71 Mexican, Bakery, Desserts, Seafood 2.6 Myrtle Beach</span><span class="ch">\n</span><span class="st">Tapas - Jaypee Vasant Continental 90 BBQ, Mediterranean, Seafood 3.2 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Caravan Resto Bar 57 Desserts, Tea, BBQ, Mediterranean, Seafood 3.2 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Bikaner Restaurant 96 BBQ, Fast Food 0.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Rollacious 85 Desserts, French, Bakery, Indian, Seafood 0.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Milan Shudh Vaishno 97 Tea, Bakery, Seafood 0.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Admission Lounge 32 BBQ, Desserts, Italian 2.7 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Allure 71 Desserts, Tea, BBQ, Indian, Mediterranean 2.8 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Dimsum Vs Sushi 83 Tea, Desserts, American, BBQ 3.4 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Rasoi - The Indian Zaika 88 Tea, American, BBQ 0.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> GBar - The Grand New Delhi 88 Desserts, Italian, Cafe, Indian, Seafood 3.3 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Nizam's Kathi Kabab 32 Desserts, Cafe, Pizza, French, Chinese, Seafood 3.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Dakshin Platter 56 Cafe, Bakery, Italian 0.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Be Bhukkad 96 Tea, French, Bakery, BBQ 3.6 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Bread &amp; Pasta 37 Tea, Desserts, Fast Food 0.0 Myrtle Beach"</span>}, {<span class="st">'Description'</span>: <span class="st">'Accommodations in Myrtle Beach'</span>, <span class="st">'Content'</span>: <span class="st">" NAME price room type house_rules minimum nights maximum occupancy review rate number city</span><span class="ch">\n</span><span class="st"> Cozy Brooklyn Room - Next to Pratt Institute 418.0 Private room No smoking &amp; No children under 10 &amp; No pets 5.0 2 2.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Greenwich Village Apartment 781.0 Entire home/apt No parties &amp; No pets 3.0 6 4.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Studio with Private Terrace on Central Park West 453.0 Entire home/apt No smoking &amp; No visitors 30.0 4 2.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Brooklyn Bliss 3 953.0 Private room No visitors 2.0 1 2.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Bright, renovated apartment close to subway+city 1131.0 Entire home/apt No visitors 2.0 10 3.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Spacious Private Room, lots of character &amp; light 1087.0 Private room No parties &amp; No pets 1.0 1 3.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> A WONDERFUL Place is Waiting 4U in Brooklyn !!! 160.0 Entire home/apt No visitors 3.0 2 3.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Modern &amp; Spacious Apartment in Central Harlem 1059.0 Entire home/apt No pets 3.0 9 3.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Adorable Prospect Heights 1 Bedroom 107.0 Entire home/apt No children under 10 31.0 2 3.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> ⭐️Walk + Transit Score 97⭐️8min to Yankee Std⭐️ 1130.0 Entire home/apt No pets &amp; No smoking 2.0 2 1.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Williamsburg Domino Park Prime Location 2 bedroom 461.0 Entire home/apt No parties 7.0 4 5.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Private Room in Fort Green BK close to city 631.0 Private room No pets &amp; No smoking 5.0 2 1.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Grande chambre lumineuse à bushwick 468.0 Private room No visitors &amp; No children under 10 2.0 1 4.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Bright &amp; Sunny FULLY FURNISHED Room 847.0 Private room No parties &amp; No pets 7.0 2 5.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Yellow submarine 179.0 Private room No pets &amp; No visitors &amp; No children under 10 2.0 2 5.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Location Angel Boy 198.0 Private room No children under 10 31.0 1 1.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Fabulous bedroom in the heart of BK 530.0 Private room No children under 10 1.0 1 5.0 Myrtle Beach</span><span class="ch">\n</span><span class="st">Adorable Polly Pocket-Sized Prospect Heights Space 397.0 Entire home/apt No children under 10 &amp; No smoking 2.0 3 5.0 Myrtle Beach</span><span class="ch">\n</span><span class="st"> Great Space in Williamsburg's Heart 736.0 Private room No smoking &amp; No pets &amp; No children under 10 1.0 2 4.0 Myrtle Beach"</span>}, {<span class="st">'Description'</span>: <span class="st">'Flight from Washington to Myrtle Beach on 2022-03-13'</span>, <span class="st">'Content'</span>: <span class="st">'Flight Number Price DepTime ArrTime ActualElapsedTime FlightDate OriginCityName DestCityName Distance</span><span class="ch">\n</span><span class="st"> F3792603 164 09:19 10:59 1 hours 40 minutes 2022-03-13 Washington Myrtle Beach 372.0</span><span class="ch">\n</span><span class="st"> F3927581 89 11:03 13:31 2 hours 28 minutes 2022-03-13 Washington Myrtle Beach 372.0'</span>}, {<span class="st">'Description'</span>: <span class="st">'Self-driving from Washington to Myrtle Beach'</span>, <span class="st">'Content'</span>: <span class="st">'self-driving, from Washington to Myrtle Beach, duration: 6 hours 47 mins, distance: 693 km, cost: 34'</span>}, {<span class="st">'Description'</span>: <span class="st">'Taxi from Washington to Myrtle Beach'</span>, <span class="st">'Content'</span>: <span class="st">'taxi, from Washington to Myrtle Beach, duration: 6 hours 47 mins, distance: 693 km, cost: 693'</span>}, {<span class="st">'Description'</span>: <span class="st">'Flight from Myrtle Beach to Washington on 2022-03-15'</span>, <span class="st">'Content'</span>: <span class="st">'Flight Number Price DepTime ArrTime ActualElapsedTime FlightDate OriginCityName DestCityName Distance</span><span class="ch">\n</span><span class="st"> F3791200 87 11:36 13:06 1 hours 30 minutes 2022-03-15 Myrtle Beach Washington 372.0</span><span class="ch">\n</span><span class="st"> F3926434 111 13:45 15:02 1 hours 17 minutes 2022-03-15 Myrtle Beach Washington 372.0'</span>}, {<span class="st">'Description'</span>: <span class="st">'Self-driving from Myrtle Beach to Washington'</span>, <span class="st">'Content'</span>: <span class="st">'self-driving, from Myrtle Beach to Washington, duration: 6 hours 45 mins, distance: 693 km, cost: 34'</span>}, {<span class="st">'Description'</span>: <span class="st">'Taxi from Myrtle Beach to Washington'</span>, <span class="st">'Content'</span>: <span class="st">'taxi, from Myrtle Beach to Washington, duration: 6 hours 45 mins, distance: 693 km, cost: 693'</span>}]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="480bdec6-114b-4940-9309-fdacbd55ebeb" class="cell" data-jupyter="{&quot;source_hidden&quot;:true}" data-execution_count="64">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>PLANNER_INSTRUCTION <span class="op">=</span> <span class="st">"""You are a proficient planner. Based on the provided information and query, please give me a detailed plan, including specifics such as flight numbers (e.g., F0123456), restaurant names, and accommodation names. Note that all the information in your plan should be derived from the provided data. You must adhere to the format given in the example. Additionally, all details should align with commonsense. The symbol '-' indicates that information is unnecessary. For example, in the provided sample, you do not need to plan after returning to the departure city. When you travel to two cities in one day, you should note it in the 'Current City' section as in the example (i.e., from A to B).</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="st">***** Example *****</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="st">Query: Could you create a travel plan for 7 people from Ithaca to Charlotte spanning 3 days, from March 8th to March 14th, 2022, with a budget of $30,200?</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="st">Travel Plan:</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="st">Day 1:</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="st">Current City: from Ithaca to Charlotte</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="st">Transportation: Flight Number: F3633413, from Ithaca to Charlotte, Departure Time: 05:38, Arrival Time: 07:46</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="st">Breakfast: Nagaland's Kitchen, Charlotte</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="st">Attraction: The Charlotte Museum of History, Charlotte</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="st">Lunch: Cafe Maple Street, Charlotte</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="st">Dinner: Bombay Vada Pav, Charlotte</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="st">Accommodation: Affordable Spacious Refurbished Room in Bushwick!, Charlotte</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="st">Day 2:</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="st">Current City: Charlotte</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="st">Transportation: -</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="st">Breakfast: Olive Tree Cafe, Charlotte</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="st">Attraction: The Mint Museum, Charlotte;Romare Bearden Park, Charlotte.</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="st">Lunch: Birbal Ji Dhaba, Charlotte</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="st">Dinner: Pind Balluchi, Charlotte</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="st">Accommodation: Affordable Spacious Refurbished Room in Bushwick!, Charlotte</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="st">Day 3:</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="st">Current City: from Charlotte to Ithaca</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="st">Transportation: Flight Number: F3786167, from Charlotte to Ithaca, Departure Time: 21:42, Arrival Time: 23:26</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="st">Breakfast: Subway, Charlotte</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="st">Attraction: Books Monument, Charlotte.</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="st">Lunch: Olive Tree Cafe, Charlotte</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="st">Dinner: Kylin Skybar, Charlotte</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="st">Accommodation: -</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="st">***** Example Ends *****</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="st">Given information: </span><span class="sc">{text}</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a><span class="st">Query: </span><span class="sc">{query}</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a><span class="st">Travel Plan:</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>PLANNER_INSTRUCTION_META <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a><span class="st">You are a proficient planner. Based on the provided information and query, please give me a detailed plan, including specifics such as flight numbers (e.g., F0123456), restaurant names, and accommodation names. Note that all the information in your plan should be derived from the provided data. You must adhere to the format given in the example. Additionally, all details should align with commonsense. The symbol '-' indicates that information is unnecessary. For example, in the provided sample, you do not need to plan after returning to the departure city. When you travel to two cities in one day, you should note it in the 'Current City' section as in the example (i.e., from A to B).</span></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a><span class="st">***** Example *****</span></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a><span class="st">Query: Could you create a travel plan for 7 people from Ithaca to Charlotte spanning 3 days, from March 8th to March 14th, 2022, with a budget of $30,200?</span></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="st">Travel Plan:</span></span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a><span class="st">Day 1:</span></span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a><span class="st">Current City: from Ithaca to Charlotte</span></span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a><span class="st">Transportation: Flight Number: F3633413, from Ithaca to Charlotte, Departure Time: 05:38, Arrival Time: 07:46</span></span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a><span class="st">Breakfast: Nagaland's Kitchen, Charlotte</span></span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a><span class="st">Attraction: The Charlotte Museum of History, Charlotte</span></span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a><span class="st">Lunch: Cafe Maple Street, Charlotte</span></span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a><span class="st">Dinner: Bombay Vada Pav, Charlotte</span></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a><span class="st">Accommodation: Affordable Spacious Refurbished Room in Bushwick!, Charlotte</span></span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a><span class="st">Day 2:</span></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a><span class="st">Current City: Charlotte</span></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a><span class="st">Transportation: -</span></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a><span class="st">Breakfast: Olive Tree Cafe, Charlotte</span></span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a><span class="st">Attraction: The Mint Museum, Charlotte;Romare Bearden Park, Charlotte.</span></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a><span class="st">Lunch: Birbal Ji Dhaba, Charlotte</span></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a><span class="st">Dinner: Pind Balluchi, Charlotte</span></span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a><span class="st">Accommodation: Affordable Spacious Refurbished Room in Bushwick!, Charlotte</span></span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a><span class="st">Day 3:</span></span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a><span class="st">Current City: from Charlotte to Ithaca</span></span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a><span class="st">Transportation: Flight Number: F3786167, from Charlotte to Ithaca, Departure Time: 21:42, Arrival Time: 23:26</span></span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a><span class="st">Breakfast: Subway, Charlotte</span></span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a><span class="st">Attraction: Books Monument, Charlotte.</span></span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a><span class="st">Lunch: Olive Tree Cafe, Charlotte</span></span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a><span class="st">Dinner: Kylin Skybar, Charlotte</span></span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a><span class="st">Accommodation: -</span></span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a><span class="st">***** Example Ends *****</span></span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a><span class="st">Given information: </span><span class="sc">{text}</span></span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a><span class="st">Query: </span><span class="sc">{query}</span></span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a><span class="st">This is your answer:</span></span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a><span class="st">Travel Plan: </span><span class="sc">{answer}</span><span class="st">.</span></span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a><span class="st">Now, you can create and collaborate with multiple experts to improve your plan to better meet the query. Therefore, please describe in as much detail as possible the different skills and focuses you need from multiple experts individually. </span></span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a><span class="st">We will provide each expert with the same information and query. However, please note that each profession has its own specialization, so you can assign each expert to just one sub-task to ensure a more refined response. </span></span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a><span class="st">We will relay their responses to you in turn, allowing you to reorganize them into a better answer.</span></span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a><span class="st">Please note that the description should be narrated in the second person, for example: You are a XXX.</span></span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a><span class="st">These are the descriptions of the experts you have created before for this task:</span></span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a><span class="sc">{description}</span></span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a><span class="st">Therefore, please remember you should not repeatedly create the same experts as described above.</span></span>
+<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a><span class="st">Now, you can give the description for a new expert (Please note that only be one, do not give multiple at one time):</span></span>
+<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>PLANNER_INSTRUCTION_MULTI <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a><span class="sc">{description}</span></span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a><span class="st">Based on the provided information and query, please give me a detailed plan, including specifics such as flight numbers (e.g., F0123456), restaurant names, and accommodation names. Note that all the information in your plan should be derived from the provided data. You must adhere to the format given in the example. Additionally, all details should align with commonsense. The symbol '-' indicates that information is unnecessary. For example, in the provided sample, you do not need to plan after returning to the departure city. When you travel to two cities in one day, you should note it in the 'Current City' section as in the example (i.e., from A to B).</span></span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a><span class="st">***** Example *****</span></span>
+<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a><span class="st">Query: Could you create a travel plan for 7 people from Ithaca to Charlotte spanning 3 days, from March 8th to March 14th, 2022, with a budget of $30,200?</span></span>
+<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a><span class="st">Travel Plan:</span></span>
+<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a><span class="st">Day 1:</span></span>
+<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a><span class="st">Current City: from Ithaca to Charlotte</span></span>
+<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a><span class="st">Transportation: Flight Number: F3633413, from Ithaca to Charlotte, Departure Time: 05:38, Arrival Time: 07:46</span></span>
+<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a><span class="st">Breakfast: Nagaland's Kitchen, Charlotte</span></span>
+<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a><span class="st">Attraction: The Charlotte Museum of History, Charlotte</span></span>
+<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a><span class="st">Lunch: Cafe Maple Street, Charlotte</span></span>
+<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a><span class="st">Dinner: Bombay Vada Pav, Charlotte</span></span>
+<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a><span class="st">Accommodation: Affordable Spacious Refurbished Room in Bushwick!, Charlotte</span></span>
+<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a><span class="st">Day 2:</span></span>
+<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a><span class="st">Current City: Charlotte</span></span>
+<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a><span class="st">Transportation: -</span></span>
+<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a><span class="st">Breakfast: Olive Tree Cafe, Charlotte</span></span>
+<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a><span class="st">Attraction: The Mint Museum, Charlotte;Romare Bearden Park, Charlotte.</span></span>
+<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a><span class="st">Lunch: Birbal Ji Dhaba, Charlotte</span></span>
+<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a><span class="st">Dinner: Pind Balluchi, Charlotte</span></span>
+<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a><span class="st">Accommodation: Affordable Spacious Refurbished Room in Bushwick!, Charlotte</span></span>
+<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a><span class="st">Day 3:</span></span>
+<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a><span class="st">Current City: from Charlotte to Ithaca</span></span>
+<span id="cb4-120"><a href="#cb4-120" aria-hidden="true" tabindex="-1"></a><span class="st">Transportation: Flight Number: F3786167, from Charlotte to Ithaca, Departure Time: 21:42, Arrival Time: 23:26</span></span>
+<span id="cb4-121"><a href="#cb4-121" aria-hidden="true" tabindex="-1"></a><span class="st">Breakfast: Subway, Charlotte</span></span>
+<span id="cb4-122"><a href="#cb4-122" aria-hidden="true" tabindex="-1"></a><span class="st">Attraction: Books Monument, Charlotte.</span></span>
+<span id="cb4-123"><a href="#cb4-123" aria-hidden="true" tabindex="-1"></a><span class="st">Lunch: Olive Tree Cafe, Charlotte</span></span>
+<span id="cb4-124"><a href="#cb4-124" aria-hidden="true" tabindex="-1"></a><span class="st">Dinner: Kylin Skybar, Charlotte</span></span>
+<span id="cb4-125"><a href="#cb4-125" aria-hidden="true" tabindex="-1"></a><span class="st">Accommodation: -</span></span>
+<span id="cb4-126"><a href="#cb4-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-127"><a href="#cb4-127" aria-hidden="true" tabindex="-1"></a><span class="st">***** Example Ends *****</span></span>
+<span id="cb4-128"><a href="#cb4-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-129"><a href="#cb4-129" aria-hidden="true" tabindex="-1"></a><span class="st">Please note that: </span><span class="sc">{description}</span></span>
+<span id="cb4-130"><a href="#cb4-130" aria-hidden="true" tabindex="-1"></a><span class="st">Given information: </span><span class="sc">{text}</span></span>
+<span id="cb4-131"><a href="#cb4-131" aria-hidden="true" tabindex="-1"></a><span class="st">Query: </span><span class="sc">{query}</span></span>
+<span id="cb4-132"><a href="#cb4-132" aria-hidden="true" tabindex="-1"></a><span class="st">Travel Plan:</span></span>
+<span id="cb4-133"><a href="#cb4-133" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb4-134"><a href="#cb4-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-135"><a href="#cb4-135" aria-hidden="true" tabindex="-1"></a>PLANNER_INSTRUCTION_REFINE <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb4-136"><a href="#cb4-136" aria-hidden="true" tabindex="-1"></a><span class="st">You are a proficient planner. Based on the provided information and query, please give me a detailed plan, including specifics such as flight numbers (e.g., F0123456), restaurant names, and accommodation names. Note that all the information in your plan should be derived from the provided data. You must adhere to the format given in the example. Additionally, all details should align with commonsense. The symbol '-' indicates that information is unnecessary. For example, in the provided sample, you do not need to plan after returning to the departure city. When you travel to two cities in one day, you should note it in the 'Current City' section as in the example (i.e., from A to B).</span></span>
+<span id="cb4-137"><a href="#cb4-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-138"><a href="#cb4-138" aria-hidden="true" tabindex="-1"></a><span class="st">***** Example *****</span></span>
+<span id="cb4-139"><a href="#cb4-139" aria-hidden="true" tabindex="-1"></a><span class="st">Query: Could you create a travel plan for 7 people from Ithaca to Charlotte spanning 3 days, from March 8th to March 14th, 2022, with a budget of $30,200?</span></span>
+<span id="cb4-140"><a href="#cb4-140" aria-hidden="true" tabindex="-1"></a><span class="st">Travel Plan:</span></span>
+<span id="cb4-141"><a href="#cb4-141" aria-hidden="true" tabindex="-1"></a><span class="st">Day 1:</span></span>
+<span id="cb4-142"><a href="#cb4-142" aria-hidden="true" tabindex="-1"></a><span class="st">Current City: from Ithaca to Charlotte</span></span>
+<span id="cb4-143"><a href="#cb4-143" aria-hidden="true" tabindex="-1"></a><span class="st">Transportation: Flight Number: F3633413, from Ithaca to Charlotte, Departure Time: 05:38, Arrival Time: 07:46</span></span>
+<span id="cb4-144"><a href="#cb4-144" aria-hidden="true" tabindex="-1"></a><span class="st">Breakfast: Nagaland's Kitchen, Charlotte</span></span>
+<span id="cb4-145"><a href="#cb4-145" aria-hidden="true" tabindex="-1"></a><span class="st">Attraction: The Charlotte Museum of History, Charlotte</span></span>
+<span id="cb4-146"><a href="#cb4-146" aria-hidden="true" tabindex="-1"></a><span class="st">Lunch: Cafe Maple Street, Charlotte</span></span>
+<span id="cb4-147"><a href="#cb4-147" aria-hidden="true" tabindex="-1"></a><span class="st">Dinner: Bombay Vada Pav, Charlotte</span></span>
+<span id="cb4-148"><a href="#cb4-148" aria-hidden="true" tabindex="-1"></a><span class="st">Accommodation: Affordable Spacious Refurbished Room in Bushwick!, Charlotte</span></span>
+<span id="cb4-149"><a href="#cb4-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-150"><a href="#cb4-150" aria-hidden="true" tabindex="-1"></a><span class="st">Day 2:</span></span>
+<span id="cb4-151"><a href="#cb4-151" aria-hidden="true" tabindex="-1"></a><span class="st">Current City: Charlotte</span></span>
+<span id="cb4-152"><a href="#cb4-152" aria-hidden="true" tabindex="-1"></a><span class="st">Transportation: -</span></span>
+<span id="cb4-153"><a href="#cb4-153" aria-hidden="true" tabindex="-1"></a><span class="st">Breakfast: Olive Tree Cafe, Charlotte</span></span>
+<span id="cb4-154"><a href="#cb4-154" aria-hidden="true" tabindex="-1"></a><span class="st">Attraction: The Mint Museum, Charlotte;Romare Bearden Park, Charlotte.</span></span>
+<span id="cb4-155"><a href="#cb4-155" aria-hidden="true" tabindex="-1"></a><span class="st">Lunch: Birbal Ji Dhaba, Charlotte</span></span>
+<span id="cb4-156"><a href="#cb4-156" aria-hidden="true" tabindex="-1"></a><span class="st">Dinner: Pind Balluchi, Charlotte</span></span>
+<span id="cb4-157"><a href="#cb4-157" aria-hidden="true" tabindex="-1"></a><span class="st">Accommodation: Affordable Spacious Refurbished Room in Bushwick!, Charlotte</span></span>
+<span id="cb4-158"><a href="#cb4-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-159"><a href="#cb4-159" aria-hidden="true" tabindex="-1"></a><span class="st">Day 3:</span></span>
+<span id="cb4-160"><a href="#cb4-160" aria-hidden="true" tabindex="-1"></a><span class="st">Current City: from Charlotte to Ithaca</span></span>
+<span id="cb4-161"><a href="#cb4-161" aria-hidden="true" tabindex="-1"></a><span class="st">Transportation: Flight Number: F3786167, from Charlotte to Ithaca, Departure Time: 21:42, Arrival Time: 23:26</span></span>
+<span id="cb4-162"><a href="#cb4-162" aria-hidden="true" tabindex="-1"></a><span class="st">Breakfast: Subway, Charlotte</span></span>
+<span id="cb4-163"><a href="#cb4-163" aria-hidden="true" tabindex="-1"></a><span class="st">Attraction: Books Monument, Charlotte.</span></span>
+<span id="cb4-164"><a href="#cb4-164" aria-hidden="true" tabindex="-1"></a><span class="st">Lunch: Olive Tree Cafe, Charlotte</span></span>
+<span id="cb4-165"><a href="#cb4-165" aria-hidden="true" tabindex="-1"></a><span class="st">Dinner: Kylin Skybar, Charlotte</span></span>
+<span id="cb4-166"><a href="#cb4-166" aria-hidden="true" tabindex="-1"></a><span class="st">Accommodation: -</span></span>
+<span id="cb4-167"><a href="#cb4-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-168"><a href="#cb4-168" aria-hidden="true" tabindex="-1"></a><span class="st">***** Example Ends *****</span></span>
+<span id="cb4-169"><a href="#cb4-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-170"><a href="#cb4-170" aria-hidden="true" tabindex="-1"></a><span class="st">Given information: </span><span class="sc">{text}</span></span>
+<span id="cb4-171"><a href="#cb4-171" aria-hidden="true" tabindex="-1"></a><span class="st">Query: </span><span class="sc">{query}</span></span>
+<span id="cb4-172"><a href="#cb4-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-173"><a href="#cb4-173" aria-hidden="true" tabindex="-1"></a><span class="st">This is your answer:</span></span>
+<span id="cb4-174"><a href="#cb4-174" aria-hidden="true" tabindex="-1"></a><span class="st">Travel Plan: </span><span class="sc">{old_answer}</span><span class="st">.</span></span>
+<span id="cb4-175"><a href="#cb4-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-176"><a href="#cb4-176" aria-hidden="true" tabindex="-1"></a><span class="st">Furthermore, you also invite an expert whose description is: </span><span class="ch">\"</span><span class="sc">{description}</span><span class="ch">\"</span></span>
+<span id="cb4-177"><a href="#cb4-177" aria-hidden="true" tabindex="-1"></a><span class="st">This expert also give an answer based on his own professional knowledge: </span><span class="sc">{new_answer}</span><span class="st">.</span></span>
+<span id="cb4-178"><a href="#cb4-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-179"><a href="#cb4-179" aria-hidden="true" tabindex="-1"></a><span class="st">Now you can refine your answer with this his answer to better meet the query. Note that all the information in your plan should be derived from the provided data. You must adhere to the format given in the example.</span></span>
+<span id="cb4-180"><a href="#cb4-180" aria-hidden="true" tabindex="-1"></a><span class="st">Refined Travel Plan: </span></span>
+<span id="cb4-181"><a href="#cb4-181" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="9edcd177-c4cd-42cf-8016-3ca233367494" class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># a help function to create models. safety settings are disabled for the experiment.</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> init_llms(model_name: <span class="bu">str</span>, temperature: <span class="bu">int</span>) <span class="op">-&gt;</span> <span class="bu">tuple</span>[GenerativeModel, GenerativeModel]:</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    genai.configure(api_key<span class="op">=</span>os.environ[<span class="st">'GOOGLE_API_KEY'</span>])</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    safe <span class="op">=</span> [</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"category"</span>: <span class="st">"HARM_CATEGORY_HARASSMENT"</span>, <span class="st">"threshold"</span>: <span class="st">"BLOCK_NONE"</span>},</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"category"</span>: <span class="st">"HARM_CATEGORY_HATE_SPEECH"</span>, <span class="st">"threshold"</span>: <span class="st">"BLOCK_NONE"</span>},</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"category"</span>: <span class="st">"HARM_CATEGORY_SEXUALLY_EXPLICIT"</span>, <span class="st">"threshold"</span>: <span class="st">"BLOCK_NONE"</span>},</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"category"</span>: <span class="st">"HARM_CATEGORY_DANGEROUS_CONTENT"</span>, <span class="st">"threshold"</span>: <span class="st">"BLOCK_NONE"</span>}</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    ]    </span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> genai.GenerativeModel(</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        model_name,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        safety_settings<span class="op">=</span>safe,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        generation_config<span class="op">=</span>{<span class="st">'temperature'</span>: temperature}</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="60001a13-d9eb-47b3-940f-19a0bd6fed5c" class="cell" data-execution_count="54">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Planner:</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, model_name <span class="op">=</span> <span class="st">'gemini-1.5-flash-001'</span>):</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.agent_prompt <span class="op">=</span> PLANNER_INSTRUCTION</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.scratchpad: <span class="bu">str</span> <span class="op">=</span> <span class="st">''</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.model_name <span class="op">=</span> model_name</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.llm <span class="op">=</span> init_llms(model_name, <span class="dv">0</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> run(<span class="va">self</span>, text, query):</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="bu">str</span>(<span class="va">self</span>.llm.invoke(<span class="va">self</span>._build_agent_prompt(text, query)).content)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _build_agent_prompt(<span class="va">self</span>, text, query) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.agent_prompt.<span class="bu">format</span>(</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>            text<span class="op">=</span>text,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>            query<span class="op">=</span>query)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>planner <span class="op">=</span> Planner(<span class="st">'gemini-1.5-flash-001'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="6cf5ec7f-9cde-4454-9e56-80c3039ddb0f" class="cell" data-execution_count="55">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># refine_plan = planner.run(reference_information, query_data['query'])</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>prompt <span class="op">=</span> planner._build_agent_prompt(reference_information, query)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="f4398d31-1262-405d-80ba-2b56d4463f9f" class="cell" data-scrolled="true">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(prompt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="c08964f8-55ae-4066-a1d5-dd24bb1ee919" class="cell" data-execution_count="57">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> planner.llm.generate_content(prompt)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>refine_plan <span class="op">=</span> output.text.strip()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="efe6ea1b-20da-4178-af11-f7118f50e04c" class="cell" data-execution_count="72">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(refine_plan)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Travel Plan:
+Day 1:
+Current City: from Washington to Myrtle Beach
+Transportation: Flight Number: F3792603, from Washington to Myrtle Beach, Departure Time: 09:19, Arrival Time: 10:59
+Breakfast: -
+Attraction: -
+Lunch: -
+Dinner: -
+Accommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach
+
+Day 2:
+Current City: Myrtle Beach
+Transportation: -
+Breakfast: Twigly, Myrtle Beach
+Attraction: SkyWheel Myrtle Beach, Myrtle Beach;WonderWorks Myrtle Beach, Myrtle Beach.
+Lunch: Eat Street Express, Myrtle Beach
+Dinner: Exotic India, Myrtle Beach
+Accommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach
+
+Day 3:
+Current City: from Myrtle Beach to Washington
+Transportation: Flight Number: F3791200, from Myrtle Beach to Washington, Departure Time: 11:36, Arrival Time: 13:06
+Breakfast: -
+Attraction: Ripley's Aquarium of Myrtle Beach, Myrtle Beach.
+Lunch: -
+Dinner: -
+Accommodation: -</code></pre>
+</div>
+</div>
+<div id="3cbe1d2f-cc19-4d6c-96db-09653b1ba297" class="cell" data-execution_count="100">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Meta_Planner:</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, model_name <span class="op">=</span> <span class="st">'gemini-1.5-flash-001'</span>):</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.agent_prompt <span class="op">=</span> PLANNER_INSTRUCTION_META</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.scratchpad: <span class="bu">str</span> <span class="op">=</span> <span class="st">''</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.llm <span class="op">=</span> init_llms(model_name, <span class="dv">0</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.last_prompt <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> run(<span class="va">self</span>, text, query, answer, description) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.last_prompt <span class="op">=</span> <span class="va">self</span>._build_agent_prompt(text, query, answer, description)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        output <span class="op">=</span>  <span class="va">self</span>.llm.generate_content(<span class="va">self</span>.last_prompt).text.strip()</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> output</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _build_agent_prompt(<span class="va">self</span>, text, query, answer, description) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.agent_prompt.<span class="bu">format</span>(</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>            text<span class="op">=</span>text,</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>            query<span class="op">=</span>query,</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>            answer<span class="op">=</span>answer,</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>            description<span class="op">=</span>description</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Multi_Planner:</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, model_name <span class="op">=</span> <span class="st">'gemini-1.5-flash-001'</span>):</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.agent_prompt <span class="op">=</span> PLANNER_INSTRUCTION_MULTI</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.scratchpad: <span class="bu">str</span> <span class="op">=</span> <span class="st">''</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.llm <span class="op">=</span> init_llms(model_name, <span class="dv">0</span>)</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.last_prompt <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> run(<span class="va">self</span>, text, query, description) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.last_prompt <span class="op">=</span> <span class="va">self</span>._build_agent_prompt(text, query, description)</span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>        output <span class="op">=</span> <span class="va">self</span>.llm.generate_content(<span class="va">self</span>.last_prompt).text.strip()</span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> output</span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _build_agent_prompt(<span class="va">self</span>, text, query, description) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.agent_prompt.<span class="bu">format</span>(</span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>            text<span class="op">=</span>text,</span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>            query<span class="op">=</span>query,</span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>            description<span class="op">=</span>description</span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Refine_Planner:</span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, model_name <span class="op">=</span> <span class="st">'gemini-1.5-flash-001'</span>):</span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.agent_prompt <span class="op">=</span> PLANNER_INSTRUCTION_REFINE</span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.scratchpad: <span class="bu">str</span> <span class="op">=</span> <span class="st">''</span></span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.llm <span class="op">=</span> init_llms(model_name, <span class="dv">0</span>)</span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.last_prompt <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> run(<span class="va">self</span>, text, query, old_answer, description, new_answer):</span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.last_prompt <span class="op">=</span> <span class="va">self</span>._build_agent_prompt(text, query, old_answer, description, new_answer)</span>
+<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a>        output <span class="op">=</span> <span class="va">self</span>.llm.generate_content(<span class="va">self</span>.last_prompt).text.strip()</span>
+<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> output</span>
+<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _build_agent_prompt(<span class="va">self</span>, text, query, old_answer, description, new_answer) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.agent_prompt.<span class="bu">format</span>(</span>
+<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a>            text<span class="op">=</span>text,</span>
+<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a>            query<span class="op">=</span>query,</span>
+<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a>            old_answer<span class="op">=</span>old_answer,</span>
+<span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a>            description<span class="op">=</span>description,</span>
+<span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a>            new_answer<span class="op">=</span>new_answer</span>
+<span id="cb12-59"><a href="#cb12-59" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb12-60"><a href="#cb12-60" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb12-61"><a href="#cb12-61" aria-hidden="true" tabindex="-1"></a>meta_planner <span class="op">=</span> Meta_Planner(<span class="st">'gemini-1.5-flash-001'</span>)</span>
+<span id="cb12-62"><a href="#cb12-62" aria-hidden="true" tabindex="-1"></a>multi_planner <span class="op">=</span> Multi_Planner(<span class="st">'gemini-1.5-flash-001'</span>)</span>
+<span id="cb12-63"><a href="#cb12-63" aria-hidden="true" tabindex="-1"></a>refine_planner <span class="op">=</span> Refine_Planner(<span class="st">'gemini-1.5-flash-001'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="1af344e8-cd56-42af-9ee1-4bb82ef5a422" class="cell" data-execution_count="78">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>expt_configure</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="78">
+<pre><code>{'set_type': 'validation',
+ 'model_name': 'gemini-1.5-flash-001',
+ 'strategy': 'collaboration',
+ 'ind': 3,
+ 'group_num': 3,
+ 'select_strategy': 'all'}</code></pre>
+</div>
+</div>
+<div id="96fe2b8d-f776-415e-8f20-defa76c84984" class="cell" data-execution_count="79">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># planner_list, planner_results = collaboration_func(ind, reference_information, query_data['query'], refine_plan)</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>ind <span class="op">=</span> <span class="dv">3</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>planner_results <span class="op">=</span> refine_plan</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>planner_list <span class="op">=</span> []</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>description_ls <span class="op">=</span> []</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="meta-planner" class="level2">
+<h2 class="anchored" data-anchor-id="meta-planner">meta planner</h2>
+<div id="81562731-c009-4362-b1d8-e3d2d3bf8dd9" class="cell" data-scrolled="true" data-execution_count="128">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>flag <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>description <span class="op">=</span> meta_planner.run(reference_information, query, planner_results, <span class="st">'</span><span class="ch">\n</span><span class="st">-'</span>.join(description_ls))</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>utils.display_html(meta_planner.last_prompt, <span class="st">'Show meta planner prompt'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<details><summary>Show meta planner prompt</summary><pre>You are a proficient planner. Based on the provided information and query, please give me a detailed plan, including specifics such as flight numbers (e.g., F0123456), restaurant names, and accommodation names. Note that all the information in your plan should be derived from the provided data. You must adhere to the format given in the example. Additionally, all details should align with commonsense. The symbol '-' indicates that information is unnecessary. For example, in the provided sample, you do not need to plan after returning to the departure city. When you travel to two cities in one day, you should note it in the 'Current City' section as in the example (i.e., from A to B).
+
+***** Example *****
+Query: Could you create a travel plan for 7 people from Ithaca to Charlotte spanning 3 days, from March 8th to March 14th, 2022, with a budget of $30,200?
+Travel Plan:
+Day 1:
+Current City: from Ithaca to Charlotte
+Transportation: Flight Number: F3633413, from Ithaca to Charlotte, Departure Time: 05:38, Arrival Time: 07:46
+Breakfast: Nagaland's Kitchen, Charlotte
+Attraction: The Charlotte Museum of History, Charlotte
+Lunch: Cafe Maple Street, Charlotte
+Dinner: Bombay Vada Pav, Charlotte
+Accommodation: Affordable Spacious Refurbished Room in Bushwick!, Charlotte
+
+Day 2:
+Current City: Charlotte
+Transportation: -
+Breakfast: Olive Tree Cafe, Charlotte
+Attraction: The Mint Museum, Charlotte;Romare Bearden Park, Charlotte.
+Lunch: Birbal Ji Dhaba, Charlotte
+Dinner: Pind Balluchi, Charlotte
+Accommodation: Affordable Spacious Refurbished Room in Bushwick!, Charlotte
+
+Day 3:
+Current City: from Charlotte to Ithaca
+Transportation: Flight Number: F3786167, from Charlotte to Ithaca, Departure Time: 21:42, Arrival Time: 23:26
+Breakfast: Subway, Charlotte
+Attraction: Books Monument, Charlotte.
+Lunch: Olive Tree Cafe, Charlotte
+Dinner: Kylin Skybar, Charlotte
+Accommodation: -
+
+***** Example Ends *****
+
+Given information: [{'Description': 'Attractions in Myrtle Beach', 'Content': " Name Latitude Longitude Address Phone Website City\n SkyWheel Myrtle Beach 33.694026 -78.877372 1110 N Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 839-9200 http://skywheelmb.com/ Myrtle Beach\n WonderWorks Myrtle Beach 33.716820 -78.884306 1313 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 626-9962 http://www.wonderworksonline.com/myrtle-beach Myrtle Beach\n Family Kingdom Amusement Park 33.682392 -78.891932 300 S Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 626-3447 http://www.familykingdomfun.com/ Myrtle Beach\n Hollywood Wax Museum 33.717142 -78.891257 1808 21st Ave N unit a, Myrtle Beach, SC 29577, USA (843) 444-0091 https://www.hollywoodwaxentertainment.com/myrtle-beach-sc-attractions/ Myrtle Beach\n Ripley's Aquarium of Myrtle Beach 33.715737 -78.877941 1110 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 916-0888 https://www.ripleyaquariums.com/myrtlebeach/ Myrtle Beach\n Broadway at the Beach 33.715617 -78.881949 1325 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 444-3200 https://www.broadwayatthebeach.com/ Myrtle Beach\n Ripley's Believe It or Not! 33.692454 -78.879754 901 N Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 916-0888 http://www.ripleys.com/myrtlebeach Myrtle Beach\n Ripley's Haunted Adventure 33.693229 -78.878922 915 N Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 916-0888 https://www.ripleys.com/myrtlebeach/haunted-adventure/ Myrtle Beach\n Myrtle Beach Boardwalk and Promenade 33.693287 -78.877580 Myrtle Beach, Myrtle Beach Boardwalk and Promenade, Myrtle Beach, SC 29577, USA (843) 918-1000 http://www.myrtlebeachdowntown.com/ Myrtle Beach\n Soar + Explore 33.716660 -78.884005 1313 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 626-9962 http://www.wonderworksonline.com/myrtle-beach/the-experience/soar-explore/ Myrtle Beach\n Free Fall Thrill Park 33.694606 -78.877455 1201 N Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 444-8255 http://freefallpark.com/ Myrtle Beach\n Ripley's Mirror Maze 33.693229 -78.878922 913 N Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 916-0888 https://www.ripleys.com/myrtlebeach/ripleys-mirror-maze/ Myrtle Beach\n Myrtle Beach State Park 33.651198 -78.930625 4401 S Kings Hwy, Myrtle Beach, SC 29575, USA (843) 238-5325 https://southcarolinaparks.com/myrtle-beach Myrtle Beach\n Hannah's Maze of Mirrors 33.717275 -78.891301 1808 21st Ave N Unit C, Myrtle Beach, SC 29577, USA (843) 444-0091 https://www.hollywoodwaxentertainment.com/myrtle-beach-sc-attractions/ Myrtle Beach\nMyrtle Beach Safari (by reservation only) 33.695161 -78.969232 851 Folly Ranch Ln, Myrtle Beach, SC 29588, USA (843) 361-4552 https://docantlesdaysafari.com/ Myrtle Beach\n Dinopark 33.715499 -78.877514 1112 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 808-9619 http://www.dinoparkmb.com/ Myrtle Beach\n Backstage Mirror Maze 33.717882 -78.882896 1314 Celebrity Cir #165, Myrtle Beach, SC 29577, USA (843) 712-1794 http://www.backstagemirrormaze.com/ Myrtle Beach\n The Pavilion Parks 33.715617 -78.881949 1325 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 839-0303 https://pavilionparks.com/ Myrtle Beach\n Gardens By The Sea 33.725774 -78.838028 5506 N Ocean Blvd #5504, Myrtle Beach, SC 29577, USA Unknown Unknown Myrtle Beach\n Pavilion Park 33.692441 -78.881687 205 9th Ave N, Myrtle Beach, SC 29577, USA (843) 839-0303 https://pavilionparks.com/ Myrtle Beach"}, {'Description': 'Restaurants in Myrtle Beach', 'Content': " Name Average Cost Cuisines Aggregate Rating City\n Exotic India 81 Indian, BBQ, Fast Food 4.1 Myrtle Beach\n Catfish Charlie's 14 Tea, Chinese, Desserts 3.3 Myrtle Beach\n d' Curry House 33 Tea, Chinese, Desserts, Fast Food 3.6 Myrtle Beach\n Twigly 55 Tea, Bakery, Mediterranean, Seafood 4.6 Myrtle Beach\n First Eat 21 Tea, Mexican, Fast Food 4.0 Myrtle Beach\n Nagai 19 Desserts, Pizza, Mexican, Fast Food, American, Seafood 4.3 Myrtle Beach\n La Pino'z Pizza 14 Cafe, Seafood, Fast Food 3.5 Myrtle Beach\n Eat Street Express 100 Fast Food, Pizza, BBQ, Italian 4.0 Myrtle Beach\n Punjabi Tadka 73 Bakery, BBQ, Fast Food, Chinese, Seafood 2.8 Myrtle Beach\n Kedarnath Prem Chand Halwai 61 Desserts, Tea, Fast Food, American, Mediterranean, Seafood 3.7 Myrtle Beach\n The Night Owl 12 Desserts, Tea, American, Bakery, Indian, Seafood 0.0 Myrtle Beach\n Negi Restaurant 46 Tea, Bakery, Pizza, Seafood 0.0 Myrtle Beach\n Turning Point Fast Food 32 Pizza, Seafood 0.0 Myrtle Beach\n Cafe Coffee Day - The Lounge 71 Mexican, Bakery, Desserts, Seafood 2.6 Myrtle Beach\nTapas - Jaypee Vasant Continental 90 BBQ, Mediterranean, Seafood 3.2 Myrtle Beach\n Caravan Resto Bar 57 Desserts, Tea, BBQ, Mediterranean, Seafood 3.2 Myrtle Beach\n Bikaner Restaurant 96 BBQ, Fast Food 0.0 Myrtle Beach\n Rollacious 85 Desserts, French, Bakery, Indian, Seafood 0.0 Myrtle Beach\n Milan Shudh Vaishno 97 Tea, Bakery, Seafood 0.0 Myrtle Beach\n Admission Lounge 32 BBQ, Desserts, Italian 2.7 Myrtle Beach\n Allure 71 Desserts, Tea, BBQ, Indian, Mediterranean 2.8 Myrtle Beach\n Dimsum Vs Sushi 83 Tea, Desserts, American, BBQ 3.4 Myrtle Beach\n Rasoi - The Indian Zaika 88 Tea, American, BBQ 0.0 Myrtle Beach\n GBar - The Grand New Delhi 88 Desserts, Italian, Cafe, Indian, Seafood 3.3 Myrtle Beach\n Nizam's Kathi Kabab 32 Desserts, Cafe, Pizza, French, Chinese, Seafood 3.0 Myrtle Beach\n Dakshin Platter 56 Cafe, Bakery, Italian 0.0 Myrtle Beach\n Be Bhukkad 96 Tea, French, Bakery, BBQ 3.6 Myrtle Beach\n Bread &amp; Pasta 37 Tea, Desserts, Fast Food 0.0 Myrtle Beach"}, {'Description': 'Accommodations in Myrtle Beach', 'Content': " NAME price room type house_rules minimum nights maximum occupancy review rate number city\n Cozy Brooklyn Room - Next to Pratt Institute 418.0 Private room No smoking &amp; No children under 10 &amp; No pets 5.0 2 2.0 Myrtle Beach\n Greenwich Village Apartment 781.0 Entire home/apt No parties &amp; No pets 3.0 6 4.0 Myrtle Beach\n Studio with Private Terrace on Central Park West 453.0 Entire home/apt No smoking &amp; No visitors 30.0 4 2.0 Myrtle Beach\n Brooklyn Bliss 3 953.0 Private room No visitors 2.0 1 2.0 Myrtle Beach\n Bright, renovated apartment close to subway+city 1131.0 Entire home/apt No visitors 2.0 10 3.0 Myrtle Beach\n Spacious Private Room, lots of character &amp; light 1087.0 Private room No parties &amp; No pets 1.0 1 3.0 Myrtle Beach\n A WONDERFUL Place is Waiting 4U in Brooklyn !!! 160.0 Entire home/apt No visitors 3.0 2 3.0 Myrtle Beach\n Modern &amp; Spacious Apartment in Central Harlem 1059.0 Entire home/apt No pets 3.0 9 3.0 Myrtle Beach\n Adorable Prospect Heights 1 Bedroom 107.0 Entire home/apt No children under 10 31.0 2 3.0 Myrtle Beach\n ⭐️Walk + Transit Score 97⭐️8min to Yankee Std⭐️ 1130.0 Entire home/apt No pets &amp; No smoking 2.0 2 1.0 Myrtle Beach\n Williamsburg Domino Park Prime Location 2 bedroom 461.0 Entire home/apt No parties 7.0 4 5.0 Myrtle Beach\n Private Room in Fort Green BK close to city 631.0 Private room No pets &amp; No smoking 5.0 2 1.0 Myrtle Beach\n Grande chambre lumineuse à bushwick 468.0 Private room No visitors &amp; No children under 10 2.0 1 4.0 Myrtle Beach\n Bright &amp; Sunny FULLY FURNISHED Room 847.0 Private room No parties &amp; No pets 7.0 2 5.0 Myrtle Beach\n Yellow submarine 179.0 Private room No pets &amp; No visitors &amp; No children under 10 2.0 2 5.0 Myrtle Beach\n Location Angel Boy 198.0 Private room No children under 10 31.0 1 1.0 Myrtle Beach\n Fabulous bedroom in the heart of BK 530.0 Private room No children under 10 1.0 1 5.0 Myrtle Beach\nAdorable Polly Pocket-Sized Prospect Heights Space 397.0 Entire home/apt No children under 10 &amp; No smoking 2.0 3 5.0 Myrtle Beach\n Great Space in Williamsburg's Heart 736.0 Private room No smoking &amp; No pets &amp; No children under 10 1.0 2 4.0 Myrtle Beach"}, {'Description': 'Flight from Washington to Myrtle Beach on 2022-03-13', 'Content': 'Flight Number Price DepTime ArrTime ActualElapsedTime FlightDate OriginCityName DestCityName Distance\n F3792603 164 09:19 10:59 1 hours 40 minutes 2022-03-13 Washington Myrtle Beach 372.0\n F3927581 89 11:03 13:31 2 hours 28 minutes 2022-03-13 Washington Myrtle Beach 372.0'}, {'Description': 'Self-driving from Washington to Myrtle Beach', 'Content': 'self-driving, from Washington to Myrtle Beach, duration: 6 hours 47 mins, distance: 693 km, cost: 34'}, {'Description': 'Taxi from Washington to Myrtle Beach', 'Content': 'taxi, from Washington to Myrtle Beach, duration: 6 hours 47 mins, distance: 693 km, cost: 693'}, {'Description': 'Flight from Myrtle Beach to Washington on 2022-03-15', 'Content': 'Flight Number Price DepTime ArrTime ActualElapsedTime FlightDate OriginCityName DestCityName Distance\n F3791200 87 11:36 13:06 1 hours 30 minutes 2022-03-15 Myrtle Beach Washington 372.0\n F3926434 111 13:45 15:02 1 hours 17 minutes 2022-03-15 Myrtle Beach Washington 372.0'}, {'Description': 'Self-driving from Myrtle Beach to Washington', 'Content': 'self-driving, from Myrtle Beach to Washington, duration: 6 hours 45 mins, distance: 693 km, cost: 34'}, {'Description': 'Taxi from Myrtle Beach to Washington', 'Content': 'taxi, from Myrtle Beach to Washington, duration: 6 hours 45 mins, distance: 693 km, cost: 693'}]
+Query: Please create a travel plan for me where I'll be departing from Washington and heading to Myrtle Beach for a 3-day trip from March 13th to March 15th, 2022. Can you help me keep this journey within a budget of $1,400?
+
+This is your answer:
+Travel Plan: Refined Travel Plan: 
+Day 1:
+Current City: from Washington to Myrtle Beach
+Transportation: Flight Number: F3792603, from Washington to Myrtle Beach, Departure Time: 09:19, Arrival Time: 10:59
+Breakfast: -
+Attraction: -
+Lunch: -
+Dinner: Exotic India, Myrtle Beach
+Accommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach
+
+Day 2:
+Current City: Myrtle Beach
+Transportation: -
+Breakfast: Twigly, Myrtle Beach
+Attraction: SkyWheel Myrtle Beach, Myrtle Beach;WonderWorks Myrtle Beach, Myrtle Beach.
+Lunch: Eat Street Express, Myrtle Beach
+Dinner: d' Curry House, Myrtle Beach
+Accommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach
+
+Day 3:
+Current City: from Myrtle Beach to Washington
+Transportation: Flight Number: F3791200, from Myrtle Beach to Washington, Departure Time: 11:36, Arrival Time: 13:06
+Breakfast: First Eat, Myrtle Beach
+Attraction: Family Kingdom Amusement Park, Myrtle Beach.
+Lunch: -
+Dinner: -
+Accommodation: -..
+
+Now, you can create and collaborate with multiple experts to improve your plan to better meet the query. Therefore, please describe in as much detail as possible the different skills and focuses you need from multiple experts individually. 
+We will provide each expert with the same information and query. However, please note that each profession has its own specialization, so you can assign each expert to just one sub-task to ensure a more refined response. 
+We will relay their responses to you in turn, allowing you to reorganize them into a better answer.
+Please note that the description should be narrated in the second person, for example: You are a XXX.
+
+These are the descriptions of the experts you have created before for this task:
+You are a **Budget Analyst**. You will analyze the provided travel plan and ensure that the total cost of the trip stays within the specified budget of $1,400. You will consider the cost of flights, accommodation, meals, and attractions. You will also suggest alternative options for each category if necessary to stay within the budget.
+-You are a **Restaurant Expert**. You will analyze the provided travel plan and suggest alternative restaurants for each meal based on the traveler's preferences and budget. You will consider the cuisine, average cost, and aggregate rating of each restaurant. You will also suggest restaurants that are located near the attractions or accommodation listed in the plan.
+
+Therefore, please remember you should not repeatedly create the same experts as described above.
+Now, you can give the description for a new expert (Please note that only be one, do not give multiple at one time):
+</pre></details>
+</div>
+</div>
+<div id="b9fcf278-bf8b-4afd-bf00-46bce8753088" class="cell" data-execution_count="93">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(description)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>You are a **Budget Analyst**. You will analyze the provided travel plan and ensure that the total cost of the trip stays within the specified budget of $1,400. You will consider the cost of flights, accommodation, meals, and attractions. You will also suggest alternative options for each category if necessary to stay within the budget.</code></pre>
+</div>
+</div>
+<div id="0e0c9146-b36b-4186-a5c7-c7d1e270cf4a" class="cell" data-execution_count="114">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(description)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>You are a **Restaurant Expert**. You will analyze the provided travel plan and suggest alternative restaurants for each meal based on the traveler's preferences and budget. You will consider the cuisine, average cost, and aggregate rating of each restaurant. You will also suggest restaurants that are located near the attractions or accommodation listed in the plan.</code></pre>
+</div>
+</div>
+<div id="a74fb969-f444-407c-aba6-b67e714b8a49" class="cell" data-execution_count="129">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(description)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>You are a **Transportation Expert**. You will analyze the provided travel plan and suggest alternative transportation options for each leg of the journey based on the traveler's budget and preferences. You will consider the cost, duration, and convenience of each option. You will also suggest alternative transportation options for getting around within Myrtle Beach.</code></pre>
+</div>
+</div>
+<div id="596f7200-5599-4f13-beb0-0e06821312d4" class="cell" data-execution_count="130">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>description_ls.append(description)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>description_ls</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="130">
+<pre><code>['You are a **Budget Analyst**. You will analyze the provided travel plan and ensure that the total cost of the trip stays within the specified budget of $1,400. You will consider the cost of flights, accommodation, meals, and attractions. You will also suggest alternative options for each category if necessary to stay within the budget.',
+ "You are a **Restaurant Expert**. You will analyze the provided travel plan and suggest alternative restaurants for each meal based on the traveler's preferences and budget. You will consider the cuisine, average cost, and aggregate rating of each restaurant. You will also suggest restaurants that are located near the attractions or accommodation listed in the plan.",
+ "You are a **Transportation Expert**. You will analyze the provided travel plan and suggest alternative transportation options for each leg of the journey based on the traveler's budget and preferences. You will consider the cost, duration, and convenience of each option. You will also suggest alternative transportation options for getting around within Myrtle Beach."]</code></pre>
+</div>
+</div>
+</section>
+<section id="multi-planner" class="level2">
+<h2 class="anchored" data-anchor-id="multi-planner">multi planner</h2>
+<div id="8659010a-70e9-4071-8ae9-98b3adb42353" class="cell" data-execution_count="131">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>description</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="131">
+<pre><code>"You are a **Transportation Expert**. You will analyze the provided travel plan and suggest alternative transportation options for each leg of the journey based on the traveler's budget and preferences. You will consider the cost, duration, and convenience of each option. You will also suggest alternative transportation options for getting around within Myrtle Beach."</code></pre>
+</div>
+</div>
+<div id="c71b59fc-cc77-4ae9-aa8b-a4b804613244" class="cell" data-scrolled="true" data-execution_count="132">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>sub_answer <span class="op">=</span> multi_planner.run(reference_information, query, description)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>utils.display_html(multi_planner.last_prompt, <span class="st">'Show multi planner prompt'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<details><summary>Show multi planner prompt</summary><pre>You are a **Transportation Expert**. You will analyze the provided travel plan and suggest alternative transportation options for each leg of the journey based on the traveler's budget and preferences. You will consider the cost, duration, and convenience of each option. You will also suggest alternative transportation options for getting around within Myrtle Beach.
+Based on the provided information and query, please give me a detailed plan, including specifics such as flight numbers (e.g., F0123456), restaurant names, and accommodation names. Note that all the information in your plan should be derived from the provided data. You must adhere to the format given in the example. Additionally, all details should align with commonsense. The symbol '-' indicates that information is unnecessary. For example, in the provided sample, you do not need to plan after returning to the departure city. When you travel to two cities in one day, you should note it in the 'Current City' section as in the example (i.e., from A to B).
+
+***** Example *****
+Query: Could you create a travel plan for 7 people from Ithaca to Charlotte spanning 3 days, from March 8th to March 14th, 2022, with a budget of $30,200?
+Travel Plan:
+Day 1:
+Current City: from Ithaca to Charlotte
+Transportation: Flight Number: F3633413, from Ithaca to Charlotte, Departure Time: 05:38, Arrival Time: 07:46
+Breakfast: Nagaland's Kitchen, Charlotte
+Attraction: The Charlotte Museum of History, Charlotte
+Lunch: Cafe Maple Street, Charlotte
+Dinner: Bombay Vada Pav, Charlotte
+Accommodation: Affordable Spacious Refurbished Room in Bushwick!, Charlotte
+
+Day 2:
+Current City: Charlotte
+Transportation: -
+Breakfast: Olive Tree Cafe, Charlotte
+Attraction: The Mint Museum, Charlotte;Romare Bearden Park, Charlotte.
+Lunch: Birbal Ji Dhaba, Charlotte
+Dinner: Pind Balluchi, Charlotte
+Accommodation: Affordable Spacious Refurbished Room in Bushwick!, Charlotte
+
+Day 3:
+Current City: from Charlotte to Ithaca
+Transportation: Flight Number: F3786167, from Charlotte to Ithaca, Departure Time: 21:42, Arrival Time: 23:26
+Breakfast: Subway, Charlotte
+Attraction: Books Monument, Charlotte.
+Lunch: Olive Tree Cafe, Charlotte
+Dinner: Kylin Skybar, Charlotte
+Accommodation: -
+
+***** Example Ends *****
+
+Please note that: You are a **Transportation Expert**. You will analyze the provided travel plan and suggest alternative transportation options for each leg of the journey based on the traveler's budget and preferences. You will consider the cost, duration, and convenience of each option. You will also suggest alternative transportation options for getting around within Myrtle Beach.
+Given information: [{'Description': 'Attractions in Myrtle Beach', 'Content': " Name Latitude Longitude Address Phone Website City\n SkyWheel Myrtle Beach 33.694026 -78.877372 1110 N Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 839-9200 http://skywheelmb.com/ Myrtle Beach\n WonderWorks Myrtle Beach 33.716820 -78.884306 1313 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 626-9962 http://www.wonderworksonline.com/myrtle-beach Myrtle Beach\n Family Kingdom Amusement Park 33.682392 -78.891932 300 S Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 626-3447 http://www.familykingdomfun.com/ Myrtle Beach\n Hollywood Wax Museum 33.717142 -78.891257 1808 21st Ave N unit a, Myrtle Beach, SC 29577, USA (843) 444-0091 https://www.hollywoodwaxentertainment.com/myrtle-beach-sc-attractions/ Myrtle Beach\n Ripley's Aquarium of Myrtle Beach 33.715737 -78.877941 1110 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 916-0888 https://www.ripleyaquariums.com/myrtlebeach/ Myrtle Beach\n Broadway at the Beach 33.715617 -78.881949 1325 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 444-3200 https://www.broadwayatthebeach.com/ Myrtle Beach\n Ripley's Believe It or Not! 33.692454 -78.879754 901 N Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 916-0888 http://www.ripleys.com/myrtlebeach Myrtle Beach\n Ripley's Haunted Adventure 33.693229 -78.878922 915 N Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 916-0888 https://www.ripleys.com/myrtlebeach/haunted-adventure/ Myrtle Beach\n Myrtle Beach Boardwalk and Promenade 33.693287 -78.877580 Myrtle Beach, Myrtle Beach Boardwalk and Promenade, Myrtle Beach, SC 29577, USA (843) 918-1000 http://www.myrtlebeachdowntown.com/ Myrtle Beach\n Soar + Explore 33.716660 -78.884005 1313 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 626-9962 http://www.wonderworksonline.com/myrtle-beach/the-experience/soar-explore/ Myrtle Beach\n Free Fall Thrill Park 33.694606 -78.877455 1201 N Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 444-8255 http://freefallpark.com/ Myrtle Beach\n Ripley's Mirror Maze 33.693229 -78.878922 913 N Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 916-0888 https://www.ripleys.com/myrtlebeach/ripleys-mirror-maze/ Myrtle Beach\n Myrtle Beach State Park 33.651198 -78.930625 4401 S Kings Hwy, Myrtle Beach, SC 29575, USA (843) 238-5325 https://southcarolinaparks.com/myrtle-beach Myrtle Beach\n Hannah's Maze of Mirrors 33.717275 -78.891301 1808 21st Ave N Unit C, Myrtle Beach, SC 29577, USA (843) 444-0091 https://www.hollywoodwaxentertainment.com/myrtle-beach-sc-attractions/ Myrtle Beach\nMyrtle Beach Safari (by reservation only) 33.695161 -78.969232 851 Folly Ranch Ln, Myrtle Beach, SC 29588, USA (843) 361-4552 https://docantlesdaysafari.com/ Myrtle Beach\n Dinopark 33.715499 -78.877514 1112 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 808-9619 http://www.dinoparkmb.com/ Myrtle Beach\n Backstage Mirror Maze 33.717882 -78.882896 1314 Celebrity Cir #165, Myrtle Beach, SC 29577, USA (843) 712-1794 http://www.backstagemirrormaze.com/ Myrtle Beach\n The Pavilion Parks 33.715617 -78.881949 1325 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 839-0303 https://pavilionparks.com/ Myrtle Beach\n Gardens By The Sea 33.725774 -78.838028 5506 N Ocean Blvd #5504, Myrtle Beach, SC 29577, USA Unknown Unknown Myrtle Beach\n Pavilion Park 33.692441 -78.881687 205 9th Ave N, Myrtle Beach, SC 29577, USA (843) 839-0303 https://pavilionparks.com/ Myrtle Beach"}, {'Description': 'Restaurants in Myrtle Beach', 'Content': " Name Average Cost Cuisines Aggregate Rating City\n Exotic India 81 Indian, BBQ, Fast Food 4.1 Myrtle Beach\n Catfish Charlie's 14 Tea, Chinese, Desserts 3.3 Myrtle Beach\n d' Curry House 33 Tea, Chinese, Desserts, Fast Food 3.6 Myrtle Beach\n Twigly 55 Tea, Bakery, Mediterranean, Seafood 4.6 Myrtle Beach\n First Eat 21 Tea, Mexican, Fast Food 4.0 Myrtle Beach\n Nagai 19 Desserts, Pizza, Mexican, Fast Food, American, Seafood 4.3 Myrtle Beach\n La Pino'z Pizza 14 Cafe, Seafood, Fast Food 3.5 Myrtle Beach\n Eat Street Express 100 Fast Food, Pizza, BBQ, Italian 4.0 Myrtle Beach\n Punjabi Tadka 73 Bakery, BBQ, Fast Food, Chinese, Seafood 2.8 Myrtle Beach\n Kedarnath Prem Chand Halwai 61 Desserts, Tea, Fast Food, American, Mediterranean, Seafood 3.7 Myrtle Beach\n The Night Owl 12 Desserts, Tea, American, Bakery, Indian, Seafood 0.0 Myrtle Beach\n Negi Restaurant 46 Tea, Bakery, Pizza, Seafood 0.0 Myrtle Beach\n Turning Point Fast Food 32 Pizza, Seafood 0.0 Myrtle Beach\n Cafe Coffee Day - The Lounge 71 Mexican, Bakery, Desserts, Seafood 2.6 Myrtle Beach\nTapas - Jaypee Vasant Continental 90 BBQ, Mediterranean, Seafood 3.2 Myrtle Beach\n Caravan Resto Bar 57 Desserts, Tea, BBQ, Mediterranean, Seafood 3.2 Myrtle Beach\n Bikaner Restaurant 96 BBQ, Fast Food 0.0 Myrtle Beach\n Rollacious 85 Desserts, French, Bakery, Indian, Seafood 0.0 Myrtle Beach\n Milan Shudh Vaishno 97 Tea, Bakery, Seafood 0.0 Myrtle Beach\n Admission Lounge 32 BBQ, Desserts, Italian 2.7 Myrtle Beach\n Allure 71 Desserts, Tea, BBQ, Indian, Mediterranean 2.8 Myrtle Beach\n Dimsum Vs Sushi 83 Tea, Desserts, American, BBQ 3.4 Myrtle Beach\n Rasoi - The Indian Zaika 88 Tea, American, BBQ 0.0 Myrtle Beach\n GBar - The Grand New Delhi 88 Desserts, Italian, Cafe, Indian, Seafood 3.3 Myrtle Beach\n Nizam's Kathi Kabab 32 Desserts, Cafe, Pizza, French, Chinese, Seafood 3.0 Myrtle Beach\n Dakshin Platter 56 Cafe, Bakery, Italian 0.0 Myrtle Beach\n Be Bhukkad 96 Tea, French, Bakery, BBQ 3.6 Myrtle Beach\n Bread &amp; Pasta 37 Tea, Desserts, Fast Food 0.0 Myrtle Beach"}, {'Description': 'Accommodations in Myrtle Beach', 'Content': " NAME price room type house_rules minimum nights maximum occupancy review rate number city\n Cozy Brooklyn Room - Next to Pratt Institute 418.0 Private room No smoking &amp; No children under 10 &amp; No pets 5.0 2 2.0 Myrtle Beach\n Greenwich Village Apartment 781.0 Entire home/apt No parties &amp; No pets 3.0 6 4.0 Myrtle Beach\n Studio with Private Terrace on Central Park West 453.0 Entire home/apt No smoking &amp; No visitors 30.0 4 2.0 Myrtle Beach\n Brooklyn Bliss 3 953.0 Private room No visitors 2.0 1 2.0 Myrtle Beach\n Bright, renovated apartment close to subway+city 1131.0 Entire home/apt No visitors 2.0 10 3.0 Myrtle Beach\n Spacious Private Room, lots of character &amp; light 1087.0 Private room No parties &amp; No pets 1.0 1 3.0 Myrtle Beach\n A WONDERFUL Place is Waiting 4U in Brooklyn !!! 160.0 Entire home/apt No visitors 3.0 2 3.0 Myrtle Beach\n Modern &amp; Spacious Apartment in Central Harlem 1059.0 Entire home/apt No pets 3.0 9 3.0 Myrtle Beach\n Adorable Prospect Heights 1 Bedroom 107.0 Entire home/apt No children under 10 31.0 2 3.0 Myrtle Beach\n ⭐️Walk + Transit Score 97⭐️8min to Yankee Std⭐️ 1130.0 Entire home/apt No pets &amp; No smoking 2.0 2 1.0 Myrtle Beach\n Williamsburg Domino Park Prime Location 2 bedroom 461.0 Entire home/apt No parties 7.0 4 5.0 Myrtle Beach\n Private Room in Fort Green BK close to city 631.0 Private room No pets &amp; No smoking 5.0 2 1.0 Myrtle Beach\n Grande chambre lumineuse à bushwick 468.0 Private room No visitors &amp; No children under 10 2.0 1 4.0 Myrtle Beach\n Bright &amp; Sunny FULLY FURNISHED Room 847.0 Private room No parties &amp; No pets 7.0 2 5.0 Myrtle Beach\n Yellow submarine 179.0 Private room No pets &amp; No visitors &amp; No children under 10 2.0 2 5.0 Myrtle Beach\n Location Angel Boy 198.0 Private room No children under 10 31.0 1 1.0 Myrtle Beach\n Fabulous bedroom in the heart of BK 530.0 Private room No children under 10 1.0 1 5.0 Myrtle Beach\nAdorable Polly Pocket-Sized Prospect Heights Space 397.0 Entire home/apt No children under 10 &amp; No smoking 2.0 3 5.0 Myrtle Beach\n Great Space in Williamsburg's Heart 736.0 Private room No smoking &amp; No pets &amp; No children under 10 1.0 2 4.0 Myrtle Beach"}, {'Description': 'Flight from Washington to Myrtle Beach on 2022-03-13', 'Content': 'Flight Number Price DepTime ArrTime ActualElapsedTime FlightDate OriginCityName DestCityName Distance\n F3792603 164 09:19 10:59 1 hours 40 minutes 2022-03-13 Washington Myrtle Beach 372.0\n F3927581 89 11:03 13:31 2 hours 28 minutes 2022-03-13 Washington Myrtle Beach 372.0'}, {'Description': 'Self-driving from Washington to Myrtle Beach', 'Content': 'self-driving, from Washington to Myrtle Beach, duration: 6 hours 47 mins, distance: 693 km, cost: 34'}, {'Description': 'Taxi from Washington to Myrtle Beach', 'Content': 'taxi, from Washington to Myrtle Beach, duration: 6 hours 47 mins, distance: 693 km, cost: 693'}, {'Description': 'Flight from Myrtle Beach to Washington on 2022-03-15', 'Content': 'Flight Number Price DepTime ArrTime ActualElapsedTime FlightDate OriginCityName DestCityName Distance\n F3791200 87 11:36 13:06 1 hours 30 minutes 2022-03-15 Myrtle Beach Washington 372.0\n F3926434 111 13:45 15:02 1 hours 17 minutes 2022-03-15 Myrtle Beach Washington 372.0'}, {'Description': 'Self-driving from Myrtle Beach to Washington', 'Content': 'self-driving, from Myrtle Beach to Washington, duration: 6 hours 45 mins, distance: 693 km, cost: 34'}, {'Description': 'Taxi from Myrtle Beach to Washington', 'Content': 'taxi, from Myrtle Beach to Washington, duration: 6 hours 45 mins, distance: 693 km, cost: 693'}]
+Query: Please create a travel plan for me where I'll be departing from Washington and heading to Myrtle Beach for a 3-day trip from March 13th to March 15th, 2022. Can you help me keep this journey within a budget of $1,400?
+Travel Plan:
+</pre></details>
+</div>
+</div>
+<div id="a28cdbad-f3dd-4d0a-828c-33b72c63c184" class="cell" data-scrolled="true" data-execution_count="133">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(sub_answer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Travel Plan:
+Day 1:
+Current City: from Washington to Myrtle Beach
+Transportation: Flight Number: F3927581, from Washington to Myrtle Beach, Departure Time: 11:03, Arrival Time: 13:31
+Breakfast: -
+Attraction: -
+Lunch: -
+Dinner: -
+Accommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach
+
+Day 2:
+Current City: Myrtle Beach
+Transportation: -
+Breakfast: Twigly, Myrtle Beach
+Attraction: Ripley's Aquarium of Myrtle Beach, Myrtle Beach; Broadway at the Beach, Myrtle Beach.
+Lunch: Eat Street Express, Myrtle Beach
+Dinner: Exotic India, Myrtle Beach
+Accommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach
+
+Day 3:
+Current City: from Myrtle Beach to Washington
+Transportation: Flight Number: F3791200, from Myrtle Beach to Washington, Departure Time: 11:36, Arrival Time: 13:06
+Breakfast: -
+Attraction: Myrtle Beach State Park, Myrtle Beach.
+Lunch: -
+Dinner: -
+Accommodation: -</code></pre>
+</div>
+</div>
+</section>
+<section id="refine-planner" class="level2">
+<h2 class="anchored" data-anchor-id="refine-planner">refine planner</h2>
+<div id="80a1f53e-2c3f-491e-ab39-75b18ce0ef1d" class="cell" data-scrolled="true" data-execution_count="134">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>new_planner_results <span class="op">=</span> refine_planner.run(reference_information, query, planner_results, description, sub_answer)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>utils.display_html(refine_planner.last_prompt, <span class="st">'Show refine planner prompt'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<details><summary>Show refine planner prompt</summary><pre>You are a proficient planner. Based on the provided information and query, please give me a detailed plan, including specifics such as flight numbers (e.g., F0123456), restaurant names, and accommodation names. Note that all the information in your plan should be derived from the provided data. You must adhere to the format given in the example. Additionally, all details should align with commonsense. The symbol '-' indicates that information is unnecessary. For example, in the provided sample, you do not need to plan after returning to the departure city. When you travel to two cities in one day, you should note it in the 'Current City' section as in the example (i.e., from A to B).
+
+***** Example *****
+Query: Could you create a travel plan for 7 people from Ithaca to Charlotte spanning 3 days, from March 8th to March 14th, 2022, with a budget of $30,200?
+Travel Plan:
+Day 1:
+Current City: from Ithaca to Charlotte
+Transportation: Flight Number: F3633413, from Ithaca to Charlotte, Departure Time: 05:38, Arrival Time: 07:46
+Breakfast: Nagaland's Kitchen, Charlotte
+Attraction: The Charlotte Museum of History, Charlotte
+Lunch: Cafe Maple Street, Charlotte
+Dinner: Bombay Vada Pav, Charlotte
+Accommodation: Affordable Spacious Refurbished Room in Bushwick!, Charlotte
+
+Day 2:
+Current City: Charlotte
+Transportation: -
+Breakfast: Olive Tree Cafe, Charlotte
+Attraction: The Mint Museum, Charlotte;Romare Bearden Park, Charlotte.
+Lunch: Birbal Ji Dhaba, Charlotte
+Dinner: Pind Balluchi, Charlotte
+Accommodation: Affordable Spacious Refurbished Room in Bushwick!, Charlotte
+
+Day 3:
+Current City: from Charlotte to Ithaca
+Transportation: Flight Number: F3786167, from Charlotte to Ithaca, Departure Time: 21:42, Arrival Time: 23:26
+Breakfast: Subway, Charlotte
+Attraction: Books Monument, Charlotte.
+Lunch: Olive Tree Cafe, Charlotte
+Dinner: Kylin Skybar, Charlotte
+Accommodation: -
+
+***** Example Ends *****
+
+Given information: [{'Description': 'Attractions in Myrtle Beach', 'Content': " Name Latitude Longitude Address Phone Website City\n SkyWheel Myrtle Beach 33.694026 -78.877372 1110 N Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 839-9200 http://skywheelmb.com/ Myrtle Beach\n WonderWorks Myrtle Beach 33.716820 -78.884306 1313 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 626-9962 http://www.wonderworksonline.com/myrtle-beach Myrtle Beach\n Family Kingdom Amusement Park 33.682392 -78.891932 300 S Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 626-3447 http://www.familykingdomfun.com/ Myrtle Beach\n Hollywood Wax Museum 33.717142 -78.891257 1808 21st Ave N unit a, Myrtle Beach, SC 29577, USA (843) 444-0091 https://www.hollywoodwaxentertainment.com/myrtle-beach-sc-attractions/ Myrtle Beach\n Ripley's Aquarium of Myrtle Beach 33.715737 -78.877941 1110 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 916-0888 https://www.ripleyaquariums.com/myrtlebeach/ Myrtle Beach\n Broadway at the Beach 33.715617 -78.881949 1325 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 444-3200 https://www.broadwayatthebeach.com/ Myrtle Beach\n Ripley's Believe It or Not! 33.692454 -78.879754 901 N Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 916-0888 http://www.ripleys.com/myrtlebeach Myrtle Beach\n Ripley's Haunted Adventure 33.693229 -78.878922 915 N Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 916-0888 https://www.ripleys.com/myrtlebeach/haunted-adventure/ Myrtle Beach\n Myrtle Beach Boardwalk and Promenade 33.693287 -78.877580 Myrtle Beach, Myrtle Beach Boardwalk and Promenade, Myrtle Beach, SC 29577, USA (843) 918-1000 http://www.myrtlebeachdowntown.com/ Myrtle Beach\n Soar + Explore 33.716660 -78.884005 1313 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 626-9962 http://www.wonderworksonline.com/myrtle-beach/the-experience/soar-explore/ Myrtle Beach\n Free Fall Thrill Park 33.694606 -78.877455 1201 N Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 444-8255 http://freefallpark.com/ Myrtle Beach\n Ripley's Mirror Maze 33.693229 -78.878922 913 N Ocean Blvd, Myrtle Beach, SC 29577, USA (843) 916-0888 https://www.ripleys.com/myrtlebeach/ripleys-mirror-maze/ Myrtle Beach\n Myrtle Beach State Park 33.651198 -78.930625 4401 S Kings Hwy, Myrtle Beach, SC 29575, USA (843) 238-5325 https://southcarolinaparks.com/myrtle-beach Myrtle Beach\n Hannah's Maze of Mirrors 33.717275 -78.891301 1808 21st Ave N Unit C, Myrtle Beach, SC 29577, USA (843) 444-0091 https://www.hollywoodwaxentertainment.com/myrtle-beach-sc-attractions/ Myrtle Beach\nMyrtle Beach Safari (by reservation only) 33.695161 -78.969232 851 Folly Ranch Ln, Myrtle Beach, SC 29588, USA (843) 361-4552 https://docantlesdaysafari.com/ Myrtle Beach\n Dinopark 33.715499 -78.877514 1112 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 808-9619 http://www.dinoparkmb.com/ Myrtle Beach\n Backstage Mirror Maze 33.717882 -78.882896 1314 Celebrity Cir #165, Myrtle Beach, SC 29577, USA (843) 712-1794 http://www.backstagemirrormaze.com/ Myrtle Beach\n The Pavilion Parks 33.715617 -78.881949 1325 Celebrity Cir, Myrtle Beach, SC 29577, USA (843) 839-0303 https://pavilionparks.com/ Myrtle Beach\n Gardens By The Sea 33.725774 -78.838028 5506 N Ocean Blvd #5504, Myrtle Beach, SC 29577, USA Unknown Unknown Myrtle Beach\n Pavilion Park 33.692441 -78.881687 205 9th Ave N, Myrtle Beach, SC 29577, USA (843) 839-0303 https://pavilionparks.com/ Myrtle Beach"}, {'Description': 'Restaurants in Myrtle Beach', 'Content': " Name Average Cost Cuisines Aggregate Rating City\n Exotic India 81 Indian, BBQ, Fast Food 4.1 Myrtle Beach\n Catfish Charlie's 14 Tea, Chinese, Desserts 3.3 Myrtle Beach\n d' Curry House 33 Tea, Chinese, Desserts, Fast Food 3.6 Myrtle Beach\n Twigly 55 Tea, Bakery, Mediterranean, Seafood 4.6 Myrtle Beach\n First Eat 21 Tea, Mexican, Fast Food 4.0 Myrtle Beach\n Nagai 19 Desserts, Pizza, Mexican, Fast Food, American, Seafood 4.3 Myrtle Beach\n La Pino'z Pizza 14 Cafe, Seafood, Fast Food 3.5 Myrtle Beach\n Eat Street Express 100 Fast Food, Pizza, BBQ, Italian 4.0 Myrtle Beach\n Punjabi Tadka 73 Bakery, BBQ, Fast Food, Chinese, Seafood 2.8 Myrtle Beach\n Kedarnath Prem Chand Halwai 61 Desserts, Tea, Fast Food, American, Mediterranean, Seafood 3.7 Myrtle Beach\n The Night Owl 12 Desserts, Tea, American, Bakery, Indian, Seafood 0.0 Myrtle Beach\n Negi Restaurant 46 Tea, Bakery, Pizza, Seafood 0.0 Myrtle Beach\n Turning Point Fast Food 32 Pizza, Seafood 0.0 Myrtle Beach\n Cafe Coffee Day - The Lounge 71 Mexican, Bakery, Desserts, Seafood 2.6 Myrtle Beach\nTapas - Jaypee Vasant Continental 90 BBQ, Mediterranean, Seafood 3.2 Myrtle Beach\n Caravan Resto Bar 57 Desserts, Tea, BBQ, Mediterranean, Seafood 3.2 Myrtle Beach\n Bikaner Restaurant 96 BBQ, Fast Food 0.0 Myrtle Beach\n Rollacious 85 Desserts, French, Bakery, Indian, Seafood 0.0 Myrtle Beach\n Milan Shudh Vaishno 97 Tea, Bakery, Seafood 0.0 Myrtle Beach\n Admission Lounge 32 BBQ, Desserts, Italian 2.7 Myrtle Beach\n Allure 71 Desserts, Tea, BBQ, Indian, Mediterranean 2.8 Myrtle Beach\n Dimsum Vs Sushi 83 Tea, Desserts, American, BBQ 3.4 Myrtle Beach\n Rasoi - The Indian Zaika 88 Tea, American, BBQ 0.0 Myrtle Beach\n GBar - The Grand New Delhi 88 Desserts, Italian, Cafe, Indian, Seafood 3.3 Myrtle Beach\n Nizam's Kathi Kabab 32 Desserts, Cafe, Pizza, French, Chinese, Seafood 3.0 Myrtle Beach\n Dakshin Platter 56 Cafe, Bakery, Italian 0.0 Myrtle Beach\n Be Bhukkad 96 Tea, French, Bakery, BBQ 3.6 Myrtle Beach\n Bread &amp; Pasta 37 Tea, Desserts, Fast Food 0.0 Myrtle Beach"}, {'Description': 'Accommodations in Myrtle Beach', 'Content': " NAME price room type house_rules minimum nights maximum occupancy review rate number city\n Cozy Brooklyn Room - Next to Pratt Institute 418.0 Private room No smoking &amp; No children under 10 &amp; No pets 5.0 2 2.0 Myrtle Beach\n Greenwich Village Apartment 781.0 Entire home/apt No parties &amp; No pets 3.0 6 4.0 Myrtle Beach\n Studio with Private Terrace on Central Park West 453.0 Entire home/apt No smoking &amp; No visitors 30.0 4 2.0 Myrtle Beach\n Brooklyn Bliss 3 953.0 Private room No visitors 2.0 1 2.0 Myrtle Beach\n Bright, renovated apartment close to subway+city 1131.0 Entire home/apt No visitors 2.0 10 3.0 Myrtle Beach\n Spacious Private Room, lots of character &amp; light 1087.0 Private room No parties &amp; No pets 1.0 1 3.0 Myrtle Beach\n A WONDERFUL Place is Waiting 4U in Brooklyn !!! 160.0 Entire home/apt No visitors 3.0 2 3.0 Myrtle Beach\n Modern &amp; Spacious Apartment in Central Harlem 1059.0 Entire home/apt No pets 3.0 9 3.0 Myrtle Beach\n Adorable Prospect Heights 1 Bedroom 107.0 Entire home/apt No children under 10 31.0 2 3.0 Myrtle Beach\n ⭐️Walk + Transit Score 97⭐️8min to Yankee Std⭐️ 1130.0 Entire home/apt No pets &amp; No smoking 2.0 2 1.0 Myrtle Beach\n Williamsburg Domino Park Prime Location 2 bedroom 461.0 Entire home/apt No parties 7.0 4 5.0 Myrtle Beach\n Private Room in Fort Green BK close to city 631.0 Private room No pets &amp; No smoking 5.0 2 1.0 Myrtle Beach\n Grande chambre lumineuse à bushwick 468.0 Private room No visitors &amp; No children under 10 2.0 1 4.0 Myrtle Beach\n Bright &amp; Sunny FULLY FURNISHED Room 847.0 Private room No parties &amp; No pets 7.0 2 5.0 Myrtle Beach\n Yellow submarine 179.0 Private room No pets &amp; No visitors &amp; No children under 10 2.0 2 5.0 Myrtle Beach\n Location Angel Boy 198.0 Private room No children under 10 31.0 1 1.0 Myrtle Beach\n Fabulous bedroom in the heart of BK 530.0 Private room No children under 10 1.0 1 5.0 Myrtle Beach\nAdorable Polly Pocket-Sized Prospect Heights Space 397.0 Entire home/apt No children under 10 &amp; No smoking 2.0 3 5.0 Myrtle Beach\n Great Space in Williamsburg's Heart 736.0 Private room No smoking &amp; No pets &amp; No children under 10 1.0 2 4.0 Myrtle Beach"}, {'Description': 'Flight from Washington to Myrtle Beach on 2022-03-13', 'Content': 'Flight Number Price DepTime ArrTime ActualElapsedTime FlightDate OriginCityName DestCityName Distance\n F3792603 164 09:19 10:59 1 hours 40 minutes 2022-03-13 Washington Myrtle Beach 372.0\n F3927581 89 11:03 13:31 2 hours 28 minutes 2022-03-13 Washington Myrtle Beach 372.0'}, {'Description': 'Self-driving from Washington to Myrtle Beach', 'Content': 'self-driving, from Washington to Myrtle Beach, duration: 6 hours 47 mins, distance: 693 km, cost: 34'}, {'Description': 'Taxi from Washington to Myrtle Beach', 'Content': 'taxi, from Washington to Myrtle Beach, duration: 6 hours 47 mins, distance: 693 km, cost: 693'}, {'Description': 'Flight from Myrtle Beach to Washington on 2022-03-15', 'Content': 'Flight Number Price DepTime ArrTime ActualElapsedTime FlightDate OriginCityName DestCityName Distance\n F3791200 87 11:36 13:06 1 hours 30 minutes 2022-03-15 Myrtle Beach Washington 372.0\n F3926434 111 13:45 15:02 1 hours 17 minutes 2022-03-15 Myrtle Beach Washington 372.0'}, {'Description': 'Self-driving from Myrtle Beach to Washington', 'Content': 'self-driving, from Myrtle Beach to Washington, duration: 6 hours 45 mins, distance: 693 km, cost: 34'}, {'Description': 'Taxi from Myrtle Beach to Washington', 'Content': 'taxi, from Myrtle Beach to Washington, duration: 6 hours 45 mins, distance: 693 km, cost: 693'}]
+Query: Please create a travel plan for me where I'll be departing from Washington and heading to Myrtle Beach for a 3-day trip from March 13th to March 15th, 2022. Can you help me keep this journey within a budget of $1,400?
+
+This is your answer:
+Travel Plan: Refined Travel Plan: 
+Day 1:
+Current City: from Washington to Myrtle Beach
+Transportation: Flight Number: F3792603, from Washington to Myrtle Beach, Departure Time: 09:19, Arrival Time: 10:59
+Breakfast: -
+Attraction: -
+Lunch: -
+Dinner: Exotic India, Myrtle Beach
+Accommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach
+
+Day 2:
+Current City: Myrtle Beach
+Transportation: -
+Breakfast: Twigly, Myrtle Beach
+Attraction: SkyWheel Myrtle Beach, Myrtle Beach;WonderWorks Myrtle Beach, Myrtle Beach.
+Lunch: Eat Street Express, Myrtle Beach
+Dinner: d' Curry House, Myrtle Beach
+Accommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach
+
+Day 3:
+Current City: from Myrtle Beach to Washington
+Transportation: Flight Number: F3791200, from Myrtle Beach to Washington, Departure Time: 11:36, Arrival Time: 13:06
+Breakfast: First Eat, Myrtle Beach
+Attraction: Family Kingdom Amusement Park, Myrtle Beach.
+Lunch: -
+Dinner: -
+Accommodation: -..
+
+Furthermore, you also invite an expert whose description is: "You are a **Transportation Expert**. You will analyze the provided travel plan and suggest alternative transportation options for each leg of the journey based on the traveler's budget and preferences. You will consider the cost, duration, and convenience of each option. You will also suggest alternative transportation options for getting around within Myrtle Beach."
+This expert also give an answer based on his own professional knowledge: Travel Plan:
+Day 1:
+Current City: from Washington to Myrtle Beach
+Transportation: Flight Number: F3927581, from Washington to Myrtle Beach, Departure Time: 11:03, Arrival Time: 13:31
+Breakfast: -
+Attraction: -
+Lunch: -
+Dinner: -
+Accommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach
+
+Day 2:
+Current City: Myrtle Beach
+Transportation: -
+Breakfast: Twigly, Myrtle Beach
+Attraction: Ripley's Aquarium of Myrtle Beach, Myrtle Beach; Broadway at the Beach, Myrtle Beach.
+Lunch: Eat Street Express, Myrtle Beach
+Dinner: Exotic India, Myrtle Beach
+Accommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach
+
+Day 3:
+Current City: from Myrtle Beach to Washington
+Transportation: Flight Number: F3791200, from Myrtle Beach to Washington, Departure Time: 11:36, Arrival Time: 13:06
+Breakfast: -
+Attraction: Myrtle Beach State Park, Myrtle Beach.
+Lunch: -
+Dinner: -
+Accommodation: -.
+
+Now you can refine your answer with this his answer to better meet the query. Note that all the information in your plan should be derived from the provided data. You must adhere to the format given in the example.
+Refined Travel Plan: 
+</pre></details>
+</div>
+</div>
+<div id="1b3d6e97-f632-4d0d-888a-d16ac5444f10" class="cell" data-scrolled="true" data-execution_count="135">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(new_planner_results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Refined Travel Plan: 
+Day 1:
+Current City: from Washington to Myrtle Beach
+Transportation: Flight Number: F3927581, from Washington to Myrtle Beach, Departure Time: 11:03, Arrival Time: 13:31
+Breakfast: -
+Attraction: -
+Lunch: -
+Dinner: -
+Accommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach
+
+Day 2:
+Current City: Myrtle Beach
+Transportation: -
+Breakfast: Twigly, Myrtle Beach
+Attraction: Ripley's Aquarium of Myrtle Beach, Myrtle Beach; Broadway at the Beach, Myrtle Beach.
+Lunch: Eat Street Express, Myrtle Beach
+Dinner: Exotic India, Myrtle Beach
+Accommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach
+
+Day 3:
+Current City: from Myrtle Beach to Washington
+Transportation: Flight Number: F3791200, from Myrtle Beach to Washington, Departure Time: 11:36, Arrival Time: 13:06
+Breakfast: -
+Attraction: Myrtle Beach State Park, Myrtle Beach.
+Lunch: -
+Dinner: -
+Accommodation: -</code></pre>
+</div>
+</div>
+<div id="29efcf8d-ae94-41cb-a507-f03691b5278b" class="cell" data-scrolled="true" data-execution_count="136">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(new_planner_results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Refined Travel Plan: 
+Day 1:
+Current City: from Washington to Myrtle Beach
+Transportation: Flight Number: F3927581, from Washington to Myrtle Beach, Departure Time: 11:03, Arrival Time: 13:31
+Breakfast: -
+Attraction: -
+Lunch: -
+Dinner: -
+Accommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach
+
+Day 2:
+Current City: Myrtle Beach
+Transportation: -
+Breakfast: Twigly, Myrtle Beach
+Attraction: Ripley's Aquarium of Myrtle Beach, Myrtle Beach; Broadway at the Beach, Myrtle Beach.
+Lunch: Eat Street Express, Myrtle Beach
+Dinner: Exotic India, Myrtle Beach
+Accommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach
+
+Day 3:
+Current City: from Myrtle Beach to Washington
+Transportation: Flight Number: F3791200, from Myrtle Beach to Washington, Departure Time: 11:36, Arrival Time: 13:06
+Breakfast: -
+Attraction: Myrtle Beach State Park, Myrtle Beach.
+Lunch: -
+Dinner: -
+Accommodation: -</code></pre>
+</div>
+</div>
+<div id="4c53a94b-2e40-4663-a1f1-a6f31ee54f72" class="cell" data-execution_count="137">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>planner_list.append({</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>            <span class="st">"time"</span>: i,</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>            <span class="st">"planner_results"</span>: planner_results,</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>            <span class="st">"description"</span>: description,</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>            <span class="st">"sub_answer"</span>: sub_answer,</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>            <span class="st">"new_planner_results"</span>: new_planner_results</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>        })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="83e8469d-ef1e-4933-8403-63dbe6f5c18b" class="cell" data-scrolled="true" data-execution_count="138">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>planner_list</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="138">
+<pre><code>[{'time': 0,
+  'planner_results': "Travel Plan:\nDay 1:\nCurrent City: from Washington to Myrtle Beach\nTransportation: Flight Number: F3792603, from Washington to Myrtle Beach, Departure Time: 09:19, Arrival Time: 10:59\nBreakfast: -\nAttraction: -\nLunch: -\nDinner: -\nAccommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach\n\nDay 2:\nCurrent City: Myrtle Beach\nTransportation: -\nBreakfast: Twigly, Myrtle Beach\nAttraction: SkyWheel Myrtle Beach, Myrtle Beach;WonderWorks Myrtle Beach, Myrtle Beach.\nLunch: Eat Street Express, Myrtle Beach\nDinner: Exotic India, Myrtle Beach\nAccommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach\n\nDay 3:\nCurrent City: from Myrtle Beach to Washington\nTransportation: Flight Number: F3791200, from Myrtle Beach to Washington, Departure Time: 11:36, Arrival Time: 13:06\nBreakfast: -\nAttraction: Ripley's Aquarium of Myrtle Beach, Myrtle Beach.\nLunch: -\nDinner: -\nAccommodation: -",
+  'description': 'You are a **Budget Analyst**. You will analyze the provided travel plan and ensure that the total cost of the trip stays within the specified budget of $1,400. You will consider the cost of flights, accommodation, meals, and attractions. You will also suggest alternative options for each category if necessary to stay within the budget.',
+  'sub_answer': "Travel Plan:\nDay 1:\nCurrent City: from Washington to Myrtle Beach\nTransportation: Flight Number: F3927581, from Washington to Myrtle Beach, Departure Time: 11:03, Arrival Time: 13:31\nBreakfast: -\nAttraction: -\nLunch: -\nDinner: Exotic India, Myrtle Beach\nAccommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach\n\nDay 2:\nCurrent City: Myrtle Beach\nTransportation: -\nBreakfast: Twigly, Myrtle Beach\nAttraction: Ripley's Aquarium of Myrtle Beach, Myrtle Beach\nLunch: Eat Street Express, Myrtle Beach\nDinner: Nagai, Myrtle Beach\nAccommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach\n\nDay 3:\nCurrent City: from Myrtle Beach to Washington\nTransportation: Flight Number: F3791200, from Myrtle Beach to Washington, Departure Time: 11:36, Arrival Time: 13:06\nBreakfast: Cafe Coffee Day - The Lounge, Myrtle Beach\nAttraction: Myrtle Beach Boardwalk and Promenade, Myrtle Beach\nLunch: -\nDinner: -\nAccommodation: -",
+  'new_planner_results': "Refined Travel Plan: \nDay 1:\nCurrent City: from Washington to Myrtle Beach\nTransportation: Flight Number: F3927581, from Washington to Myrtle Beach, Departure Time: 11:03, Arrival Time: 13:31\nBreakfast: -\nAttraction: -\nLunch: -\nDinner: Exotic India, Myrtle Beach\nAccommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach\n\nDay 2:\nCurrent City: Myrtle Beach\nTransportation: -\nBreakfast: Twigly, Myrtle Beach\nAttraction: Ripley's Aquarium of Myrtle Beach, Myrtle Beach\nLunch: Eat Street Express, Myrtle Beach\nDinner: Nagai, Myrtle Beach\nAccommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach\n\nDay 3:\nCurrent City: from Myrtle Beach to Washington\nTransportation: Flight Number: F3791200, from Myrtle Beach to Washington, Departure Time: 11:36, Arrival Time: 13:06\nBreakfast: Cafe Coffee Day - The Lounge, Myrtle Beach\nAttraction: Myrtle Beach Boardwalk and Promenade, Myrtle Beach\nLunch: -\nDinner: -\nAccommodation: -"},
+ {'time': 1,
+  'planner_results': "Refined Travel Plan: \nDay 1:\nCurrent City: from Washington to Myrtle Beach\nTransportation: Flight Number: F3927581, from Washington to Myrtle Beach, Departure Time: 11:03, Arrival Time: 13:31\nBreakfast: -\nAttraction: -\nLunch: -\nDinner: Exotic India, Myrtle Beach\nAccommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach\n\nDay 2:\nCurrent City: Myrtle Beach\nTransportation: -\nBreakfast: Twigly, Myrtle Beach\nAttraction: Ripley's Aquarium of Myrtle Beach, Myrtle Beach\nLunch: Eat Street Express, Myrtle Beach\nDinner: Nagai, Myrtle Beach\nAccommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach\n\nDay 3:\nCurrent City: from Myrtle Beach to Washington\nTransportation: Flight Number: F3791200, from Myrtle Beach to Washington, Departure Time: 11:36, Arrival Time: 13:06\nBreakfast: Cafe Coffee Day - The Lounge, Myrtle Beach\nAttraction: Myrtle Beach Boardwalk and Promenade, Myrtle Beach\nLunch: -\nDinner: -\nAccommodation: -",
+  'description': "You are a **Restaurant Expert**. You will analyze the provided travel plan and suggest alternative restaurants for each meal based on the traveler's preferences and budget. You will consider the cuisine, average cost, and aggregate rating of each restaurant. You will also suggest restaurants that are located near the attractions or accommodation listed in the plan.",
+  'sub_answer': "Travel Plan:\nDay 1:\nCurrent City: from Washington to Myrtle Beach\nTransportation: Flight Number: F3792603, from Washington to Myrtle Beach, Departure Time: 09:19, Arrival Time: 10:59\nBreakfast: -\nAttraction: -\nLunch: -\nDinner: Exotic India, Myrtle Beach\nAccommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach\n\nDay 2:\nCurrent City: Myrtle Beach\nTransportation: -\nBreakfast: Twigly, Myrtle Beach\nAttraction: SkyWheel Myrtle Beach, Myrtle Beach;WonderWorks Myrtle Beach, Myrtle Beach.\nLunch: Eat Street Express, Myrtle Beach\nDinner: d' Curry House, Myrtle Beach\nAccommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach\n\nDay 3:\nCurrent City: from Myrtle Beach to Washington\nTransportation: Flight Number: F3791200, from Myrtle Beach to Washington, Departure Time: 11:36, Arrival Time: 13:06\nBreakfast: First Eat, Myrtle Beach\nAttraction: Family Kingdom Amusement Park, Myrtle Beach.\nLunch: -\nDinner: -\nAccommodation: -",
+  'new_planner_results': "Refined Travel Plan: \nDay 1:\nCurrent City: from Washington to Myrtle Beach\nTransportation: Flight Number: F3792603, from Washington to Myrtle Beach, Departure Time: 09:19, Arrival Time: 10:59\nBreakfast: -\nAttraction: -\nLunch: -\nDinner: Exotic India, Myrtle Beach\nAccommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach\n\nDay 2:\nCurrent City: Myrtle Beach\nTransportation: -\nBreakfast: Twigly, Myrtle Beach\nAttraction: SkyWheel Myrtle Beach, Myrtle Beach;WonderWorks Myrtle Beach, Myrtle Beach.\nLunch: Eat Street Express, Myrtle Beach\nDinner: d' Curry House, Myrtle Beach\nAccommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach\n\nDay 3:\nCurrent City: from Myrtle Beach to Washington\nTransportation: Flight Number: F3791200, from Myrtle Beach to Washington, Departure Time: 11:36, Arrival Time: 13:06\nBreakfast: First Eat, Myrtle Beach\nAttraction: Family Kingdom Amusement Park, Myrtle Beach.\nLunch: -\nDinner: -\nAccommodation: -."},
+ {'time': 2,
+  'planner_results': "Refined Travel Plan: \nDay 1:\nCurrent City: from Washington to Myrtle Beach\nTransportation: Flight Number: F3792603, from Washington to Myrtle Beach, Departure Time: 09:19, Arrival Time: 10:59\nBreakfast: -\nAttraction: -\nLunch: -\nDinner: Exotic India, Myrtle Beach\nAccommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach\n\nDay 2:\nCurrent City: Myrtle Beach\nTransportation: -\nBreakfast: Twigly, Myrtle Beach\nAttraction: SkyWheel Myrtle Beach, Myrtle Beach;WonderWorks Myrtle Beach, Myrtle Beach.\nLunch: Eat Street Express, Myrtle Beach\nDinner: d' Curry House, Myrtle Beach\nAccommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach\n\nDay 3:\nCurrent City: from Myrtle Beach to Washington\nTransportation: Flight Number: F3791200, from Myrtle Beach to Washington, Departure Time: 11:36, Arrival Time: 13:06\nBreakfast: First Eat, Myrtle Beach\nAttraction: Family Kingdom Amusement Park, Myrtle Beach.\nLunch: -\nDinner: -\nAccommodation: -.",
+  'description': "You are a **Transportation Expert**. You will analyze the provided travel plan and suggest alternative transportation options for each leg of the journey based on the traveler's budget and preferences. You will consider the cost, duration, and convenience of each option. You will also suggest alternative transportation options for getting around within Myrtle Beach.",
+  'sub_answer': "Travel Plan:\nDay 1:\nCurrent City: from Washington to Myrtle Beach\nTransportation: Flight Number: F3927581, from Washington to Myrtle Beach, Departure Time: 11:03, Arrival Time: 13:31\nBreakfast: -\nAttraction: -\nLunch: -\nDinner: -\nAccommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach\n\nDay 2:\nCurrent City: Myrtle Beach\nTransportation: -\nBreakfast: Twigly, Myrtle Beach\nAttraction: Ripley's Aquarium of Myrtle Beach, Myrtle Beach; Broadway at the Beach, Myrtle Beach.\nLunch: Eat Street Express, Myrtle Beach\nDinner: Exotic India, Myrtle Beach\nAccommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach\n\nDay 3:\nCurrent City: from Myrtle Beach to Washington\nTransportation: Flight Number: F3791200, from Myrtle Beach to Washington, Departure Time: 11:36, Arrival Time: 13:06\nBreakfast: -\nAttraction: Myrtle Beach State Park, Myrtle Beach.\nLunch: -\nDinner: -\nAccommodation: -",
+  'new_planner_results': "Refined Travel Plan: \nDay 1:\nCurrent City: from Washington to Myrtle Beach\nTransportation: Flight Number: F3927581, from Washington to Myrtle Beach, Departure Time: 11:03, Arrival Time: 13:31\nBreakfast: -\nAttraction: -\nLunch: -\nDinner: -\nAccommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach\n\nDay 2:\nCurrent City: Myrtle Beach\nTransportation: -\nBreakfast: Twigly, Myrtle Beach\nAttraction: Ripley's Aquarium of Myrtle Beach, Myrtle Beach; Broadway at the Beach, Myrtle Beach.\nLunch: Eat Street Express, Myrtle Beach\nDinner: Exotic India, Myrtle Beach\nAccommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach\n\nDay 3:\nCurrent City: from Myrtle Beach to Washington\nTransportation: Flight Number: F3791200, from Myrtle Beach to Washington, Departure Time: 11:36, Arrival Time: 13:06\nBreakfast: -\nAttraction: Myrtle Beach State Park, Myrtle Beach.\nLunch: -\nDinner: -\nAccommodation: -"}]</code></pre>
+</div>
+</div>
+<div id="b7783be3-e8f4-404a-a796-0990f153b9ea" class="cell" data-execution_count="139">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>planner_results <span class="op">=</span> new_planner_results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="9f1bdc25-b484-4c1a-af6f-185ecda507c3" class="cell" data-execution_count="140">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> i <span class="op">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="4c6687e9-bc36-45be-b06b-7f5f54cfd63a" class="cell" data-execution_count="141">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>i</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="141">
+<pre><code>3</code></pre>
+</div>
+</div>
+<div id="3189e3d1-ab92-421e-9f75-f381f667847e" class="cell" data-execution_count="159">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(planner_results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Refined Travel Plan: 
+Day 1:
+Current City: from Washington to Myrtle Beach
+Transportation: Flight Number: F3927581, from Washington to Myrtle Beach, Departure Time: 11:03, Arrival Time: 13:31
+Breakfast: -
+Attraction: -
+Lunch: -
+Dinner: -
+Accommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach
+
+Day 2:
+Current City: Myrtle Beach
+Transportation: -
+Breakfast: Twigly, Myrtle Beach
+Attraction: Ripley's Aquarium of Myrtle Beach, Myrtle Beach; Broadway at the Beach, Myrtle Beach.
+Lunch: Eat Street Express, Myrtle Beach
+Dinner: Exotic India, Myrtle Beach
+Accommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach
+
+Day 3:
+Current City: from Myrtle Beach to Washington
+Transportation: Flight Number: F3791200, from Myrtle Beach to Washington, Departure Time: 11:36, Arrival Time: 13:06
+Breakfast: -
+Attraction: Myrtle Beach State Park, Myrtle Beach.
+Lunch: -
+Dinner: -
+Accommodation: -</code></pre>
+</div>
+</div>
+</section>
+<section id="check-planner-list" class="level2">
+<h2 class="anchored" data-anchor-id="check-planner-list">Check planner list</h2>
+<div id="576b0c91-1b80-42df-8436-929cec5d5742" class="cell" data-execution_count="148">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>planner_list[<span class="dv">0</span>].keys()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="148">
+<pre><code>dict_keys(['time', 'planner_results', 'description', 'sub_answer', 'new_planner_results'])</code></pre>
+</div>
+</div>
+<div id="87f82d10-18e3-4a89-98bc-b0263946c055" class="cell" data-execution_count="158">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> planner <span class="kw">in</span> planner_list:</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(planner[<span class="st">'description'</span>], <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>You are a **Budget Analyst**. You will analyze the provided travel plan and ensure that the total cost of the trip stays within the specified budget of $1,400. You will consider the cost of flights, accommodation, meals, and attractions. You will also suggest alternative options for each category if necessary to stay within the budget. 
+
+You are a **Restaurant Expert**. You will analyze the provided travel plan and suggest alternative restaurants for each meal based on the traveler's preferences and budget. You will consider the cuisine, average cost, and aggregate rating of each restaurant. You will also suggest restaurants that are located near the attractions or accommodation listed in the plan. 
+
+You are a **Transportation Expert**. You will analyze the provided travel plan and suggest alternative transportation options for each leg of the journey based on the traveler's budget and preferences. You will consider the cost, duration, and convenience of each option. You will also suggest alternative transportation options for getting around within Myrtle Beach. 
+</code></pre>
+</div>
+</div>
+<div id="9eaf5dce-872f-4183-940a-0fa3a57ebb19" class="cell" data-scrolled="true" data-execution_count="153">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(planner_list[<span class="dv">0</span>][<span class="st">'planner_results'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Travel Plan:
+Day 1:
+Current City: from Washington to Myrtle Beach
+Transportation: Flight Number: F3792603, from Washington to Myrtle Beach, Departure Time: 09:19, Arrival Time: 10:59
+Breakfast: -
+Attraction: -
+Lunch: -
+Dinner: -
+Accommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach
+
+Day 2:
+Current City: Myrtle Beach
+Transportation: -
+Breakfast: Twigly, Myrtle Beach
+Attraction: SkyWheel Myrtle Beach, Myrtle Beach;WonderWorks Myrtle Beach, Myrtle Beach.
+Lunch: Eat Street Express, Myrtle Beach
+Dinner: Exotic India, Myrtle Beach
+Accommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach
+
+Day 3:
+Current City: from Myrtle Beach to Washington
+Transportation: Flight Number: F3791200, from Myrtle Beach to Washington, Departure Time: 11:36, Arrival Time: 13:06
+Breakfast: -
+Attraction: Ripley's Aquarium of Myrtle Beach, Myrtle Beach.
+Lunch: -
+Dinner: -
+Accommodation: -</code></pre>
+</div>
+</div>
+<div id="fafefa5b-ddf4-4c25-99ff-acc5390c8eb7" class="cell" data-scrolled="true" data-execution_count="156">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(planner_list[<span class="dv">2</span>][<span class="st">'new_planner_results'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Refined Travel Plan: 
+Day 1:
+Current City: from Washington to Myrtle Beach
+Transportation: Flight Number: F3927581, from Washington to Myrtle Beach, Departure Time: 11:03, Arrival Time: 13:31
+Breakfast: -
+Attraction: -
+Lunch: -
+Dinner: -
+Accommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach
+
+Day 2:
+Current City: Myrtle Beach
+Transportation: -
+Breakfast: Twigly, Myrtle Beach
+Attraction: Ripley's Aquarium of Myrtle Beach, Myrtle Beach; Broadway at the Beach, Myrtle Beach.
+Lunch: Eat Street Express, Myrtle Beach
+Dinner: Exotic India, Myrtle Beach
+Accommodation: Cozy Brooklyn Room - Next to Pratt Institute, Myrtle Beach
+
+Day 3:
+Current City: from Myrtle Beach to Washington
+Transportation: Flight Number: F3791200, from Myrtle Beach to Washington, Departure Time: 11:36, Arrival Time: 13:06
+Breakfast: -
+Attraction: Myrtle Beach State Park, Myrtle Beach.
+Lunch: -
+Dinner: -
+Accommodation: -</code></pre>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/liminma\.github\.io\/machine-learning-lab");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

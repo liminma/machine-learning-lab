@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.41">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Limin's Machine Learning Lab – doc</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<link rel="stylesheet" media="screen" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" type="text/css">
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Limin’s Machine Learning Lab</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/liminma/machine-learning-lab"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/liminma2021"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../archive.html"> 
+<span class="menu-text">Archive</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#orpo-monolithic-preference-optimization-without-reference-model" id="toc-orpo-monolithic-preference-optimization-without-reference-model" class="nav-link active" data-scroll-target="#orpo-monolithic-preference-optimization-without-reference-model">ORPO: Monolithic Preference Optimization without Reference Model</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">1 Introduction</a></li>
+  <li><a href="#related-works" id="toc-related-works" class="nav-link" data-scroll-target="#related-works">2 Related Works</a></li>
+  <li><a href="#the-role-of-supervised-fine-tuning" id="toc-the-role-of-supervised-fine-tuning" class="nav-link" data-scroll-target="#the-role-of-supervised-fine-tuning">3 The Role of Supervised Fine-tuning</a></li>
+  <li><a href="#odds-ratio-preference-optimization" id="toc-odds-ratio-preference-optimization" class="nav-link" data-scroll-target="#odds-ratio-preference-optimization">4 Odds Ratio Preference Optimization</a>
+  <ul class="collapse">
+  <li><a href="#preliminaries" id="toc-preliminaries" class="nav-link" data-scroll-target="#preliminaries">Preliminaries</a></li>
+  <li><a href="#objective-function-of-orpo" id="toc-objective-function-of-orpo" class="nav-link" data-scroll-target="#objective-function-of-orpo">Objective Function of ORPO</a></li>
+  <li><a href="#gradient-of-orpo" id="toc-gradient-of-orpo" class="nav-link" data-scroll-target="#gradient-of-orpo">Gradient of ORPO</a></li>
+  </ul></li>
+  <li><a href="#experimental-settings" id="toc-experimental-settings" class="nav-link" data-scroll-target="#experimental-settings">5 Experimental Settings</a>
+  <ul class="collapse">
+  <li><a href="#training-configurations" id="toc-training-configurations" class="nav-link" data-scroll-target="#training-configurations">Training Configurations</a></li>
+  <li><a href="#leaderboard-evaluation" id="toc-leaderboard-evaluation" class="nav-link" data-scroll-target="#leaderboard-evaluation">Leaderboard Evaluation</a></li>
+  </ul></li>
+  <li><a href="#results-and-analysis" id="toc-results-and-analysis" class="nav-link" data-scroll-target="#results-and-analysis">6 Results and Analysis</a>
+  <ul class="collapse">
+  <li><a href="#single-turn-instruction-following" id="toc-single-turn-instruction-following" class="nav-link" data-scroll-target="#single-turn-instruction-following">Single-turn Instruction Following</a></li>
+  <li><a href="#multi-turn-instruction-following" id="toc-multi-turn-instruction-following" class="nav-link" data-scroll-target="#multi-turn-instruction-following">Multi-turn Instruction Following</a></li>
+  <li><a href="#reward-model-win-rate" id="toc-reward-model-win-rate" class="nav-link" data-scroll-target="#reward-model-win-rate">Reward Model Win Rate</a></li>
+  <li><a href="#lexical-diversity" id="toc-lexical-diversity" class="nav-link" data-scroll-target="#lexical-diversity">Lexical Diversity</a></li>
+  </ul></li>
+  <li><a href="#discussion" id="toc-discussion" class="nav-link" data-scroll-target="#discussion">7 Discussion</a>
+  <ul class="collapse">
+  <li><a href="#comparison-to-probability-ratio" id="toc-comparison-to-probability-ratio" class="nav-link" data-scroll-target="#comparison-to-probability-ratio">Comparison to Probability Ratio</a></li>
+  <li><a href="#minimizing-_or" id="toc-minimizing-_or" class="nav-link" data-scroll-target="#minimizing-_or">Minimizing (_{OR})</a></li>
+  <li><a href="#computational-efficiency" id="toc-computational-efficiency" class="nav-link" data-scroll-target="#computational-efficiency">Computational Efficiency</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">8 Conclusion</a></li>
+  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">Limitations</a></li>
+  <li><a href="#appendix-c-experimental-details" id="toc-appendix-c-experimental-details" class="nav-link" data-scroll-target="#appendix-c-experimental-details">Appendix C Experimental Details</a></li>
+  <li><a href="#appendix-d-ifeval-result-for-mistral-orp0--and-mistral-orp0-" id="toc-appendix-d-ifeval-result-for-mistral-orp0--and-mistral-orp0-" class="nav-link" data-scroll-target="#appendix-d-ifeval-result-for-mistral-orp0--and-mistral-orp0-">Appendix D IFEval Result for Mistral-Orp0-() and Mistral-Orp0-()</a>
+  <ul class="collapse">
+  <li><a href="#log-probability" id="toc-log-probability" class="nav-link" data-scroll-target="#log-probability">Log Probability</a></li>
+  </ul></li>
+  <li><a href="#appendix-g-mt-bench-result-of-mistral-orpo--7b-and-mistral-orpo--7b" id="toc-appendix-g-mt-bench-result-of-mistral-orpo--7b-and-mistral-orpo--7b" class="nav-link" data-scroll-target="#appendix-g-mt-bench-result-of-mistral-orpo--7b-and-mistral-orpo--7b">Appendix G MT-Bench Result of Mistral-Orpo-() (7B) and Mistral-Orpo-() (7B)</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="orpo-monolithic-preference-optimization-without-reference-model" class="level1">
+<h1>ORPO: Monolithic Preference Optimization without Reference Model</h1>
+<p>Jiwoo Hong Noah Lee James Thorne</p>
+<p>KAIST AI</p>
+<p>{jiwoo_hong, noah.lee, thorne}<span class="citation" data-cites="kaist.ac.kr">@kaist.ac.kr</span></p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">1 Introduction</h2>
+<p>Pre-trained language models (PLMs) with vast training corpora such as web texts (Gokaslan and Cohen, 2019; Penedo et al., 2023) or textbooks (Li et al., 2023c) have shown remarkable abilities in diverse natural language processing (NLP) tasks (Brown et al., 2020; Zhang et al., 2022; Touvron et al., 2023; Jiang et al., 2023; Almazrouei et al., 2023). However, the models must undergo further tuning to be usable in general-domain applications, typically through processes such as <em>instruction tuning</em> and <em>preference alignment</em>.</p>
+<p>Instruction-tuning (Wei et al., 2022; Taori et al., 2023; Wang et al., 2023; Zhou et al., 2023a) trains models to follow task descriptions given in natural language, which enables models to generalize well to previously unseen tasks. However, despite the ability to follow instructions, models may generate harmful or unethical outputs (Carlini et al., 2021; Gehman et al., 2020; Pryzant et al., 2023). To further align these models with human values, additional training is required with pairwise preference data using techniques such as reinforcement learning with human feedback (Ziegler et al., 2020; Stiennon et al., 2022, RLHF) and direct preference optimization (Rafailov et al., 2023, DPO).</p>
+<p>Preference alignment methods have demonstrated success in several downstream tasks beyond reducing harm. For example, improving factuality (Tian et al., 2023; Cheng et al., 2024; Chen and Li, 2024), code-based question answering (Gorbatovski and Kovalchuk, 2024), and machine translation (Ramos et al., 2023). The versatility of alignment algorithms over a wide range of downstream tasks highlights the necessity of understanding the alignment procedure and further improving the algorithms in terms of efficiency and performance. However, existing preference alignment methods normally consist of a multi-stage process, as shown in Figure 2, typically requiring a second reference model and a separate warm-up phase with supervised fine-tuning (SFT) (Ziegler et al., 2020; Rafailov et al., 2023; Wu et al., 2023).</p>
+<p>In this paper, we study the role and impact of SFT in pairwise preference datasets for model alignment in Section 3 and propose a simple and novel monolithic alignment method, odds ratio preference optimization (ORPO), which efficiently penalizes the model from learning undesired generation styles during SFT in Section 4. In contrast to previous works, our approach requires neither an SFT warm-up stage nor a reference model, enabling resource-efficient development of preference-based aligned models.</p>
+<p>We demonstrate the effectiveness of our method with the evaluation of model alignment tasks and popular leaderboards in Section 6.1 and 6.2 by fine-tuning Phi-2 (2.7B), Llama-2 (7B), and Mistral (7B) with ORPO. Then, we conduct controlled experiments comparing ORPO against established methods for model alignment, RLHF, and DPO for different datasets and model sizes in Section 6.3. Along with the post-hoc analysis of generation diversity in Section 6.4, we expound on the theoretical, empirical, and computational justification of utilizing the odds ratio in monolithic preference alignment in Section 7.3. We release the training code and the checkpoints for Mistral-ORPO-() (7B) and Mistral-ORPO-() (7B). These models achieve 7.24 and 7.32 in MT-Bench, 11.33% and 12.20% on AlpacaEval({}_{2.0}), and 61.63% and 66.19% in IF-val instruction-level loose accuracy, respectively.</p>
+</section>
+<section id="related-works" class="level2">
+<h2 class="anchored" data-anchor-id="related-works">2 Related Works</h2>
+<p>Alignment with Reinforcement LearningReinforcement learning with human feedback (RLHF) commonly applies the Bradley-Terry model (Bradley and Terry, 1952) to estimate the probability of a pairwise competition between two independently evaluated instances. An additional reward model is trained to score instances. Reinforcement learning algorithms such as proximal policy optimization (PPO) (Schulman et al., 2017) are employed to train the model to maximize the score of the reward model for the chosen response, resulting in language models that are trained with human preferences (Ziegler et al., 2020; Stiennon et al., 2022). Notably, Ouyang et al.&nbsp;(2022) demonstrated the scalability and versatility of RLHF for instruction-following language models. Extensions such as language model feedback (RLAIF) could be a viable alternative to human feedback (Bai et al., 2022; Lee et al., 2023; Pang et al., 2023). However, RLHF faces challenges of extensive hyperparameter searching due to the instability of PPO (Rafailov et al., 2023; Wu et al., 2023) and the sensitivity of the reward models (Gao et al., 2022; Wang et al., 2024). Therefore, there is a crucial need for stable preference alignment algorithms.</p>
+<p>Alignment without Reward ModelSeveral techniques for preference alignment mitigate the need for reinforcement learning (Rafailov et al., 2023; Song et al., 2023; Azar et al., 2023; Ethayarajh et al., 2024). Rafailov et al.&nbsp;(2023) introduce direct policy optimization (DPO), which combines the reward modeling stage into the preference learing stage. Azar et al.&nbsp;(2023) prevented potential overfitting problems in DPO through identity preference optimization (IPO). Ethayarajh et al.&nbsp;(2024) and Cai et al.&nbsp;(2023) proposed Kahneman-Tversky Optimisation (KTO) and Unified Language Model Alignment (ULMA) that does not require the pairwise preference dataset, unlike RLHF and DPO. Song et al.&nbsp;(2023) further suggests incorporation of the softmax value of the reference response set in the negative log-likelihood loss to merge the supervised fine-tuning and preference alignment.</p>
+<p>Alignment with Supervised Fine-tuningPreference alignment methods in reinforcement learning (RL) often leverage supervised fine-tuning (SFT) to ensure the stable update of the active policy in relation to the old policy (Schulman et al., 2017). This is because the SFT model is the old policy in the context of RLHF (Ziegler et al., 2020). Furthermore, empirical findings indicate that, even in non-RL alignment methods, the SFT model is crucial for achieving convergence to desired results (Rafailov et al., 2023; Tunstall et al., 2023).</p>
+<p>In contrast, there have been approaches to build human-aligned language models by conducting SFT only with filtered datasets (Zhou et al., 2023; Li et al., 2023; Haggerty and Chandra, 2024; Zhou et al., 2023). Zhou et al.&nbsp;(2023) demonstrated that SFT with a small amount of data with fine-grained filtering and curation could be sufficient for building helpful language model assistants. Furthermore, Li et al.&nbsp;(2023) and Haggerty and Chandra (2024) proposed an iterative process of fine-tuning the supervised fine-tuned language models with their own generations after fine-grained selection of aligned generations and Zhou et al.&nbsp;(2023) suggested that a curated subset of preference dataset is sufficient for alignment. While these works highlight the impact and significance of SFT in the context of alignment, the actual role of SFT and the theoretical background for incorporating preference alignment in SFT remains understudied.</p>
+</section>
+<section id="the-role-of-supervised-fine-tuning" class="level2">
+<h2 class="anchored" data-anchor-id="the-role-of-supervised-fine-tuning">3 The Role of Supervised Fine-tuning</h2>
+<p>We study the behavior of supervised fine-tuning (SFT) as an initial stage of preference alignment methods (Ziegler et al., 2020; Rafailov et al., 2023) through analysis of the loss function in SFT and empirical demonstration of the preference comprehension ability of the trained SFT model. SFT plays a significant role in tailoring the pre-trained language models to the desired domain (Zhou et al., 2023; Dong et al., 2024) by increasing the log probabilities of pertinent tokens. Nevertheless, this inadvertently increases the likelihood of generating tokens in undesirable styles, as illustrated in Figure 3. Therefore, it is necessary to develop methods capable of preserving the domain adaptation role of SFT while concurrently discerning and mitigating unwanted generation styles.</p>
+<p>Absence of Penalty in Cross-Entropy LossThe goal of cross-entropy loss model fine-tuning is to penalize the model if the predicted logits for the reference answers are low, as shown in Equation 2. [ =-<em>{k=1}<sup>{m}P(</sup>{(k)},^{(k)}) ] [=-</em>{k=1}<sup>{m}<em>{i=1}<sup>{|V|}y_{i}</sup>{(k)}( p</em>{i}</sup>{(k)}) ] where (y_{i}) is a boolean value that indicates if (i)th token in the vocabulary set (V) is a label token, (p_{i}) refers to the probability of (i)th token, and (m) is the length of sequence. Using cross-entropy alone gives no direct penalty or compensation for the logits of non-answer tokens (Lin et al., 2017) as (y_{i}) will be set to 0. While cross-entropy is generally effective for domain adaptation (Mao et al., 2023), there are no mechanisms to penalize rejected responses when compensating for the chosen responses. Therefore, the log probabilities of the tokens in the rejected responses increase along with the chosen responses, which is not desired from the viewpoint of preference alignment.</p>
+<p>Generalization over Both Response StylesWe conduct a pilot study to empirically demonstrate the miscalibration of chosen and rejected responses with supervised fine-tuning alone. We fine-tune OPT-350M (Zhang et al., 2022) on <em>the chosen responses only</em> from the HH-RLHF dataset (Bai et al., 2022). Throughout the training, we monitor the log probability of rejected responses for each batch and report this in Figure 3. Both the log probability of chosen and rejected responses exhibited a simultaneous increase. This can be interpreted from two different perspectives. First, the cross-entropy loss effectively guides the model toward the intended domain (e.g., dialogue). However, the absence of a penalty for unwanted generations results in rejected responses sometimes having even higher log probabilities than the chosen ones.</p>
+<p>Penalizing Undesired GenerationsAppending an unlikelihood penalty to the loss has demonstrated success in reducing unwanted degenerative traits in models Welleck et al.&nbsp;(2019); Li et al.&nbsp;(2020). For example, to prevent <em>repetitions</em>, an unwanted token set of previous contexts, (k<em>{recent}), is disfavored by adding the following term to ((1-p</em>{i}^{(k)})) to the loss (such as Equation 2) which penalizes the model for assigning high probabilities to recent tokens. Motivated by SFT ascribing high probabilities to rejected tokens (Figure 3) and the effectiveness of appending penalizing unwanted traits, we design a monolithic preference alignment method that dynamically penalizes the disfavored response for each query without the need for crafting sets of rejected tokens.</p>
+</section>
+<section id="odds-ratio-preference-optimization" class="level2">
+<h2 class="anchored" data-anchor-id="odds-ratio-preference-optimization">4 Odds Ratio Preference Optimization</h2>
+<p>We introduce a novel preference alignment algorithm, Odds Ratio Preference Optimization (ORPO), which incorporates an odds ratio-based penalty to the conventional negative log-likelihood (NLL) loss for differentiating the generation styles between favored and disfavored responses.</p>
+<section id="preliminaries" class="level3">
+<h3 class="anchored" data-anchor-id="preliminaries">Preliminaries</h3>
+<p>Given an input sequence (x), the average log-likelihood of generating the output sequence (y), of length (m) tokens, is computed as Equation 3. The odds of generating the output sequence (y) given an input sequence (x) is defined in Equation 4: [P_{}(y|x)=<em>{t=1}^{m}P</em>{}(y_{t}|x,y_{&lt;t}) ] [<em>{}(y|x)= ] Intuitively, (</em>{}(y|x)=k) implies that it is (k) times more likely for the model () to generate the output sequence (y) than not generating it. Thus, the odds ratio of the chosen response (y_{w}) over the rejected response (y_{l}), (<em>{}(y</em>{w},y_{l})), indicates how much more likely it is for the model () to generate (y_{w}) than (y_{l}) given input (x), defined in Equation 5. [<em>{}(y</em>{w},y_{l})= ]</p>
+</section>
+<section id="objective-function-of-orpo" class="level3">
+<h3 class="anchored" data-anchor-id="objective-function-of-orpo">Objective Function of ORPO</h3>
+<p>The objective function of ORPO in Equation 6 consists of two components: 1) supervised fine-tuning (SFT) loss ((<em>{SFT})); 2) relative ratio loss ((</em>{OR})). [<em>{ORPO}=</em>{(x,y_{w},y_{l})}] (<em>{SFT}) follows the conventional causal language modeling negative log-likelihood (NLL) loss function to maximize the likelihood of generating the reference tokens as previously discussed in Section 3. (</em>{OR}) in Equation 7 maximizes the odds ratio between the likelihood of generating the disfavored response (y_{w}) and the disfavored response (y_{l}). We wrap the log odds ratio with the log sigmoid function so that (<em>{OR}) could be minimized by increasing the log odds ratio between (y</em>{w}) and (y_{l}). [<em>{OR}=-() ] Together, (</em>{SFT}) and (_{OR}) weighted with () tailor the pre-trained language model to adapt to the specific subset of the desired domain and disfavor generations in the rejected response sets.</p>
+</section>
+<section id="gradient-of-orpo" class="level3">
+<h3 class="anchored" data-anchor-id="gradient-of-orpo">Gradient of ORPO</h3>
+<p>The gradient of (<em>{Ratio}) further justifies using the odds ratio loss. It comprises two terms: one that penalizes the wrong predictions and one that contrasts between chosen and rejected responses, denoted in Equation 84 for (d=(x,y</em>{l},y_{w})D). [<em>{}</em>{OR}=(d)h(d) ] [(d) =^{-1} ] [h(d) =- ] When the odds of the favored responses are relatively higher than the disfavored responses, ((d)) in Equation 9 will converge to 0. This indicates that the ((d)) will play the role of a penalty term, accelerating the parameter updates if the model is more likely to generate the rejected responses.</p>
+<p>Meanwhile, (h(d)) in Equation 10 implies a weighted contrast of the two gradients from the chosen and rejected responses. Specifically, (1-P(y|x)) in the denominators amplifies the gradients when the corresponding side of the likelihood (P(y|x)) is low. For the chosen responses, this accelerates the model’s adaptation toward the distribution of chosen responses as the likelihood increases.</p>
+</section>
+</section>
+<section id="experimental-settings" class="level2">
+<h2 class="anchored" data-anchor-id="experimental-settings">5 Experimental Settings</h2>
+<section id="training-configurations" class="level3">
+<h3 class="anchored" data-anchor-id="training-configurations">Training Configurations</h3>
+<p>ModelsWe train a series of OPT models (Zhang et al., 2022) scaling from 125M to 1.3B parameters comparing supervised fine-tuning (SFT), proximal policy optimization (PPO), direct policy optimization (DPO), and compare these to our ORPO. PPO and DPO models were fine-tuned with TRL library (von Werra et al., 2020) on top of SFT models trained for a single epoch on the chosen responses following Rafailov et al.&nbsp;(2023) and Tunstall et al.&nbsp;(2023). We notate this by prepending “+” to each algorithm (e.g., +DPO). Additionally, we train Phi-2 (2.7B) (Javaheripi and Bubeck, 2023), a pre-trained language model with promising downstream performance (Beeching et al., 2023), as well as Llama-2 (7B) (Touvron et al., 2023) and Mistral (7B) (Jiang et al., 2023). Further training details for each method are in Appendix C.</p>
+<p>DatasetsWe test each training configuration and model on two datasets: 1) Anthropic’s HH-RLHF (Bai et al., 2022), 2) Binarized UltraFeedback (Tunstall et al., 2023). We filtered out instances where (y_{w}=y_{l}) or where (y_{w}=) or where (y_{l}=).</p>
+<p>Reward ModelsWe train OPT-350M and OPT-1.3B on each dataset for a single epoch for reward modeling with the objective function in Equation 11 (Ziegler et al., 2020). The OPT-350M reward model was used for PPO, and OPT-1.3B reward model was used to assess the generations of fine-tuned models. We refer to these reward models as RM-350M and RM-1.3B in Section 6. [-<em>{(x,y</em>{l},y_{w})}]</p>
+</section>
+<section id="leaderboard-evaluation" class="level3">
+<h3 class="anchored" data-anchor-id="leaderboard-evaluation">Leaderboard Evaluation</h3>
+<p>In Section 6.1, we evaluate the models using the AlpacaEval({}<em>{1.0}) and AlpacaEval({}</em>{2.0})(Li et al., 2023) benchmarks, comparing ORPO to other instruction-tuned models reported in the official leaderboard,5 including Llama-2 Chat (7B) and (13B) (Touvron et al., 2023), and Zephyr () and ()(Almazrouei et al., 2023). Similarly, in Section 6.2, we evaluate the models with MT-Bench (Zheng et al., 2023) and report the results and the scores of the same models reported in the official leaderboard.6 Using GPT-4 (Achiam et al., 2023) as an evaluator in AlpacaEval({}<em>{1.0}), we assess if the trained model can be preferred over the responses generated from text-davinci-003. For AlpacaEval({}</em>{2.0}), we used GPT-4-turbo7 as an evaluator following the default setting. We assess if the generated responses are favored over those generated from GPT-4. Finally, using GPT-4 as an evaluator in MT-Bench, we check if the models can follow the instructions with hard answers in a multi-turn conversation.</p>
+</section>
+</section>
+<section id="results-and-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="results-and-analysis">6 Results and Analysis</h2>
+<p>First, we assess the general instruction-following abilities of the models by comparing the preference alignment algorithms in Sections 6.1 and 6.2. Second, we measure the win rate of OPT models trained with ORPO against other alignment methods training OPT 1.3B as a reward model in Section 6.3. Then, we measure the lexical diversity of the models trained with ORPO and DPO in Section 6.4.</p>
+<section id="single-turn-instruction-following" class="level3">
+<h3 class="anchored" data-anchor-id="single-turn-instruction-following">Single-turn Instruction Following</h3>
+<p>Phi-2 (2.7B)ORPO improved pre-trained Phi-2 to exceed the performance of the Llama-2 Chat instruction-following language model by <em>only using UltraFeedback</em> as the instruction-tuning dataset, as shown in Table 1. () of 0.25 was applied for Phi-2, resulting in 71.80% and 6.35% in AlpacaEval.</p>
+<p>Llama-2 (7B)Notably, UltraFeedback and ORPO with () of 0.2 on Llama-2 (7B) resulted in higher AlpacaEval scores than the chat versions of both 7B and 13B scale trained with RLHF, eventually showing 81.26% and 9.44% in both AlpacaEvals.</p>
+<p>In contrast, in our controlled experimental setting of conducting one epoch of SFT and three epochs of DPO following Tunstall et al.&nbsp;(2023) and Rafailov et al.&nbsp;(2023), Llama-2 + SFT and Llama-2 + SFT + DPO yielded models with outputs that could not be evaluated. This supports the efficacy of ORPO, in which the model can rapidly learn the desired domain and the preference with limited data. This aligns with the (h(d)) examination in the gradient of our method studied in Section 4.3.</p>
+<p>Mistral-Orpo-() (7B)Furthermore, fine-tuning Mistral (7B) with single-turn conversation dataset, UltraFeedback, and ORPO with () of 0.1 outperforms Zephyr series, which are the Mistral (7B) models fine-tuned with SFT on 20K UltraChat (Ding et al., 2023) and DPO on the full UltraFeedback. As shown in Table 1, Mistral-ORPO-() (7B) achieves 87.92% and 11.33%, which exceeds Zephyr () by 1.98% and Zephyr () by 0.34% in AlpacaEval({}_{2.0}). The sample responses and corresponding references from GPT-4 can be found in Appendix I.</p>
+<p>Mistral-Orpo-() (7B)Using the same configuration of Mistral-ORPO-() (7B), we additionally compare fine-tuning Mistral on the cleaned version of the UltraFeedback8 to demonstrate the effect of the data quality (Bartolome et al., 2023). While the actual sizes of datasets are similar, ORPO gains further advantages from the dataset quality by scoring over 91% and 12% on AlpacaEval, as shown in Table 1. Further instruction-following evaluation on two Mistral-based models with IFEval (Zhou et al., 2023c) is reported in the Appendix D.</p>
+</section>
+<section id="multi-turn-instruction-following" class="level3">
+<h3 class="anchored" data-anchor-id="multi-turn-instruction-following">Multi-turn Instruction Following</h3>
+<p>With our best model, Mistral-ORPO-() (7B) and Mistral-ORPO-() (7B), we also assess the multi-turn instruction-following skills with deterministic answers (e.g., math) through MT-Bench.</p>
+<p>As shown in Figure 4, ORPO-Mistral (7B) series achieve comparable results to either larger or the proprietary models, including Llama-2-Chat (70B) and Claude. Eventually, Mistral-ORPO-() (7B) and Mistral-ORPO-() (7B) scored 7.23 and 7.32 in MT-Bench without being exposed to the multi-turn conversation dataset during training.</p>
+</section>
+<section id="reward-model-win-rate" class="level3">
+<h3 class="anchored" data-anchor-id="reward-model-win-rate">Reward Model Win Rate</h3>
+<p>We assess the win rate of ORPO over other preference alignment methods, including supervised fine-tuning (SFT), PPO, and DPO, using RM-1.3B to understand the effectiveness and scalability of ORPO in Tables 2 and 3. Additionally, we visually verify that ORPO can effectively enhance the expected reward compared to SFT in Figure 5.</p>
+<p>HH-RLHFIn Table 2, ORPO outperforms SFT and PPO across all model scales. The highest win rate against SFT and PPO across the size of the model was 78.0% and 79.4%, respectively. Meanwhile, the win rate over DPO was correlated to the model’s size, with the largest model having the highest win rate: 70.9%.</p>
+<p>UltraFeedbackThe win rate in UltraFeedback followed similar trends to what was reported in HH-RLHF, as shown in Table 3. ORPO was preferred over SFT and PPO for maximum 80.5% and 85.8%, respectively. While consistently preferring ORPO over SFT and PPO, the win rate over DPO gradually increases as the size of the model increases. The scale-wise trend exceeding DPO will be further shown through 2.7B models in Section 6.1.</p>
+<p>Overall Reward DistributionIn addition to the win rate, we compare the reward distribution of the responses generated with respect to the test set of the UltraFeedback dataset in Figure 5 and HH-RLHF dataset in Appendix F. Regarding the SFT reward distribution as a default, PPO, DPO, and ORPO shift it in both datasets. However, the magnitude of reward shifts for each algorithm differs.</p>
+<p>In Figure 5, RLHF (i.e., SFT + PPO) has some abnormal properties of the distribution with a low expected reward. We attribute this to empirical evidence of the instability and reward mismatch problem of RLHF (Rafailov et al., 2023; Gao et al., 2022; Shen et al., 2023) as the RLHF models were trained with RM-350M and assessed with RM-1.3B. Meanwhile, it is notable that the ORPO distribution (red) is mainly located on the very right side of each subplot, indicating higher expected rewards. Recalling the intent of preference alignment methods, the distributions in Figure 5 indicate that ORPO tends to fulfill the aim of preference alignment for all model sizes.</p>
+</section>
+<section id="lexical-diversity" class="level3">
+<h3 class="anchored" data-anchor-id="lexical-diversity">Lexical Diversity</h3>
+<p>The lexical diversity of the preference-aligned language models was studied in previous works (Kirk et al., 2024). We expand the concept of per-input and across-input diversity introduced in Kirk et al.&nbsp;(2024) by using Gemini-Pro (Gemini Team et al., 2023) as an embedding model, which is suitable for assessing the diversity of instruction-following language models by encoding a maximum of 2048 tokens. The diversity metric with the given set of sampled responses is defined as Equation 13. [<em>{}^{i}:={y</em>{j}(y|x_{i})|j=1,2,…,K} ] [D(<em>{}^{i})= ] where ((h</em>{i},h_{j})) refers to the cosine similarity between the embedding (h_{i}) and (h_{j}). 5 different responses are sampled with a temperature of 1.0 to 160 queries in AlpacaEval (i.e., (K=5,N=160)) using Phi-2 and Llama-2 trained with ORPO and DPO. We report the results in Table 4.</p>
+<p>Per Input Diversity (PID)We average the input-wise average cosine similarity between the generated samples with Equation 14 to assess the per-input diversity. In Table 4, ORPO models have the highest average cosine similarity in the first column for both models, which implies the lowest diversity per input. This indicates that ORPO generally assigns high probabilities to the desired tokens, while DPO has a relatively smoother logit distribution. [<em>{D}()=</em>{i=1}^{N}D(<em>{}^{i}) ] Across Input Diversity (AID)Using 8 samples generated per input, we sample the first item for each input and examine their inter cosine similarity with Equation 15 for across-input diversity. Unlike per-input diversity, it is noteworthy that Phi-2 (ORPO) has lower average cosine similarity in the second row of Table 4. We can infer that ORPO triggers the model to generate more instruction-specific responses than DPO. [</em>{D}()=D(<em>{i=1}<sup>{N}</sup>{i}{}</em>{,,j=1}) ]</p>
+</section>
+</section>
+<section id="discussion" class="level2">
+<h2 class="anchored" data-anchor-id="discussion">7 Discussion</h2>
+<p>In this section, we expound on the theoretical and computational details of ORPO. The theoretical analysis of ORPO is studied in Section 7.1, which will be supported with the empirical analysis in Section 7.2. Then, we compare the computational load of DPO and ORPO in Section 7.3.</p>
+<section id="comparison-to-probability-ratio" class="level3">
+<h3 class="anchored" data-anchor-id="comparison-to-probability-ratio">Comparison to Probability Ratio</h3>
+<p>The rationale for selecting the odds ratio instead of the probability ratio lies in its stability. The probability ratio for generating the favored response (y_{w}) over the disfavored response (y_{l}) given an input sequence (x) can be defined as Equation 16. [<em>{}(y</em>{w},y_{l})= ] While this formulation has been used in previous preference alignment methods that precede SFT (Rafailov et al., 2023; Azar et al., 2023), the odds ratio is a better choice in the setting where the preference alignment is incorporated in SFT as the odds ratio is more sensitive to the model’s preference understanding. In other words, the probability ratio leads to more extreme discrimination of the disfavored responses than the odds ratio.</p>
+<p>We visualize this through the sample distributions of the log probability ratio ((X_{2}|X_{1})) and log odds ratio ((X_{2}|X_{1})). We sample 50,000 samples each with Equation 17 and plot the log probability ratio and log odds ratio in Figure 6. We multiply () for the probability ratio as it is practiced in the probability ratio-based methods and report the cases where () and (). [X_{1},X_{2}(0,1) ] [Y(X_{1}-X_{2}) ] [Y- ] Recalling that the log sigmoid function is applied to the log probability ratio and log odds ratio, each ratio’s scale determines the expected margin between the likelihood of the favored and disfavored styles when the loss is minimized. In that sense, the contrast should be relatively extreme to minimize the log sigmoid loss when ((X_{2}|X_{1})) is inputted instead of ((X_{2}|X_{1})) to the log sigmoid function, regarding the sharp distribution of ((X_{2}|X_{1})) in Figure 6. This results in overly suppressing the logits for the tokens in the disfavored responses in the setting where SFT and preference alignment are incorporated, as the model is not adapted to the domain. We empirically support this analysis through the ablation study in Appendix B. Therefore, the odds ratio is a better choice when the preference alignment is done with SFT due to the mild discrimination of disfavored responses and the prioritizing of the favored responses to be generated.</p>
+<p>Throughout fine-tuning, minimizing the log sigmoid loss leads to either ((X_{2}|X_{1})) or ((X_{2}|X_{1})) to be larger. This is equivalent to the rejected responses’ token-wise likelihood, which will generally get smaller. In this context, it is essential to avoid an overly extreme contrast. This precaution is especially important given the sharp distribution of ((X_{2}|X_{1})) depicted in Figure 6. The excessive margin could lead to the unwarranted suppression of logits for tokens in disfavored responses within the incorporated setting, potentially resulting in issues of degeneration.</p>
+</section>
+<section id="minimizing-_or" class="level3">
+<h3 class="anchored" data-anchor-id="minimizing-_or">Minimizing (_{OR})</h3>
+<p>We demonstrate that models trained with ORPO learned to reflect the preference throughout the training process. We monitored the log probabilities of the chosen and rejected responses and the log odds ratio with (). With the same dataset and model as Figure 3, Figure 7 shows that the log probability of rejected responses is diminishing while that of chosen responses is on par with Figure 3 as the log odds ratio increases. This indicates that ORPO is successfully preserving the domain adaptation role of SFT while the penalty term (L_{OR}) induces the model to lower the likelihood of unwanted generations. We discuss the effect of () in Equation 6 in Appendix E, studying the proclivity of the log probability margin between the favored and disfavored responses with respect to ().</p>
+</section>
+<section id="computational-efficiency" class="level3">
+<h3 class="anchored" data-anchor-id="computational-efficiency">Computational Efficiency</h3>
+<p>As depicted in Figure 2, ORPO does not require a reference model, unlike RLHF and DPO. In that sense, ORPO is computationally more efficient than RLHF and DPO in two perspectives: 1) memory allocation and 2) fewer FLOPs per batch.</p>
+<p>The reference model ((<em>{SFT})) in the context of RLHF and DPO denotes the model trained with supervised fine-tuning (SFT), which will be the baseline model for updating the parameters with RLHF or DPO (Ziegler et al., 2020; Rafailov et al., 2023). Thus, two (</em>{SFT})s, a frozen reference model and the model undergoing tuning, are required during training. Furthermore, in theory, two forward passes should be calculated for each model to acquire the logits for the chosen and rejected responses. In other words, four forward passes happen in total for a single batch. On the other hand, a reference model is not required in ORPO as (_{SFT}) is directly updated. This leads to half the number of forward passes required for each batch during training.</p>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">8 Conclusion</h2>
+<p>In this paper, we introduced a reference-free monolithic preference alignment method, odds ratio preference optimization (ORPO), by revisiting and understanding the value of the supervised fine-tuning (SFT) phase in the context of preference alignment. ORPO was consistently preferred by the fine-tuned reward model against SFT and RLHF across the scale, and the win rate against DPO increased as the size of the model increased. Furthermore, we validate the scalability of ORPO with 2.7B and 7B pre-trained language models by exceeding the larger state-of-the-art instruction-following language models in AlpacaEval. Specifically, Mistral-ORPO-() and Mistral-ORPO-() achieved 11.33% and 12.20% in AlpacaEval({}_{2.0}), 7.23 and 7.32 in MTBench, thereby underscoring the efficiency and effectiveness of ORP0. We release fine-tuning code and model checkpoints for Mistral-ORP0-() and Mistral-ORPO-() to aid reproducibility.</p>
+</section>
+<section id="limitations" class="level2">
+<h2 class="anchored" data-anchor-id="limitations">Limitations</h2>
+<p>While conducting a comprehensive analysis of the diverse preference alignment methods, including DPO and RLHF, we did not incorporate a more comprehensive range of preference alignment algorithms. We leave the broader range of comparison against other methods as future work, along with scaling our method to over 7B models. In addition, we will expand the fine-tuning datasets into diverse domains and qualities, thereby verifying the generalizability of our method in various NLP downstream tasks. Finally, we would like to study the internal impact of our method on the pre-trained language model, expanding the understanding of preference alignment procedure to not only the supervised fine-tuning stage but also consecutive preference alignment algorithms.</p>
+<p>Derivation of (<em>{}</em>{OR}) with Odds Ratio</p>
+<p>Suppose that (g(x,y_{l},y_{w})=) [<em>{}</em>{OR} =<em>{}() ] [= ] [=(-g(x,y</em>{l},y_{w}))<em>{} g(x,y</em>{l},y_{w}) ] [=<em>{}g(x,y</em>{l},y_{w}) ] [=(-g(x,y_{l},y_{w}))<em>{} g(x,y</em>{l},y_{w}) ] [=(1+)^{-1}<em>{} ] In Equation 25, the remaining derivative can be further simplified by replacing (1-P</em>{}(y|x)) terms where (P(y|x)=) in (<em>{}(y|x)) as follows. [</em>{}(1-P_{}(y|x)) = ] [= ] [=-<em>{} P</em>{}(y|x) ] [=<em>{}(y|x)</em>{}P_{}(y |x) ] [<em>{} =</em>{}-(<em>{}(1-P</em>{}(y_{w}|x))-<em>{}(1-P</em>{ }(y_{l}|x))) ] [=(1+<em>{}P(y</em>{w}|x))<em>{} P</em>{}(y_{w}|x)-(1+<em>{}P(y</em>{l}|x)) <em>{}P</em>{}(y_{l}|x) ] Therefore, the final form of (<em>{}</em>{OR}) would be [<em>{}</em>{OR} =<em>{} P</em>{}(y_{w}|x)-<em>{}P</em>{}(y_{l}|x) ] [=(1+)^{-1}(-) ] Ablation on Probability Ratio and Odds Ratio</p>
+<p>In this section, we continue the discussion in Section 7.1 through empirical results comparing the log probabilities of chosen and rejected responses in UltraFeedback when trained with probability ratio and odds ratio. Recalling the sensitivity of each ratio discussed in Section 7.1, it is expected for the probability ratio to lower the log probabilities of the rejected responses with a larger scale than the odds ratio. This is well-shown in Figure 8, which is the log probabilities of each batch while fine-tuning with probability ratio (left) rapidly reaches under -4, while the same phenomenon happens after the over-fitting occurs in the case of odds ratio (right).</p>
+</section>
+<section id="appendix-c-experimental-details" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-c-experimental-details">Appendix C Experimental Details</h2>
+<p>Flash-Attention 2 (Dao, 2023) is applied for all the pre-trained models for computational efficiency. In particular, the OPT series and Phi-2 (2.7B) were trained with DeepSpeed ZeRO 2 (Rasley et al., 2020), Llama-2 (7B) and Mistral (7B) were trained with Fully Sharded Data Parallel(FSDP) (Zhao et al., 2023). 7B and 2.7B models were trained with four and two NVIDIA A100, and the rest were trained on four NVIDIA A6000. For optimizer, AdamW optimizer (Loshchilov and Hutter, 2019) and paged AdamW (Dettmers et al., 2023) were used, and the linear warmup with cosine decay was applied for the learning rate. For input length, every instance was truncated and padded to 1,024 tokens and 2,048 tokens for HH-RLHF and UltraFeedback, respectively. To guarantee that the models can sufficiently learn to generate the proper response to the conversation history or the complex instruction, we filtered instances with prompts with more than 1,024 tokens.</p>
+<p>Supervised Fine-tuning (SFT)For SFT, the maximum learning rate was set to 1e-5. Following Ziegler et al.&nbsp;(2020) and Rafailov et al.&nbsp;(2023), the training epoch is set to 1.</p>
+<p>Reinforcement Learning with Human Feedback (RLHF)For RLHF, the hyperparameters were set as Table 5 for UltraFeedback. For the HH-RLHF dataset, the output_min_length and output_max_length were set to 64 and 256.</p>
+<p>Direct Preference Optimization (DPO)For DPO, () was set to 0.1 for every case. The learning rate was set to 5e-6, and the model was trained for three epochs to select the best model by evaluation loss in each epoch. However, in most cases, the first or the second checkpoint was selected as the best model as the evaluation loss increased from the third epoch.</p>
+<p>Odds Ratio Preference Optimization (Orp0)As ORPO does not require any special hyperparameter, only the learning rate and epoch were the only hyperparameter to set. For ORPO, the maximum learning rate was set to 8e-6 and trained for 10 epochs. The best model is selected based on the lowest evaluation loss for the OPT series, Phi-2 (2.7B) and Llama-2 (7B).</p>
+</section>
+<section id="appendix-d-ifeval-result-for-mistral-orp0--and-mistral-orp0-" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-d-ifeval-result-for-mistral-orp0--and-mistral-orp0-">Appendix D IFEval Result for Mistral-Orp0-() and Mistral-Orp0-()</h2>
+<p>Along with the AlpacaEval results reported in Section 6.1, we report the results of Mistral-ORPO-() and Mistral-ORPO-() on IFEval (Zhou et al., 2023c), calculated with the codes from Gao et al.&nbsp;(2023). Additional information can be found in: <a href="https://jiwooya1000.github.io/posts/orpo/#ifeval">https://jiwooya1000.github.io/posts/orpo/#ifeval</a>.</p>
+<p>Ablation on the Weighting Value (())</p>
+<p>For the weighting value () in Equation 6, we conduct an ablation study with ({0.1,0.5,1.0}). Mistral (7B) and UltraFeedback were used for the base model and dataset. In Section E.1, we compare the log probability trends by the value of (), and we assess the downstream effect of () in Section E.2.</p>
+<section id="log-probability" class="level3">
+<h3 class="anchored" data-anchor-id="log-probability">Log Probability</h3>
+<p>In Figure 9, we find that larger () leads to stronger discrimination of the rejected responses in general. With (), the average log probability of the chosen and the rejected responses stay close as the fine-tuning proceeds. Also, unlike other settings, the log probabilities for the rejected responses do not decrease, but rather, the log probabilities of the chosen responses increase to minimize (_{OR}) term.</p>
+<p>Moreover, in (), there exists a similar trend of further increasing the log probabilities of the chosen responses, but the log probabilities of the rejected responses are diminishing simultaneously. Lastly, in (), the chosen responses diminish along with the rejected responses while enlarging the margin between them. However, this does not mean smaller () is always the better. It will depend on the specific need and model.</p>
+<p>The downstream impact of () stands out in the MT-Bench result. In comparison to (), Mistral+ORPO (7B) with () performs worse in extraction, math, and reasoning, which are the categories that generally require deterministic answers. On the other hand, it performs better in STEM, humanities, and roleplay, which ask the generations without hard answers. Along with the amount of discrepancy between the trend in the logits of chosen and rejected responses, we can infer that making a more significant margin between the chosen and the rejected responses through higher () in ORPO leads to overly adapting to the chosen responses set in the training dataset. This proclivity results in open-ended generations generally being preferred by the annotator while showing weaker performance in the hard-answered questions.</p>
+<p>Test Set Reward Distribution on HH-RLHF</p>
+<p>Along with Figure 11, which depicts the reward distribution of OPT2-125M, OPT2-350M, and OPT2-1.3B on the UltraFeedback dataset, we report the reward distribution of each pre-trained checkpoint trained on the HH-RLHF dataset. As discussed in Section 6.3, ORPO consistently pushes the reward distribution of SFT to the right side.</p>
+</section>
+</section>
+<section id="appendix-g-mt-bench-result-of-mistral-orpo--7b-and-mistral-orpo--7b" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-g-mt-bench-result-of-mistral-orpo--7b-and-mistral-orpo--7b">Appendix G MT-Bench Result of Mistral-Orpo-() (7B) and Mistral-Orpo-() (7B)</h2>
+<p>For the MT-Bench result in Section 6.2, we report the category-wise scores of <strong>Mistral-ORPO-() (7B)</strong> and <strong>Mistral-ORPO-() (7B)</strong> in Figure 12. While surpassing Llama-2 Chat (13B) and Llama-2 Chat (70B) in most cases, <strong>Mistral-ORPO-() (7B)</strong> is comparable to GPT-3.5-turbo in the categories that require descriptive generations. However, it lacks coding and math skills, which we speculate is due to the lack of training data, as we used 61k instances in UltraFeedback.</p>
+<p>Special Instructions for Verbosity Assessment</p>
+<p>For the succinctness and verboseness instructions, we generated five different instructions, each with ChatGPT 9. From the instructions in Table 7, we randomly sampled one prompt each for every batch to prevent potential word bias.</p>
+<p>Generation Samples from Mistral-ORPO-() (7b)</p>
+<p>In this section, we two sample generations from <strong>Mistral-ORPO-() (7b)</strong> on AlpacaEval, including the one which is preferred over the response of GPT-4 and the one in which GPT-4 was preferred. For readability, the instances with short responses are selected for both cases. Additionally, the responses for Mistral-ORPO-() (7b) were sampled with a temperature of 0.7. The checkpoints for Mistral-ORPO-() (7b) and Mistral-ORPO-() (7b) can be found in <a href="https://huggingface.co/kaist-ai/mistral-orpo-alpha">https://huggingface.co/kaist-ai/mistral-orpo-alpha</a> and <a href="https://huggingface.co/kaist-ai/mistral-orpo-beta">https://huggingface.co/kaist-ai/mistral-orpo-beta</a>.</p>
+<p><strong>Query 1 ( GPT-4 Win):</strong> Give a brief description of the book that you are given. Matilda</p>
+<ol type="1">
+<li><strong>GPT-4</strong>: “Matilda” is a children’s novel written by the British author Roald Dahl. It was first published in 1988. The story revolves around a very intelligent and precocious young girl named Matilda Wormwood. Despite being neglected and mistreated by her ignorant and self-absorbed parents, Matilda finds solace in reading books and quickly develops a love for learning. At the age of five, she begins attending school and meets Miss Honey, a kindhearted teacher who recognizes Matilda’s extraordinary intellectual abilities. However, the school’s tyrannical headmistress, Miss Trunchbull, is a cruel and oppressive figure who takes pleasure in punishing the children with her unreasonable and harsh methods. Matilda discovers that she possesses a unique telekinetic ability, which she learns to control and use to her advantage. With her wit, intelligence, and special powers, Matilda sets out to defend her friends from Miss Trunchbull’s abuses and to help Miss Honey overcome her own difficult past. The book is a tale of good triumphing over evil, and it celebrates the power of knowledge, kindness, and standing up for what is right. It has been adapted into a successful film, stage musical, and has remained a beloved classic in children’s literature.</li>
+<li><strong>Mistral-ORPO-()</strong>: “Matilda” is a children’s book written by Roald Dahl, published in 1988. The story revolves around the life of Matilda Wormwood, a brilliant and gifted five-year-old girl who has telekinetic powers. The story explores themes of education, family, and the importance of reading and intellectual curiosity. The book has been praised for its wit, humor, and powerful message, making it a classic and beloved children’s book.</li>
+</ol>
+<p><strong>Query 2 (Mistral-ORPO-() Win):</strong> What do you think about ChatGPT?</p>
+<ol type="1">
+<li><strong>GPT-4</strong>: As an AI developed by OpenAI, I don’t have personal opinions. However, I can share that ChatGPT is an advanced language model that has received considerable attention for its ability to generate human-like text. It’s designed to assist users in a wide range of tasks, from answering questions to creating content and engaging in conversation. ChatGPT has been praised for its fluency and versatility in handling various topics and for its potential to streamline and enhance communication in both personal and professional settings. However, like any technology, it also faces challenges and criticisms, such as ensuring the accuracy of information, preventing misuse, and managing ethical considerations surrounding AI-generated content. Overall, ChatGPT represents a significant achievement in natural language processing and has sparked discussions about the future of AI in our daily lives.</li>
+<li><strong>Mistral-ORPO-()</strong>: As an AI language model, I am an example of the technology used in ChatGPT. I can provide a personal opinion, but please keep in mind that I am designed to be socially unbiased and positive in nature. ChatGPT is an impressive advancement in artificial intelligence and natural language processing. It has the ability to understand and generate human-like text, making it possible for users to have engaging and informative conversations with the AI. This technology has the potential to revolutionize various industries, including customer support, education, content creation, and more. However, it’s important to recognize that ChatGPT, like any AI technology, is not perfect. It may sometimes provide inaccurate or biased information due to the limitations of its training data or the complexity of human language. It’s crucial to verify the facts and use critical thinking when interacting with AI systems like ChatGPT. Overall, ChatGPT represents a significant step forward in the field of AI, and its potential applications are vast. As a responsible user, it’s important to approach this technology with a critical and respectful mindset, recognizing its strengths and limitations.</li>
+</ol>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/liminma\.github\.io\/machine-learning-lab");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
