@@ -17,3 +17,5 @@ format:
   html:
     theme: cosmo
     css: styles.css
+    header-includes: <link rel="stylesheet" media="screen" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" type="text/css"/>
+    mainfont: Inter
